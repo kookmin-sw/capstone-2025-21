@@ -117,9 +117,9 @@ enum OnboardingType {
     var image: UIImage {
         switch self {
         case .timeTable:
-            return .timeTable
+            return .graphicsTimeTable
         case .theme:
-            return .t
+            return .graphicsTheme
         }
     }
 }
