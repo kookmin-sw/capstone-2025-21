@@ -1,0 +1,93 @@
+### macOS ###
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
+.env
+
+# Icon must end with two
+Icon
+
+# Thumbnails
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+
+# Xcode
+DerivedData/
+*.xcworkspace/
+*.xcuserstate
+*.xcodeproj
+xcuserdata/
+
+# Swift Package Manager
+.build/
+
+# Cocoapods
+Pods/
+*.xcscmblueprint
+
+# Carthage
+Carthage/
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/
+fastlane/test_output/
+
+# Fastlane.swift runner binary
+**/fastlane/FastlaneRunner
+**/fastlane/.env.default
+*.p8
+
+**Gemfile.lock
+
+# Archives
+*.xcarchive
+
+# Debugging
+*.mode1v3
+*.mode2v3
+
+# Logs
+*.log
+
+# User-specific
+.idea/
+.vscode/
+.DS_Store
+
+# Environment
+.env
+
+# Other build artifacts
+*.app
+*.ipa
+*.dSYM/
+
+### Tuist derived files ###
+graph.dot
+graph.png
+Derived/
+
+### Tuist managed dependencies ###
+Tuist/Dependencies
+
+###Config
+*.xcconfig
