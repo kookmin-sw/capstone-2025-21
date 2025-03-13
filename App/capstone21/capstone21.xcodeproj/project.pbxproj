@@ -11,6 +11,24 @@
 		D285AA6D2D829DC30016CBB1 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AA6C2D829DC30016CBB1 /* ContentView.swift */; };
 		D285AA6F2D829DC50016CBB1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D285AA6E2D829DC50016CBB1 /* Assets.xcassets */; };
 		D285AA722D829DC50016CBB1 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D285AA712D829DC50016CBB1 /* Preview Assets.xcassets */; };
+		D285AAB62D829ED00016CBB1 /* AuthRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AA7F2D829ED00016CBB1 /* AuthRouter.swift */; };
+		D285AAB72D829ED00016CBB1 /* BannerRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AA802D829ED00016CBB1 /* BannerRouter.swift */; };
+		D285AAB82D829ED00016CBB1 /* ChallengeRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AA812D829ED00016CBB1 /* ChallengeRouter.swift */; };
+		D285AAB92D829ED00016CBB1 /* MyPageRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AA822D829ED00016CBB1 /* MyPageRouter.swift */; };
+		D285AABA2D829ED00016CBB1 /* PointRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AA832D829ED00016CBB1 /* PointRouter.swift */; };
+		D285AABC2D829ED00016CBB1 /* APIConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AA862D829ED00016CBB1 /* APIConstants.swift */; };
+		D285AABD2D829ED00016CBB1 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AA872D829ED00016CBB1 /* Config.swift */; };
+		D285AABE2D829ED00016CBB1 /* MoyaLoggerPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AA882D829ED00016CBB1 /* MoyaLoggerPlugin.swift */; };
+		D285AABF2D829ED00016CBB1 /* NetworkHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AA892D829ED00016CBB1 /* NetworkHelper.swift */; };
+		D285AAC02D829ED00016CBB1 /* NetworkResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AA8A2D829ED00016CBB1 /* NetworkResult.swift */; };
+		D285AAC12D829ED00016CBB1 /* ResponseData.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AA8B2D829ED00016CBB1 /* ResponseData.swift */; };
+		D285AADC2D829ED00016CBB1 /* Providers.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AAAD2D829ED00016CBB1 /* Providers.swift */; };
+		D285AADE2D829ED00016CBB1 /* AuthInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AAB02D829ED00016CBB1 /* AuthInterceptor.swift */; };
+		D285AADF2D829ED00016CBB1 /* BaseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AAB12D829ED00016CBB1 /* BaseModel.swift */; };
+		D285AAE02D829ED00016CBB1 /* BaseTargetType.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AAB22D829ED00016CBB1 /* BaseTargetType.swift */; };
+		D285AAE12D829ED00016CBB1 /* NetworkProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AAB32D829ED00016CBB1 /* NetworkProvider.swift */; };
+		D285AAE42D829FFA0016CBB1 /* CombineMoya in Frameworks */ = {isa = PBXBuildFile; productRef = D285AAE32D829FFA0016CBB1 /* CombineMoya */; };
+		D285AAE62D829FFA0016CBB1 /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = D285AAE52D829FFA0016CBB1 /* Moya */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,6 +38,22 @@
 		D285AA6E2D829DC50016CBB1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D285AA712D829DC50016CBB1 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		D285AA732D829DC50016CBB1 /* capstone21.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = capstone21.entitlements; sourceTree = "<group>"; };
+		D285AA7F2D829ED00016CBB1 /* AuthRouter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthRouter.swift; sourceTree = "<group>"; };
+		D285AA802D829ED00016CBB1 /* BannerRouter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BannerRouter.swift; sourceTree = "<group>"; };
+		D285AA812D829ED00016CBB1 /* ChallengeRouter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChallengeRouter.swift; sourceTree = "<group>"; };
+		D285AA822D829ED00016CBB1 /* MyPageRouter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyPageRouter.swift; sourceTree = "<group>"; };
+		D285AA832D829ED00016CBB1 /* PointRouter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PointRouter.swift; sourceTree = "<group>"; };
+		D285AA862D829ED00016CBB1 /* APIConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIConstants.swift; sourceTree = "<group>"; };
+		D285AA872D829ED00016CBB1 /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
+		D285AA882D829ED00016CBB1 /* MoyaLoggerPlugin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MoyaLoggerPlugin.swift; sourceTree = "<group>"; };
+		D285AA892D829ED00016CBB1 /* NetworkHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkHelper.swift; sourceTree = "<group>"; };
+		D285AA8A2D829ED00016CBB1 /* NetworkResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkResult.swift; sourceTree = "<group>"; };
+		D285AA8B2D829ED00016CBB1 /* ResponseData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResponseData.swift; sourceTree = "<group>"; };
+		D285AAAD2D829ED00016CBB1 /* Providers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Providers.swift; sourceTree = "<group>"; };
+		D285AAB02D829ED00016CBB1 /* AuthInterceptor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthInterceptor.swift; sourceTree = "<group>"; };
+		D285AAB12D829ED00016CBB1 /* BaseModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseModel.swift; sourceTree = "<group>"; };
+		D285AAB22D829ED00016CBB1 /* BaseTargetType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseTargetType.swift; sourceTree = "<group>"; };
+		D285AAB32D829ED00016CBB1 /* NetworkProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkProvider.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -27,6 +61,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D285AAE62D829FFA0016CBB1 /* Moya in Frameworks */,
+				D285AAE42D829FFA0016CBB1 /* CombineMoya in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -52,6 +88,9 @@
 		D285AA692D829DC30016CBB1 /* capstone21 */ = {
 			isa = PBXGroup;
 			children = (
+				D285AA7B2D829E060016CBB1 /* Networks */,
+				D285AA7A2D829DFE0016CBB1 /* DSKit */,
+				D285AA792D829DF90016CBB1 /* Feat */,
 				D285AA6A2D829DC30016CBB1 /* capstone21App.swift */,
 				D285AA6C2D829DC30016CBB1 /* ContentView.swift */,
 				D285AA6E2D829DC50016CBB1 /* Assets.xcassets */,
@@ -67,6 +106,96 @@
 				D285AA712D829DC50016CBB1 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		D285AA792D829DF90016CBB1 /* Feat */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Feat;
+			sourceTree = "<group>";
+		};
+		D285AA7A2D829DFE0016CBB1 /* DSKit */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = DSKit;
+			sourceTree = "<group>";
+		};
+		D285AA7B2D829E060016CBB1 /* Networks */ = {
+			isa = PBXGroup;
+			children = (
+				D285AA7D2D829EAB0016CBB1 /* Foundation */,
+			);
+			path = Networks;
+			sourceTree = "<group>";
+		};
+		D285AA7D2D829EAB0016CBB1 /* Foundation */ = {
+			isa = PBXGroup;
+			children = (
+				D285AAB42D829ED00016CBB1 /* Base */,
+				D285AAAB2D829ED00016CBB1 /* DTO */,
+				D285AA8C2D829ED00016CBB1 /* Foundation */,
+				D285AA842D829ED00016CBB1 /* Router */,
+				D285AAAE2D829ED00016CBB1 /* Service */,
+			);
+			path = Foundation;
+			sourceTree = "<group>";
+		};
+		D285AA842D829ED00016CBB1 /* Router */ = {
+			isa = PBXGroup;
+			children = (
+				D285AA7F2D829ED00016CBB1 /* AuthRouter.swift */,
+				D285AA802D829ED00016CBB1 /* BannerRouter.swift */,
+				D285AA812D829ED00016CBB1 /* ChallengeRouter.swift */,
+				D285AA822D829ED00016CBB1 /* MyPageRouter.swift */,
+				D285AA832D829ED00016CBB1 /* PointRouter.swift */,
+			);
+			name = Router;
+			path = ../../../../../../HMH_iOS/HMH_iOS/HMH_iOS/Network/Router;
+			sourceTree = "<group>";
+		};
+		D285AA8C2D829ED00016CBB1 /* Foundation */ = {
+			isa = PBXGroup;
+			children = (
+				D285AA862D829ED00016CBB1 /* APIConstants.swift */,
+				D285AA872D829ED00016CBB1 /* Config.swift */,
+				D285AA882D829ED00016CBB1 /* MoyaLoggerPlugin.swift */,
+				D285AA892D829ED00016CBB1 /* NetworkHelper.swift */,
+				D285AA8A2D829ED00016CBB1 /* NetworkResult.swift */,
+				D285AA8B2D829ED00016CBB1 /* ResponseData.swift */,
+			);
+			name = Foundation;
+			path = ../../../../../../HMH_iOS/HMH_iOS/HMH_iOS/Network/Foundation;
+			sourceTree = "<group>";
+		};
+		D285AAAB2D829ED00016CBB1 /* DTO */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = DTO;
+			path = ../../../../../../HMH_iOS/HMH_iOS/HMH_iOS/Network/DTO;
+			sourceTree = "<group>";
+		};
+		D285AAAE2D829ED00016CBB1 /* Service */ = {
+			isa = PBXGroup;
+			children = (
+				D285AAAD2D829ED00016CBB1 /* Providers.swift */,
+			);
+			name = Service;
+			path = ../../../../../../HMH_iOS/HMH_iOS/HMH_iOS/Network/Service;
+			sourceTree = "<group>";
+		};
+		D285AAB42D829ED00016CBB1 /* Base */ = {
+			isa = PBXGroup;
+			children = (
+				D285AAB02D829ED00016CBB1 /* AuthInterceptor.swift */,
+				D285AAB12D829ED00016CBB1 /* BaseModel.swift */,
+				D285AAB22D829ED00016CBB1 /* BaseTargetType.swift */,
+				D285AAB32D829ED00016CBB1 /* NetworkProvider.swift */,
+			);
+			name = Base;
+			path = ../../../../../../HMH_iOS/HMH_iOS/HMH_iOS/Network/Base;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -85,6 +214,10 @@
 			dependencies = (
 			);
 			name = capstone21;
+			packageProductDependencies = (
+				D285AAE32D829FFA0016CBB1 /* CombineMoya */,
+				D285AAE52D829FFA0016CBB1 /* Moya */,
+			);
 			productName = capstone21;
 			productReference = D285AA672D829DC30016CBB1 /* capstone21.app */;
 			productType = "com.apple.product-type.application";
@@ -113,6 +246,9 @@
 				Base,
 			);
 			mainGroup = D285AA5E2D829DC30016CBB1;
+			packageReferences = (
+				D285AAE22D829FFA0016CBB1 /* XCRemoteSwiftPackageReference "Moya" */,
+			);
 			productRefGroup = D285AA682D829DC30016CBB1 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -139,8 +275,24 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D285AAB72D829ED00016CBB1 /* BannerRouter.swift in Sources */,
+				D285AAB82D829ED00016CBB1 /* ChallengeRouter.swift in Sources */,
+				D285AABE2D829ED00016CBB1 /* MoyaLoggerPlugin.swift in Sources */,
+				D285AAC02D829ED00016CBB1 /* NetworkResult.swift in Sources */,
+				D285AAE02D829ED00016CBB1 /* BaseTargetType.swift in Sources */,
+				D285AABD2D829ED00016CBB1 /* Config.swift in Sources */,
+				D285AABF2D829ED00016CBB1 /* NetworkHelper.swift in Sources */,
+				D285AADF2D829ED00016CBB1 /* BaseModel.swift in Sources */,
+				D285AAC12D829ED00016CBB1 /* ResponseData.swift in Sources */,
 				D285AA6D2D829DC30016CBB1 /* ContentView.swift in Sources */,
+				D285AADE2D829ED00016CBB1 /* AuthInterceptor.swift in Sources */,
+				D285AABA2D829ED00016CBB1 /* PointRouter.swift in Sources */,
+				D285AABC2D829ED00016CBB1 /* APIConstants.swift in Sources */,
+				D285AAB62D829ED00016CBB1 /* AuthRouter.swift in Sources */,
+				D285AADC2D829ED00016CBB1 /* Providers.swift in Sources */,
 				D285AA6B2D829DC30016CBB1 /* capstone21App.swift in Sources */,
+				D285AAE12D829ED00016CBB1 /* NetworkProvider.swift in Sources */,
+				D285AAB92D829ED00016CBB1 /* MyPageRouter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -337,6 +489,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		D285AAE22D829FFA0016CBB1 /* XCRemoteSwiftPackageReference "Moya" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Moya/Moya";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 15.0.3;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		D285AAE32D829FFA0016CBB1 /* CombineMoya */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D285AAE22D829FFA0016CBB1 /* XCRemoteSwiftPackageReference "Moya" */;
+			productName = CombineMoya;
+		};
+		D285AAE52D829FFA0016CBB1 /* Moya */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D285AAE22D829FFA0016CBB1 /* XCRemoteSwiftPackageReference "Moya" */;
+			productName = Moya;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = D285AA5F2D829DC30016CBB1 /* Project object */;
 }
