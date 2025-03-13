@@ -7,88 +7,22 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		D285AAFB2D82A25E0016CBB1 /* capstone21App.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AAFA2D82A25E0016CBB1 /* capstone21App.swift */; };
-		D285AAFD2D82A25E0016CBB1 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AAFC2D82A25E0016CBB1 /* ContentView.swift */; };
-		D285AAFF2D82A2600016CBB1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D285AAFE2D82A2600016CBB1 /* Assets.xcassets */; };
-		D285AB022D82A2600016CBB1 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D285AB012D82A2600016CBB1 /* Preview Assets.xcassets */; };
-		D285AB122D82A2AF0016CBB1 /* NotoSansKR-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D285AB0B2D82A2AF0016CBB1 /* NotoSansKR-Bold.ttf */; };
-		D285AB132D82A2AF0016CBB1 /* NotoSansKR-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D285AB0C2D82A2AF0016CBB1 /* NotoSansKR-Medium.ttf */; };
-		D285AB142D82A2AF0016CBB1 /* NotoSansKR-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D285AB0D2D82A2AF0016CBB1 /* NotoSansKR-Regular.ttf */; };
-		D285AB152D82A2AF0016CBB1 /* NotoSansKR-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D285AB0E2D82A2AF0016CBB1 /* NotoSansKR-SemiBold.ttf */; };
-		D285AB162D82A2AF0016CBB1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D285AB102D82A2AF0016CBB1 /* Assets.xcassets */; };
-		D285AB3F2D82A2EB0016CBB1 /* HeyAlertButtonType.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AB172D82A2EB0016CBB1 /* HeyAlertButtonType.swift */; };
-		D285AB402D82A2EB0016CBB1 /* HeyAlertEnterNameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AB182D82A2EB0016CBB1 /* HeyAlertEnterNameView.swift */; };
-		D285AB412D82A2EB0016CBB1 /* HeyAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AB192D82A2EB0016CBB1 /* HeyAlertView.swift */; };
-		D285AB422D82A2EB0016CBB1 /* HeyGuestAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AB1A2D82A2EB0016CBB1 /* HeyGuestAlertView.swift */; };
-		D285AB432D82A2EB0016CBB1 /* CustomFontSubstringText.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AB1C2D82A2EB0016CBB1 /* CustomFontSubstringText.swift */; };
-		D285AB442D82A2EB0016CBB1 /* HeyTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AB1E2D82A2EB0016CBB1 /* HeyTextField.swift */; };
-		D285AB452D82A2EB0016CBB1 /* PasswordTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AB1F2D82A2EB0016CBB1 /* PasswordTextField.swift */; };
-		D285AB462D82A2EB0016CBB1 /* SecurityPasswordField.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AB202D82A2EB0016CBB1 /* SecurityPasswordField.swift */; };
-		D285AB472D82A2EB0016CBB1 /* BounceScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AB222D82A2EB0016CBB1 /* BounceScrollView.swift */; };
-		D285AB482D82A2EB0016CBB1 /* CarouselView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AB232D82A2EB0016CBB1 /* CarouselView.swift */; };
-		D285AB492D82A2EB0016CBB1 /* ErrorMessageToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AB242D82A2EB0016CBB1 /* ErrorMessageToastView.swift */; };
-		D285AB4A2D82A2EB0016CBB1 /* KeyboardAdaptiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AB252D82A2EB0016CBB1 /* KeyboardAdaptiveView.swift */; };
-		D285AB4B2D82A2EB0016CBB1 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AB262D82A2EB0016CBB1 /* LoadingView.swift */; };
-		D285AB4C2D82A2EB0016CBB1 /* SecurityCodeInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AB272D82A2EB0016CBB1 /* SecurityCodeInputView.swift */; };
-		D285AB4D2D82A2EB0016CBB1 /* TabBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AB282D82A2EB0016CBB1 /* TabBarView.swift */; };
-		D285AB4E2D82A2EB0016CBB1 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AB2B2D82A2EB0016CBB1 /* Color.swift */; };
-		D285AB4F2D82A2EB0016CBB1 /* Font.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AB2C2D82A2EB0016CBB1 /* Font.swift */; };
-		D285AB502D82A2EB0016CBB1 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AB2D2D82A2EB0016CBB1 /* Image.swift */; };
-		D285AB512D82A2EB0016CBB1 /* Color+.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AB2F2D82A2EB0016CBB1 /* Color+.swift */; };
-		D285AB522D82A2EB0016CBB1 /* View+.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AB302D82A2EB0016CBB1 /* View+.swift */; };
-		D285AB532D82A2EB0016CBB1 /* AlertButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AB322D82A2EB0016CBB1 /* AlertButtonStyle.swift */; };
-		D285AB542D82A2EB0016CBB1 /* ButtonColorStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AB332D82A2EB0016CBB1 /* ButtonColorStyle.swift */; };
-		D285AB552D82A2EB0016CBB1 /* ButtonStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AB342D82A2EB0016CBB1 /* ButtonStyles.swift */; };
-		D285AB562D82A2EB0016CBB1 /* HeySheetStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AB362D82A2EB0016CBB1 /* HeySheetStyle.swift */; };
-		D285AB572D82A2EB0016CBB1 /* TextFieldColorStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AB382D82A2EB0016CBB1 /* TextFieldColorStyle.swift */; };
-		D285AB582D82A2EB0016CBB1 /* TextFieldStateStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AB392D82A2EB0016CBB1 /* TextFieldStateStyle.swift */; };
-		D285AB592D82A2EB0016CBB1 /* TextFieldStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AB3A2D82A2EB0016CBB1 /* TextFieldStyles.swift */; };
-		D285AB5A2D82A2EB0016CBB1 /* DSKitDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AB3D2D82A2EB0016CBB1 /* DSKitDemoView.swift */; };
+		D285AB782D832ABE0016CBB1 /* capstone21App.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AB772D832ABE0016CBB1 /* capstone21App.swift */; };
+		D285AB7A2D832ABE0016CBB1 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D285AB792D832ABE0016CBB1 /* ContentView.swift */; };
+		D285AB7C2D832AC00016CBB1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D285AB7B2D832AC00016CBB1 /* Assets.xcassets */; };
+		D285AB7F2D832AC00016CBB1 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D285AB7E2D832AC00016CBB1 /* Preview Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		D285AAF72D82A25E0016CBB1 /* capstone21.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = capstone21.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		D285AAFA2D82A25E0016CBB1 /* capstone21App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = capstone21App.swift; sourceTree = "<group>"; };
-		D285AAFC2D82A25E0016CBB1 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		D285AAFE2D82A2600016CBB1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		D285AB012D82A2600016CBB1 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		D285AB0B2D82A2AF0016CBB1 /* NotoSansKR-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSansKR-Bold.ttf"; sourceTree = "<group>"; };
-		D285AB0C2D82A2AF0016CBB1 /* NotoSansKR-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSansKR-Medium.ttf"; sourceTree = "<group>"; };
-		D285AB0D2D82A2AF0016CBB1 /* NotoSansKR-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSansKR-Regular.ttf"; sourceTree = "<group>"; };
-		D285AB0E2D82A2AF0016CBB1 /* NotoSansKR-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSansKR-SemiBold.ttf"; sourceTree = "<group>"; };
-		D285AB102D82A2AF0016CBB1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		D285AB172D82A2EB0016CBB1 /* HeyAlertButtonType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeyAlertButtonType.swift; sourceTree = "<group>"; };
-		D285AB182D82A2EB0016CBB1 /* HeyAlertEnterNameView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeyAlertEnterNameView.swift; sourceTree = "<group>"; };
-		D285AB192D82A2EB0016CBB1 /* HeyAlertView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeyAlertView.swift; sourceTree = "<group>"; };
-		D285AB1A2D82A2EB0016CBB1 /* HeyGuestAlertView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeyGuestAlertView.swift; sourceTree = "<group>"; };
-		D285AB1C2D82A2EB0016CBB1 /* CustomFontSubstringText.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomFontSubstringText.swift; sourceTree = "<group>"; };
-		D285AB1E2D82A2EB0016CBB1 /* HeyTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeyTextField.swift; sourceTree = "<group>"; };
-		D285AB1F2D82A2EB0016CBB1 /* PasswordTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PasswordTextField.swift; sourceTree = "<group>"; };
-		D285AB202D82A2EB0016CBB1 /* SecurityPasswordField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecurityPasswordField.swift; sourceTree = "<group>"; };
-		D285AB222D82A2EB0016CBB1 /* BounceScrollView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BounceScrollView.swift; sourceTree = "<group>"; };
-		D285AB232D82A2EB0016CBB1 /* CarouselView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CarouselView.swift; sourceTree = "<group>"; };
-		D285AB242D82A2EB0016CBB1 /* ErrorMessageToastView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ErrorMessageToastView.swift; sourceTree = "<group>"; };
-		D285AB252D82A2EB0016CBB1 /* KeyboardAdaptiveView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardAdaptiveView.swift; sourceTree = "<group>"; };
-		D285AB262D82A2EB0016CBB1 /* LoadingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
-		D285AB272D82A2EB0016CBB1 /* SecurityCodeInputView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecurityCodeInputView.swift; sourceTree = "<group>"; };
-		D285AB282D82A2EB0016CBB1 /* TabBarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBarView.swift; sourceTree = "<group>"; };
-		D285AB2B2D82A2EB0016CBB1 /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
-		D285AB2C2D82A2EB0016CBB1 /* Font.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Font.swift; sourceTree = "<group>"; };
-		D285AB2D2D82A2EB0016CBB1 /* Image.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
-		D285AB2F2D82A2EB0016CBB1 /* Color+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Color+.swift"; sourceTree = "<group>"; };
-		D285AB302D82A2EB0016CBB1 /* View+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "View+.swift"; sourceTree = "<group>"; };
-		D285AB322D82A2EB0016CBB1 /* AlertButtonStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlertButtonStyle.swift; sourceTree = "<group>"; };
-		D285AB332D82A2EB0016CBB1 /* ButtonColorStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ButtonColorStyle.swift; sourceTree = "<group>"; };
-		D285AB342D82A2EB0016CBB1 /* ButtonStyles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ButtonStyles.swift; sourceTree = "<group>"; };
-		D285AB362D82A2EB0016CBB1 /* HeySheetStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeySheetStyle.swift; sourceTree = "<group>"; };
-		D285AB382D82A2EB0016CBB1 /* TextFieldColorStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextFieldColorStyle.swift; sourceTree = "<group>"; };
-		D285AB392D82A2EB0016CBB1 /* TextFieldStateStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextFieldStateStyle.swift; sourceTree = "<group>"; };
-		D285AB3A2D82A2EB0016CBB1 /* TextFieldStyles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextFieldStyles.swift; sourceTree = "<group>"; };
-		D285AB3D2D82A2EB0016CBB1 /* DSKitDemoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DSKitDemoView.swift; sourceTree = "<group>"; };
+		D285AB742D832ABE0016CBB1 /* capstone21.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = capstone21.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D285AB772D832ABE0016CBB1 /* capstone21App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = capstone21App.swift; sourceTree = "<group>"; };
+		D285AB792D832ABE0016CBB1 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		D285AB7B2D832AC00016CBB1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D285AB7E2D832AC00016CBB1 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		D285AAF42D82A25E0016CBB1 /* Frameworks */ = {
+		D285AB712D832ABE0016CBB1 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -98,222 +32,51 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		D285AAEE2D82A25E0016CBB1 = {
+		D285AB6B2D832ABE0016CBB1 = {
 			isa = PBXGroup;
 			children = (
-				D285AAF92D82A25E0016CBB1 /* capstone21 */,
-				D285AAF82D82A25E0016CBB1 /* Products */,
+				D285AB762D832ABE0016CBB1 /* capstone21 */,
+				D285AB752D832ABE0016CBB1 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		D285AAF82D82A25E0016CBB1 /* Products */ = {
+		D285AB752D832ABE0016CBB1 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D285AAF72D82A25E0016CBB1 /* capstone21.app */,
+				D285AB742D832ABE0016CBB1 /* capstone21.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		D285AAF92D82A25E0016CBB1 /* capstone21 */ = {
+		D285AB762D832ABE0016CBB1 /* capstone21 */ = {
 			isa = PBXGroup;
 			children = (
-				D285AB0A2D82A2950016CBB1 /* DSKit */,
-				D285AB092D82A2870016CBB1 /* Networks */,
-				D285AB082D82A2800016CBB1 /* Feat */,
-				D285AAFA2D82A25E0016CBB1 /* capstone21App.swift */,
-				D285AAFC2D82A25E0016CBB1 /* ContentView.swift */,
-				D285AAFE2D82A2600016CBB1 /* Assets.xcassets */,
-				D285AB002D82A2600016CBB1 /* Preview Content */,
+				D285AB772D832ABE0016CBB1 /* capstone21App.swift */,
+				D285AB792D832ABE0016CBB1 /* ContentView.swift */,
+				D285AB7B2D832AC00016CBB1 /* Assets.xcassets */,
+				D285AB7D2D832AC00016CBB1 /* Preview Content */,
 			);
 			path = capstone21;
 			sourceTree = "<group>";
 		};
-		D285AB002D82A2600016CBB1 /* Preview Content */ = {
+		D285AB7D2D832AC00016CBB1 /* Preview Content */ = {
 			isa = PBXGroup;
 			children = (
-				D285AB012D82A2600016CBB1 /* Preview Assets.xcassets */,
+				D285AB7E2D832AC00016CBB1 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
-			sourceTree = "<group>";
-		};
-		D285AB082D82A2800016CBB1 /* Feat */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Feat;
-			sourceTree = "<group>";
-		};
-		D285AB092D82A2870016CBB1 /* Networks */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Networks;
-			sourceTree = "<group>";
-		};
-		D285AB0A2D82A2950016CBB1 /* DSKit */ = {
-			isa = PBXGroup;
-			children = (
-				D285AB3E2D82A2EB0016CBB1 /* Sources */,
-				D285AB112D82A2AF0016CBB1 /* Resources */,
-			);
-			path = DSKit;
-			sourceTree = "<group>";
-		};
-		D285AB0F2D82A2AF0016CBB1 /* Font */ = {
-			isa = PBXGroup;
-			children = (
-				D285AB0B2D82A2AF0016CBB1 /* NotoSansKR-Bold.ttf */,
-				D285AB0C2D82A2AF0016CBB1 /* NotoSansKR-Medium.ttf */,
-				D285AB0D2D82A2AF0016CBB1 /* NotoSansKR-Regular.ttf */,
-				D285AB0E2D82A2AF0016CBB1 /* NotoSansKR-SemiBold.ttf */,
-			);
-			path = Font;
-			sourceTree = "<group>";
-		};
-		D285AB112D82A2AF0016CBB1 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				D285AB0F2D82A2AF0016CBB1 /* Font */,
-				D285AB102D82A2AF0016CBB1 /* Assets.xcassets */,
-			);
-			name = Resources;
-			path = "../../../../../heylets-iOS/Projects/Modules/DSKit/Resources";
-			sourceTree = "<group>";
-		};
-		D285AB1B2D82A2EB0016CBB1 /* Alert */ = {
-			isa = PBXGroup;
-			children = (
-				D285AB172D82A2EB0016CBB1 /* HeyAlertButtonType.swift */,
-				D285AB182D82A2EB0016CBB1 /* HeyAlertEnterNameView.swift */,
-				D285AB192D82A2EB0016CBB1 /* HeyAlertView.swift */,
-				D285AB1A2D82A2EB0016CBB1 /* HeyGuestAlertView.swift */,
-			);
-			path = Alert;
-			sourceTree = "<group>";
-		};
-		D285AB1D2D82A2EB0016CBB1 /* Text */ = {
-			isa = PBXGroup;
-			children = (
-				D285AB1C2D82A2EB0016CBB1 /* CustomFontSubstringText.swift */,
-			);
-			path = Text;
-			sourceTree = "<group>";
-		};
-		D285AB212D82A2EB0016CBB1 /* TextField */ = {
-			isa = PBXGroup;
-			children = (
-				D285AB1E2D82A2EB0016CBB1 /* HeyTextField.swift */,
-				D285AB1F2D82A2EB0016CBB1 /* PasswordTextField.swift */,
-				D285AB202D82A2EB0016CBB1 /* SecurityPasswordField.swift */,
-			);
-			path = TextField;
-			sourceTree = "<group>";
-		};
-		D285AB292D82A2EB0016CBB1 /* View */ = {
-			isa = PBXGroup;
-			children = (
-				D285AB222D82A2EB0016CBB1 /* BounceScrollView.swift */,
-				D285AB232D82A2EB0016CBB1 /* CarouselView.swift */,
-				D285AB242D82A2EB0016CBB1 /* ErrorMessageToastView.swift */,
-				D285AB252D82A2EB0016CBB1 /* KeyboardAdaptiveView.swift */,
-				D285AB262D82A2EB0016CBB1 /* LoadingView.swift */,
-				D285AB272D82A2EB0016CBB1 /* SecurityCodeInputView.swift */,
-				D285AB282D82A2EB0016CBB1 /* TabBarView.swift */,
-			);
-			path = View;
-			sourceTree = "<group>";
-		};
-		D285AB2A2D82A2EB0016CBB1 /* Component */ = {
-			isa = PBXGroup;
-			children = (
-				D285AB1B2D82A2EB0016CBB1 /* Alert */,
-				D285AB1D2D82A2EB0016CBB1 /* Text */,
-				D285AB212D82A2EB0016CBB1 /* TextField */,
-				D285AB292D82A2EB0016CBB1 /* View */,
-			);
-			path = Component;
-			sourceTree = "<group>";
-		};
-		D285AB2E2D82A2EB0016CBB1 /* Constant */ = {
-			isa = PBXGroup;
-			children = (
-				D285AB2B2D82A2EB0016CBB1 /* Color.swift */,
-				D285AB2C2D82A2EB0016CBB1 /* Font.swift */,
-				D285AB2D2D82A2EB0016CBB1 /* Image.swift */,
-			);
-			path = Constant;
-			sourceTree = "<group>";
-		};
-		D285AB312D82A2EB0016CBB1 /* Extension */ = {
-			isa = PBXGroup;
-			children = (
-				D285AB2F2D82A2EB0016CBB1 /* Color+.swift */,
-				D285AB302D82A2EB0016CBB1 /* View+.swift */,
-			);
-			path = Extension;
-			sourceTree = "<group>";
-		};
-		D285AB352D82A2EB0016CBB1 /* Button */ = {
-			isa = PBXGroup;
-			children = (
-				D285AB322D82A2EB0016CBB1 /* AlertButtonStyle.swift */,
-				D285AB332D82A2EB0016CBB1 /* ButtonColorStyle.swift */,
-				D285AB342D82A2EB0016CBB1 /* ButtonStyles.swift */,
-			);
-			path = Button;
-			sourceTree = "<group>";
-		};
-		D285AB372D82A2EB0016CBB1 /* Sheet */ = {
-			isa = PBXGroup;
-			children = (
-				D285AB362D82A2EB0016CBB1 /* HeySheetStyle.swift */,
-			);
-			path = Sheet;
-			sourceTree = "<group>";
-		};
-		D285AB3B2D82A2EB0016CBB1 /* TextField */ = {
-			isa = PBXGroup;
-			children = (
-				D285AB382D82A2EB0016CBB1 /* TextFieldColorStyle.swift */,
-				D285AB392D82A2EB0016CBB1 /* TextFieldStateStyle.swift */,
-				D285AB3A2D82A2EB0016CBB1 /* TextFieldStyles.swift */,
-			);
-			path = TextField;
-			sourceTree = "<group>";
-		};
-		D285AB3C2D82A2EB0016CBB1 /* Style */ = {
-			isa = PBXGroup;
-			children = (
-				D285AB352D82A2EB0016CBB1 /* Button */,
-				D285AB372D82A2EB0016CBB1 /* Sheet */,
-				D285AB3B2D82A2EB0016CBB1 /* TextField */,
-			);
-			path = Style;
-			sourceTree = "<group>";
-		};
-		D285AB3E2D82A2EB0016CBB1 /* Sources */ = {
-			isa = PBXGroup;
-			children = (
-				D285AB2A2D82A2EB0016CBB1 /* Component */,
-				D285AB2E2D82A2EB0016CBB1 /* Constant */,
-				D285AB312D82A2EB0016CBB1 /* Extension */,
-				D285AB3C2D82A2EB0016CBB1 /* Style */,
-				D285AB3D2D82A2EB0016CBB1 /* DSKitDemoView.swift */,
-			);
-			name = Sources;
-			path = "../../../../../heylets-iOS/Projects/Modules/DSKit/Sources";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		D285AAF62D82A25E0016CBB1 /* capstone21 */ = {
+		D285AB732D832ABE0016CBB1 /* capstone21 */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D285AB052D82A2600016CBB1 /* Build configuration list for PBXNativeTarget "capstone21" */;
+			buildConfigurationList = D285AB822D832AC00016CBB1 /* Build configuration list for PBXNativeTarget "capstone21" */;
 			buildPhases = (
-				D285AAF32D82A25E0016CBB1 /* Sources */,
-				D285AAF42D82A25E0016CBB1 /* Frameworks */,
-				D285AAF52D82A25E0016CBB1 /* Resources */,
+				D285AB702D832ABE0016CBB1 /* Sources */,
+				D285AB712D832ABE0016CBB1 /* Frameworks */,
+				D285AB722D832ABE0016CBB1 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -321,25 +84,25 @@
 			);
 			name = capstone21;
 			productName = capstone21;
-			productReference = D285AAF72D82A25E0016CBB1 /* capstone21.app */;
+			productReference = D285AB742D832ABE0016CBB1 /* capstone21.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		D285AAEF2D82A25E0016CBB1 /* Project object */ = {
+		D285AB6C2D832ABE0016CBB1 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1540;
 				LastUpgradeCheck = 1540;
 				TargetAttributes = {
-					D285AAF62D82A25E0016CBB1 = {
+					D285AB732D832ABE0016CBB1 = {
 						CreatedOnToolsVersion = 15.4;
 					};
 				};
 			};
-			buildConfigurationList = D285AAF22D82A25E0016CBB1 /* Build configuration list for PBXProject "capstone21" */;
+			buildConfigurationList = D285AB6F2D832ABE0016CBB1 /* Build configuration list for PBXProject "capstone21" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -347,75 +110,42 @@
 				en,
 				Base,
 			);
-			mainGroup = D285AAEE2D82A25E0016CBB1;
-			productRefGroup = D285AAF82D82A25E0016CBB1 /* Products */;
+			mainGroup = D285AB6B2D832ABE0016CBB1;
+			productRefGroup = D285AB752D832ABE0016CBB1 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				D285AAF62D82A25E0016CBB1 /* capstone21 */,
+				D285AB732D832ABE0016CBB1 /* capstone21 */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		D285AAF52D82A25E0016CBB1 /* Resources */ = {
+		D285AB722D832ABE0016CBB1 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D285AB022D82A2600016CBB1 /* Preview Assets.xcassets in Resources */,
-				D285AB152D82A2AF0016CBB1 /* NotoSansKR-SemiBold.ttf in Resources */,
-				D285AB132D82A2AF0016CBB1 /* NotoSansKR-Medium.ttf in Resources */,
-				D285AB122D82A2AF0016CBB1 /* NotoSansKR-Bold.ttf in Resources */,
-				D285AB162D82A2AF0016CBB1 /* Assets.xcassets in Resources */,
-				D285AAFF2D82A2600016CBB1 /* Assets.xcassets in Resources */,
-				D285AB142D82A2AF0016CBB1 /* NotoSansKR-Regular.ttf in Resources */,
+				D285AB7F2D832AC00016CBB1 /* Preview Assets.xcassets in Resources */,
+				D285AB7C2D832AC00016CBB1 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		D285AAF32D82A25E0016CBB1 /* Sources */ = {
+		D285AB702D832ABE0016CBB1 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D285AB4D2D82A2EB0016CBB1 /* TabBarView.swift in Sources */,
-				D285AAFD2D82A25E0016CBB1 /* ContentView.swift in Sources */,
-				D285AAFB2D82A25E0016CBB1 /* capstone21App.swift in Sources */,
-				D285AB572D82A2EB0016CBB1 /* TextFieldColorStyle.swift in Sources */,
-				D285AB452D82A2EB0016CBB1 /* PasswordTextField.swift in Sources */,
-				D285AB4F2D82A2EB0016CBB1 /* Font.swift in Sources */,
-				D285AB542D82A2EB0016CBB1 /* ButtonColorStyle.swift in Sources */,
-				D285AB532D82A2EB0016CBB1 /* AlertButtonStyle.swift in Sources */,
-				D285AB592D82A2EB0016CBB1 /* TextFieldStyles.swift in Sources */,
-				D285AB4A2D82A2EB0016CBB1 /* KeyboardAdaptiveView.swift in Sources */,
-				D285AB4C2D82A2EB0016CBB1 /* SecurityCodeInputView.swift in Sources */,
-				D285AB512D82A2EB0016CBB1 /* Color+.swift in Sources */,
-				D285AB402D82A2EB0016CBB1 /* HeyAlertEnterNameView.swift in Sources */,
-				D285AB3F2D82A2EB0016CBB1 /* HeyAlertButtonType.swift in Sources */,
-				D285AB502D82A2EB0016CBB1 /* Image.swift in Sources */,
-				D285AB442D82A2EB0016CBB1 /* HeyTextField.swift in Sources */,
-				D285AB432D82A2EB0016CBB1 /* CustomFontSubstringText.swift in Sources */,
-				D285AB4B2D82A2EB0016CBB1 /* LoadingView.swift in Sources */,
-				D285AB472D82A2EB0016CBB1 /* BounceScrollView.swift in Sources */,
-				D285AB462D82A2EB0016CBB1 /* SecurityPasswordField.swift in Sources */,
-				D285AB552D82A2EB0016CBB1 /* ButtonStyles.swift in Sources */,
-				D285AB522D82A2EB0016CBB1 /* View+.swift in Sources */,
-				D285AB492D82A2EB0016CBB1 /* ErrorMessageToastView.swift in Sources */,
-				D285AB412D82A2EB0016CBB1 /* HeyAlertView.swift in Sources */,
-				D285AB582D82A2EB0016CBB1 /* TextFieldStateStyle.swift in Sources */,
-				D285AB562D82A2EB0016CBB1 /* HeySheetStyle.swift in Sources */,
-				D285AB482D82A2EB0016CBB1 /* CarouselView.swift in Sources */,
-				D285AB5A2D82A2EB0016CBB1 /* DSKitDemoView.swift in Sources */,
-				D285AB422D82A2EB0016CBB1 /* HeyGuestAlertView.swift in Sources */,
-				D285AB4E2D82A2EB0016CBB1 /* Color.swift in Sources */,
+				D285AB7A2D832ABE0016CBB1 /* ContentView.swift in Sources */,
+				D285AB782D832ABE0016CBB1 /* capstone21App.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		D285AB032D82A2600016CBB1 /* Debug */ = {
+		D285AB802D832AC00016CBB1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -478,7 +208,7 @@
 			};
 			name = Debug;
 		};
-		D285AB042D82A2600016CBB1 /* Release */ = {
+		D285AB812D832AC00016CBB1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -534,7 +264,7 @@
 			};
 			name = Release;
 		};
-		D285AB062D82A2600016CBB1 /* Debug */ = {
+		D285AB832D832AC00016CBB1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -562,7 +292,7 @@
 			};
 			name = Debug;
 		};
-		D285AB072D82A2600016CBB1 /* Release */ = {
+		D285AB842D832AC00016CBB1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -593,25 +323,25 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		D285AAF22D82A25E0016CBB1 /* Build configuration list for PBXProject "capstone21" */ = {
+		D285AB6F2D832ABE0016CBB1 /* Build configuration list for PBXProject "capstone21" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				D285AB032D82A2600016CBB1 /* Debug */,
-				D285AB042D82A2600016CBB1 /* Release */,
+				D285AB802D832AC00016CBB1 /* Debug */,
+				D285AB812D832AC00016CBB1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D285AB052D82A2600016CBB1 /* Build configuration list for PBXNativeTarget "capstone21" */ = {
+		D285AB822D832AC00016CBB1 /* Build configuration list for PBXNativeTarget "capstone21" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				D285AB062D82A2600016CBB1 /* Debug */,
-				D285AB072D82A2600016CBB1 /* Release */,
+				D285AB832D832AC00016CBB1 /* Debug */,
+				D285AB842D832AC00016CBB1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = D285AAEF2D82A25E0016CBB1 /* Project object */;
+	rootObject = D285AB6C2D832ABE0016CBB1 /* Project object */;
 }
