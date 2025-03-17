@@ -8,7 +8,7 @@
 import SwiftUI
 
 @main
-struct capstone21App: App {
+struct MenuApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
