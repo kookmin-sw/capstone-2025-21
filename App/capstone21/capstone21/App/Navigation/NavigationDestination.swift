@@ -7,4 +7,10 @@
 
 import Foundation
 
-enum NavigationDestination: Hashable {}
+enum NavigationDestination: Hashable {
+    // Onboarding
+    case logIn
+    
+//    case selectNationality
+//    case SelectAllergy
+}
