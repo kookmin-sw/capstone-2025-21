@@ -6,3 +6,30 @@
 //
 
 import Foundation
+import Combine
+
+public class OnboardingViewModel: ObservableObject {
+    
+    enum Action {
+        case startButtonDidTap
+        case alreadyRegisteredButtonDidTap
+    }
+    
+    @Published var index: Int = 0
+    var navigationRouter: NavigationRoutableType
+    
+    init(navigationRouter: NavigationRoutableType) {
+        self.navigationRouter = navigationRouter
+    }
+    
+    func send(_ action: Action) {
+        switch action {
+        case .startButtonDidTap:
+            navigationRouter.push(to: .logIn)
+        case .alreadyRegisteredButtonDidTap:
+            navigationRouter.push(to: .logIn)
+        }
+    }
+}
+
+

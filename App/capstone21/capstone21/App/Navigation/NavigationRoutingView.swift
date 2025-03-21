@@ -21,6 +21,10 @@ struct NavigationRoutingView: View {
                 windowRouter: container.windowRouter
                 )
             )
+        case .selectNationality:
+            SelectNationalityView(viewModel: .init(navigationRouter: container.navigationRouter))
+        case .SelectAllergy:
+            SelectAllergyView(viewModel: .init(navigationRouter: container.navigationRouter))
         }
     }
 }
