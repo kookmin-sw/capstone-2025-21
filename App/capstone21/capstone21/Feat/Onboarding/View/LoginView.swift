@@ -5,14 +5,6 @@
 //  Created by 류희재 on 3/17/25.
 //
 
-//
-//  LogInView.swift
-//  OnboardingFeature
-//
-//  Created by 류희재 on 12/18/24.
-//  Copyright © 2024 Heylets-iOS. All rights reserved.
-//
-
 import SwiftUI
 
 public struct LogInView: View {
@@ -60,7 +52,7 @@ public struct LogInView: View {
                     
                     Spacer()
                     
-                    Text("New to Heylets?")
+                    Text("New to Menu?")
                         .font(.regular_14)
                         .foregroundStyle(Color.heyGray1)
                         .padding(.trailing, 8)
@@ -97,23 +89,6 @@ public struct LogInView: View {
                 )
                 .padding(.bottom, 14)
                 
-                HStack {
-                    Text(viewModel.state.errMessage)
-                        .font(.regular_14)
-                        .foregroundColor(.heyError)
-                        .frame(width: 180)
-                    
-                    Spacer()
-                    
-                    Button {
-                        viewModel.send(.forgotPasswordButtonDidTap)
-                    } label: {
-                        Text("Forgot password?")
-                            .font(.regular_12)
-                            .foregroundStyle(Color.heyGray1)
-                    }
-                }
-                
                 Spacer()
                 
                 Button("Log In") {
@@ -146,4 +121,14 @@ public struct LogInView: View {
             .setMenuNavigation()
         }
     }
+}
+
+#Preview {
+    let container = DIContainer.stub
+    return LogInView(viewModel: .init(
+        navigationRouter: container.navigationRouter,
+        windowRouter: container.windowRouter
+        )
+    )
+    .environmentObject(DIContainer.stub)
 }

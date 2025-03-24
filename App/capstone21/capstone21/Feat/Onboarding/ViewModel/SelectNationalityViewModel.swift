@@ -7,10 +7,28 @@
 
 import Foundation
 import UIKit
+import SwiftUI
+
+enum NationalityInfo: String {
+    case USA
+    case JPN
+    case CHN
+    
+    var image: Image {
+        switch self {
+        case .USA:
+            return Image(.usa)
+        case .JPN:
+            return Image(.japen)
+        case .CHN:
+            return Image(.china)
+        }
+    }
+}
 
 public class SelectNationalityViewModel: ObservableObject {
     struct State {
-        var filteredItems: [String] = []
+        var filteredItems: [NationalityInfo] = []
         var continueButtonIsEnabled = false
         var errMessage = ""
     }
@@ -19,14 +37,14 @@ public class SelectNationalityViewModel: ObservableObject {
         case backButtonDidTap
         case nextButtonDidTap
         case textFieldDidTap
-        case selectUniversity(String)
+        case selectNationality(NationalityInfo)
     }
     
     // MARK: - Properties
     
-    private let allUniversityItems: [String] = ["NTU", "NUS", "SMU"]
+    private let allNationalityItems: [NationalityInfo] = [.USA, .JPN, .CHN]
     @Published var searchText = ""
-    @Published var university: String? = nil
+    @Published var nationality: NationalityInfo? = nil
     
     @Published var state = State()
     var navigationRouter: NavigationRoutableType
@@ -46,7 +64,7 @@ public class SelectNationalityViewModel: ObservableObject {
             navigationRouter.pop()
             
         case .textFieldDidTap:
-            state.filteredItems = allUniversityItems
+            state.filteredItems = allNationalityItems
             
         case .nextButtonDidTap:
             break
@@ -54,10 +72,9 @@ public class SelectNationalityViewModel: ObservableObject {
 //            useCase.userInfo.university = university.rawValue
 //            navigationRouter.push(to: .verifyEmail)
             
-        case .selectUniversity(let university):
-            break
-//            self.university = university
-//            searchText = university.rawValue
+        case .selectNationality(let nationality):
+            self.nationality = nationality
+            searchText = nationality.rawValue
         }
     }
     
@@ -65,33 +82,33 @@ public class SelectNationalityViewModel: ObservableObject {
         weak var owner = self
         guard let owner else { return }
         
-//        $university
-//            .map { $0 != nil }
-//            .assign(to: \.state.continueButtonIsEnabled, on: self)
-//            .store(in: cancelBag)
-//        
-//        $searchText
-//            .map { text in
-//                return text.isEmpty
-//                ? []
-//                : owner.allUniversityItems.filter {
-//                    $0.rawValue.localizedCaseInsensitiveContains(text)
-//                }
-//            }
-//            .assign(to: \.state.filteredItems, on: owner)
-//            .store(in: cancelBag)
-//        
-//        $searchText
-//            .map { text in
-//                owner.allUniversityItems.first {
-//                    $0.rawValue.caseInsensitiveCompare(text) == .orderedSame
-//                }
-//            }
-//            .handleEvents(receiveOutput: { university in
-//                print(university ?? "nil")
-//            })
-//            .assign(to: \.university, on: self)
-//            .store(in: cancelBag)
+        $nationality
+            .map { $0 != nil }
+            .assign(to: \.state.continueButtonIsEnabled, on: self)
+            .store(in: cancelBag)
+        
+        $searchText
+            .map { text in
+                return text.isEmpty
+                ? []
+                : owner.allNationalityItems.filter {
+                    $0.rawValue.localizedCaseInsensitiveContains(text)
+                }
+            }
+            .assign(to: \.state.filteredItems, on: owner)
+            .store(in: cancelBag)
+        
+        $searchText
+            .map { text in
+                owner.allNationalityItems.first {
+                    $0.rawValue.caseInsensitiveCompare(text) == .orderedSame
+                }
+            }
+            .handleEvents(receiveOutput: { university in
+                print(university ?? "nil")
+            })
+            .assign(to: \.nationality, on: self)
+            .store(in: cancelBag)
     }
 }
 

@@ -22,7 +22,7 @@ public struct SelectNationalityView: View {
                 VStack {
                     HeyTextField(
                         text: $viewModel.searchText,
-                        placeHolder: "Select your university",
+                        placeHolder: "Select your nationality",
                         leftImage: .icSchool
                     )
                     .focused($isFocused)
@@ -40,20 +40,20 @@ public struct SelectNationalityView: View {
                     
                     ScrollView {
                         VStack(spacing: 0) {
-                            ForEach(viewModel.state.filteredItems, id: \.self) { university in
+                            ForEach(viewModel.state.filteredItems, id: \.self) { nationality in
                                 SelectUniversityListCellView(
-                                    university,
-                                    isSelected: university == viewModel.university
+                                    nationality,
+                                    isSelected: nationality == viewModel.nationality
                                 )
                                 .onTapGesture {
-                                    viewModel.send(.selectUniversity(university))
+                                    viewModel.send(.selectNationality(nationality))
                                 }
                             }
                         }
                         .cornerRadius(8)
                     }
                 }
-            }, titleText: "What school are you attending?",
+            }, titleText: "What is your nationality?",
             nextButtonIsEnabled: viewModel.state.continueButtonIsEnabled,
             nextButtonAction: { viewModel.send(.nextButtonDidTap) }
         )
@@ -63,22 +63,22 @@ public struct SelectNationalityView: View {
 
 
 fileprivate struct SelectUniversityListCellView: View {
-    private let university: String
+    private let nationality: NationalityInfo
     private let isSelected: Bool
     
-    init(_ university: String, isSelected: Bool) {
-        self.university = university
+    init(_ nationality: NationalityInfo, isSelected: Bool) {
+        self.nationality = nationality
         self.isSelected = isSelected
     }
     
     var body: some View {
         HStack {
-            Image(uiImage: .icAdd)
+            nationality.image
                 .resizable()
                 .frame(width: 24, height: 24)
                 .padding(.leading, 16)
             
-            Text(university)
+            Text(nationality.rawValue)
                 .font(.regular_14)
                 .foregroundColor(.heyGray1)
                 .padding(.leading, 12)
@@ -88,4 +88,13 @@ fileprivate struct SelectUniversityListCellView: View {
         .padding(.vertical, 10)
         .background(isSelected ? Color.heyMain : Color.heyGray4)
     }
+}
+
+#Preview {
+    let container = DIContainer.stub
+    return SelectNationalityView(viewModel: .init(
+        navigationRouter: container.navigationRouter
+        )
+    )
+    .environmentObject(DIContainer.stub)
 }
