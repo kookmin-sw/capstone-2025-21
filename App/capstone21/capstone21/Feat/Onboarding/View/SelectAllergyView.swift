@@ -20,9 +20,31 @@ public struct SelectAllergyView: View {
     public var body: some View {
         OnboardingBaseView(
             content: {
-                VStack {
-                    if !viewModel.selectedAllergies.isEmpty {
+                VStack(alignment: .leading) {
+                    Text("Spicy Tolerance")
+                        .font(.bold_14)
+                        .padding(.top, 8)
+                        .padding(.bottom, 4)
+                    
+                    SpicyLevelSelectionView(
+                        selectedLevel: viewModel.state.selectedSpicyLevel,
+                        onSelect: { level in
+                            viewModel.send(.selectSpicyLevel(level))
+                        }
+                    )
+                    .padding(.bottom, 16)
+                    
+                    // Divider
+                    Rectangle()
+                        .fill(Color.heyGray4)
+                        .frame(height: 1)
+                        .padding(.vertical, 8)
+                    
+                    Text("Allergies")
+                        .font(.bold_14)
+                        .padding(.bottom, 4)
                         
+                    if !viewModel.selectedAllergies.isEmpty {
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: 8) {
                                 ForEach(viewModel.selectedAllergies, id: \.self) { allergy in
@@ -60,7 +82,7 @@ public struct SelectAllergyView: View {
                     }
                     .padding(.bottom, 30)
                 }
-            }, titleText: "Select your allergies",
+            }, titleText: "Select your spice preference and allergies!",
             nextButtonIsEnabled: viewModel.state.continueButtonIsEnabled,
             nextButtonAction: { viewModel.send(.nextButtonDidTap) }
         )
@@ -166,6 +188,62 @@ struct AllergyCapsuleView: View {
                     .fill(isSelected ? Color.heyMain : Color.white)
                     .overlay(
                         Capsule()
+                            .stroke(isSelected ? Color.clear : Color.heyGray4, lineWidth: 1)
+                    )
+            )
+        }
+    }
+}
+
+struct SpicyLevelSelectionView: View {
+    let selectedLevel: Int
+    let onSelect: (Int) -> Void
+    
+    let levels = [
+        (1, "Mild", "🌶️"),
+        (2, "Medium", "🌶️🌶️"),
+        (3, "Hot", "🌶️🌶️🌶️")
+    ]
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            ForEach(levels, id: \.0) { level, title, emoji in
+                SpicyLevelButton(
+                    level: level,
+                    title: title,
+                    emoji: emoji,
+                    isSelected: selectedLevel == level,
+                    onSelect: onSelect
+                )
+            }
+        }
+    }
+}
+
+struct SpicyLevelButton: View {
+    let level: Int
+    let title: String
+    let emoji: String
+    let isSelected: Bool
+    let onSelect: (Int) -> Void
+    
+    var body: some View {
+        Button(action: { onSelect(level) }) {
+            VStack(spacing: 4) {
+                Text(emoji)
+                    .font(.system(size: 24))
+                
+                Text(title)
+                    .font(.regular_14)
+                    .foregroundColor(isSelected ? .white : .heyGray1)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 12)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(isSelected ? Color.heyMain : Color.white)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
                             .stroke(isSelected ? Color.clear : Color.heyGray4, lineWidth: 1)
                     )
             )

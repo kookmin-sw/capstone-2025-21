@@ -16,6 +16,7 @@ public class SelectAllergyViewModel: ObservableObject {
         var errMessage = ""
         var showingCustomAllergyInput = false
         var customAllergyText = ""
+        var selectedSpicyLevel: Int = 0 // 0: None, 1: Mild, 2: Medium, 3: Hot
     }
     
     enum Action {
@@ -27,12 +28,13 @@ public class SelectAllergyViewModel: ObservableObject {
         case addCustomAllergy
         case updateCustomAllergyText(String)
         case cancelCustomAllergyInput
+        case selectSpicyLevel(Int)
     }
     
     // MARK: - Properties
     
     let allAllergyItems: [String] = [
-        "❌ nothing",
+        "❌ Nothing",
         "🥛 Milk",
         "🥚 Eggs",
         "🥜 Peanuts",
@@ -116,6 +118,9 @@ public class SelectAllergyViewModel: ObservableObject {
         case .cancelCustomAllergyInput:
             state.customAllergyText = ""
             state.showingCustomAllergyInput = false
+            
+        case .selectSpicyLevel(let level):
+            state.selectedSpicyLevel = level
         }
     }
     
