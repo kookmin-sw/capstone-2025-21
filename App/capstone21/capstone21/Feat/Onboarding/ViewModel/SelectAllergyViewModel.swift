@@ -7,26 +7,60 @@
 
 import Foundation
 import UIKit
+import Combine
 
 public class SelectAllergyViewModel: ObservableObject {
     struct State {
         var filteredItems: [String] = []
         var continueButtonIsEnabled = false
         var errMessage = ""
+        var showingCustomAllergyInput = false
+        var customAllergyText = ""
     }
     
     enum Action {
         case backButtonDidTap
         case nextButtonDidTap
         case textFieldDidTap
-        case selectUniversity(String)
+        case toggleAllergy(String)
+        case showCustomAllergyInput
+        case addCustomAllergy
+        case updateCustomAllergyText(String)
+        case cancelCustomAllergyInput
     }
     
     // MARK: - Properties
     
-    private let allUniversityItems: [String] = ["NTU", "NUS", "SMU"]
+    let allAllergyItems: [String] = [
+        "❌ nothing",
+        "🥛 Milk",
+        "🥚 Eggs",
+        "🥜 Peanuts",
+        "🌰 Tree nuts",
+        "🌱 Soy",
+        "🌾 Wheat",
+        "🐟 Fish",
+        "🦐 Shellfish",
+        "⚫ Sesame",
+        "🌿 Mustard",
+        "🥬 Celery",
+        "🌸 Lupin",
+        "🍷 Sulfites",
+        "🌾 Gluten",
+        "🦀 Crustaceans",
+        "🐚 Molluscs",
+        "🍑 Peach",
+        "🍅 Tomato",
+        "🦑 Squid",
+        "🐓 Chicken",
+        "🐄 Beef",
+        "🐖 Pork",
+        "➕ Etc" // 기타 옵션 추가
+    ]
+
+    
     @Published var searchText = ""
-    @Published var university: String? = nil
+    @Published var selectedAllergies: [String] = []
     
     @Published var state = State()
     var navigationRouter: NavigationRoutableType
@@ -46,18 +80,52 @@ public class SelectAllergyViewModel: ObservableObject {
             navigationRouter.pop()
             
         case .textFieldDidTap:
-            state.filteredItems = allUniversityItems
+            updateFilteredItems()
             
         case .nextButtonDidTap:
+            // Save selected allergies and navigate to next screen
+            // This would be implemented based on your app's flow
+//            navigationRouter.push(to: .nextScreen)
             break
-//            guard let university = university else { return }
-//            useCase.userInfo.university = university.rawValue
-//            navigationRouter.push(to: .verifyEmail)
             
-        case .selectUniversity(let university):
-            break
-//            self.university = university
-//            searchText = university.rawValue
+        case .toggleAllergy(let allergy):
+            if allergy == "➕ Etc" {
+                state.showingCustomAllergyInput = true
+            } else if selectedAllergies.contains(allergy) {
+                selectedAllergies.removeAll { $0 == allergy }
+            } else {
+                selectedAllergies.append(allergy)
+            }
+            
+        case .showCustomAllergyInput:
+            state.showingCustomAllergyInput = true
+            
+        case .addCustomAllergy:
+            if !state.customAllergyText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                let customAllergy = "🔖 \(state.customAllergyText.trimmingCharacters(in: .whitespacesAndNewlines))"
+                if !selectedAllergies.contains(customAllergy) {
+                    selectedAllergies.append(customAllergy)
+                }
+                state.customAllergyText = ""
+                state.showingCustomAllergyInput = false
+            }
+            
+        case .updateCustomAllergyText(let text):
+            state.customAllergyText = text
+            
+        case .cancelCustomAllergyInput:
+            state.customAllergyText = ""
+            state.showingCustomAllergyInput = false
+        }
+    }
+    
+    private func updateFilteredItems() {
+        if searchText.isEmpty {
+            state.filteredItems = allAllergyItems
+        } else {
+            state.filteredItems = allAllergyItems.filter {
+                $0.localizedCaseInsensitiveContains(searchText)
+            }
         }
     }
     
@@ -65,34 +133,18 @@ public class SelectAllergyViewModel: ObservableObject {
         weak var owner = self
         guard let owner else { return }
         
-//        $university
-//            .map { $0 != nil }
-//            .assign(to: \.state.continueButtonIsEnabled, on: self)
-//            .store(in: cancelBag)
-//
-//        $searchText
-//            .map { text in
-//                return text.isEmpty
-//                ? []
-//                : owner.allUniversityItems.filter {
-//                    $0.rawValue.localizedCaseInsensitiveContains(text)
-//                }
-//            }
-//            .assign(to: \.state.filteredItems, on: owner)
-//            .store(in: cancelBag)
-//
-//        $searchText
-//            .map { text in
-//                owner.allUniversityItems.first {
-//                    $0.rawValue.caseInsensitiveCompare(text) == .orderedSame
-//                }
-//            }
-//            .handleEvents(receiveOutput: { university in
-//                print(university ?? "nil")
-//            })
-//            .assign(to: \.university, on: self)
-//            .store(in: cancelBag)
+        $selectedAllergies
+            .map { !$0.isEmpty }
+            .assign(to: \.state.continueButtonIsEnabled, on: self)
+            .store(in: cancelBag)
+        
+        $searchText
+            .sink { [weak self] _ in
+                self?.updateFilteredItems()
+            }
+            .store(in: cancelBag)
+        
+        // Initialize with all allergies
+        state.filteredItems = allAllergyItems
     }
 }
-
-

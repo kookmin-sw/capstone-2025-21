@@ -11,6 +11,7 @@ public struct SelectAllergyView: View {
     @EnvironmentObject var container: DIContainer
     @ObservedObject var viewModel: SelectAllergyViewModel
     @FocusState private var isFocused: Bool
+    @FocusState private var customAllergyFocused: Bool
     
     public init(viewModel: SelectAllergyViewModel) {
         self.viewModel = viewModel
@@ -20,73 +21,162 @@ public struct SelectAllergyView: View {
         OnboardingBaseView(
             content: {
                 VStack {
-                    HeyTextField(
-                        text: $viewModel.searchText,
-                        placeHolder: "Select your university",
-                        leftImage: .icSchool
-                    )
-                    .focused($isFocused)
-                    .autocapitalization(.none)
-                    .disableAutocorrection(true)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color.heyMain, lineWidth: 2)
-                    )
-                    .onChange(of: isFocused) { isFocused in
-                        if isFocused {
-                            viewModel.send(.textFieldDidTap)
+                    if !viewModel.selectedAllergies.isEmpty {
+                        
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 8) {
+                                ForEach(viewModel.selectedAllergies, id: \.self) { allergy in
+                                    AllergyCapsuleView(
+                                        title: allergy,
+                                        isSelected: true
+                                    ) {
+                                        viewModel.send(.toggleAllergy(allergy))
+                                    }
+                                }
+                            }
+                            .padding(.vertical, 8)
                         }
                     }
                     
+                    // Divider
+                    Rectangle()
+                        .fill(Color.heyGray4)
+                        .frame(height: 1)
+                        .padding(.vertical, 8)
+                    
+                    // Allergy suggestions
                     ScrollView {
-                        VStack(spacing: 0) {
-                            ForEach(viewModel.state.filteredItems, id: \.self) { university in
-                                SelectUniversityListCellView(
-                                    university,
-                                    isSelected: university == viewModel.university
-                                )
-                                .onTapGesture {
-                                    viewModel.send(.selectUniversity(university))
+                        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                            ForEach(viewModel.state.filteredItems, id: \.self) { allergy in
+                                AllergyCapsuleView(
+                                    title: allergy,
+                                    isSelected: viewModel.selectedAllergies.contains(allergy)
+                                ) {
+                                    viewModel.send(.toggleAllergy(allergy))
                                 }
                             }
                         }
-                        .cornerRadius(8)
+                        .padding(.vertical, 8)
                     }
+                    .padding(.bottom, 30)
                 }
-            }, titleText: "What school are you attending?",
+            }, titleText: "Select your allergies",
             nextButtonIsEnabled: viewModel.state.continueButtonIsEnabled,
             nextButtonAction: { viewModel.send(.nextButtonDidTap) }
         )
         .onTapGesture { isFocused = false }
+        .sheet(isPresented: $viewModel.state.showingCustomAllergyInput) {
+            CustomAllergyInputView(
+                customAllergyText: Binding(
+                    get: { viewModel.state.customAllergyText },
+                    set: { viewModel.send(.updateCustomAllergyText($0)) }
+                ),
+                isFocused: _customAllergyFocused,
+                onAdd: { viewModel.send(.addCustomAllergy) },
+                onCancel: { viewModel.send(.cancelCustomAllergyInput) }
+            )
+            .onAppear {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    customAllergyFocused = true
+                }
+            }
+        }
     }
 }
 
-
-fileprivate struct SelectUniversityListCellView: View {
-    private let university: String
-    private let isSelected: Bool
-    
-    init(_ university: String, isSelected: Bool) {
-        self.university = university
-        self.isSelected = isSelected
-    }
+struct CustomAllergyInputView: View {
+    @Binding var customAllergyText: String
+    @FocusState var isFocused: Bool
+    let onAdd: () -> Void
+    let onCancel: () -> Void
     
     var body: some View {
-        HStack {
-            Image(uiImage: .icAdd)
-                .resizable()
-                .frame(width: 24, height: 24)
-                .padding(.leading, 16)
+        VStack(spacing: 16) {
+            Text("Add Custom Allergy")
+                .font(.bold_14)
+                .padding(.top, 20)
             
-            Text(university)
-                .font(.regular_14)
-                .foregroundColor(.heyGray1)
-                .padding(.leading, 12)
+            TextField("Enter allergy name", text: $customAllergyText)
+                .focused($isFocused)
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color.heyGray4, lineWidth: 1)
+                )
+                .padding(.horizontal, 20)
             
-            Spacer()
+            HStack(spacing: 16) {
+                Button(action: onCancel) {
+                    Text("Cancel")
+                        .font(.medium_16)
+                        .foregroundColor(.heyGray1)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(Color.heyGray4, lineWidth: 1)
+                        )
+                }
+                
+                Button(action: onAdd) {
+                    Text("Add")
+                        .font(.medium_16)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color.heyMain)
+                        )
+                }
+            }
+            .padding(.horizontal, 20)
+            .padding(.bottom, 20)
         }
-        .padding(.vertical, 10)
-        .background(isSelected ? Color.heyMain : Color.heyGray4)
+        .frame(height: 200)
+        .background(Color.white)
+        .cornerRadius(16)
+        .padding(.horizontal, 16)
     }
 }
 
+struct AllergyCapsuleView: View {
+    let title: String
+    let isSelected: Bool
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 4) {
+                Text(title)
+                    .font(.regular_14)
+                    .foregroundColor(isSelected ? .white : .heyGray1)
+                
+                if isSelected {
+                    Image(uiImage: .icClose)
+                        .resizable()
+                        .frame(width: 14, height: 14)
+                        .foregroundColor(.white)
+                }
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(
+                Capsule()
+                    .fill(isSelected ? Color.heyMain : Color.white)
+                    .overlay(
+                        Capsule()
+                            .stroke(isSelected ? Color.clear : Color.heyGray4, lineWidth: 1)
+                    )
+            )
+        }
+    }
+}
+
+#Preview {
+    let container = DIContainer.stub
+    return SelectAllergyView(viewModel: .init(
+        navigationRouter: container.navigationRouter)
+    )
+    .environmentObject(DIContainer.stub)
+}
