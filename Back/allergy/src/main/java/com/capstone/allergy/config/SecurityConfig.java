@@ -21,7 +21,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll() // 로그인/회원가입 허용
                         .anyRequest().authenticated() // 그 외는 인증 필요
                 )
-                .httpBasic(Customizer.withDefaults()); // 테스트용 기본 인증 허용
+                .formLogin(form -> form.disable())  // ✅ 기본 로그인 폼 비활성화
+                .httpBasic(httpBasic -> httpBasic.disable()); // ✅ 브라우저 팝업 인증도 비활성화할때
 
         return http.build();
     }
