@@ -29,7 +29,7 @@ struct HomeView: View {
                     }
                     .tag(Tab.archiving)
                 
-                MenuView()
+                MenuImagePickerView(viewModel: .init(navigationRouter: container.navigationRouter))
                     .tabItem {
                         VStack {
                             Image (systemName: homeViewModel.selectedTab == .menu
