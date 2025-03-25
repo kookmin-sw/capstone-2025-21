@@ -12,7 +12,7 @@ public class JwtTokenProvider {
     @Value("${jwt.secret}")
     private String secretKey;
 
-    private final long validityInMilliseconds = 3600000; // 1시간
+    private final long validityInMilliseconds = 1000L * 60 * 60 * 24 * 2;
 
     // 토큰 생성
     public String createToken(String userId) {
