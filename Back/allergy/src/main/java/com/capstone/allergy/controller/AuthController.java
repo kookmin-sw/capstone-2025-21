@@ -59,4 +59,10 @@ public class AuthController {
 
         return ResponseEntity.ok(response);
     }
+
+    // ✅ 로그아웃 (토큰 삭제는 클라이언트가 처리)
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout() {
+        return ResponseEntity.ok("로그아웃 성공: 클라이언트는 토큰 삭제 요망");
+    }
 }
