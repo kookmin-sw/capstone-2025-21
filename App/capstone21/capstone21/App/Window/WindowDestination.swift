@@ -10,6 +10,6 @@ import Foundation
 enum WindowDestination {
     case splash
     case onboarding
-    case main
+//    case main
 }
 
