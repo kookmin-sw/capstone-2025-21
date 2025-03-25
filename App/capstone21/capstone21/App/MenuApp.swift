@@ -13,7 +13,7 @@ struct MenuApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            SplashView(viewModel: .init(windowRouter: container.windowRouter))
                 .environmentObject(container)
         }
     }
