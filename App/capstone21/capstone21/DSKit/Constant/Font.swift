@@ -10,6 +10,7 @@ import SwiftUI
 public extension Font {
     
     //bold
+    static let bold_24: Font = .custom("NotoSansKR-Bold", size: 24)
     static let bold_20: Font = .custom("NotoSansKR-Bold", size: 20)
     static let bold_14: Font = .custom("NotoSansKR-Bold", size: 14)
     static let bold_8: Font = .custom("NotoSansKR-Bold", size: 8)
