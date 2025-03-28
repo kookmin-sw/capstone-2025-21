@@ -23,7 +23,12 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers(
+                                "/api/auth/**",              // 기존 허용 경로
+                                "/swagger-ui/**",            // Swagger UI 정적 리소스
+                                "/v3/api-docs/**",           // OpenAPI 문서 경로
+                                "/swagger-ui.html"           // Swagger HTML 진입점
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form.disable())
