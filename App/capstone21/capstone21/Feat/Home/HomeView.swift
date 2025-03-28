@@ -58,8 +58,7 @@ struct HomeView: View {
                     .tag(Tab.mypage)
             }
             
-            //구분선
-            SeperatorLineView()
+            
         }
     }
 }

@@ -33,6 +33,18 @@ struct NavigationRoutingView: View {
                 )
         case .enterIdPassword:
             EnterIdPasswordView(viewModel: .init(navigationRouter: container.navigationRouter, windowRouter: container.windowRouter))
+            
+        case .menuAnalysisLoading:
+            MenuAnalysisLoadingView(
+                navigationRouter: container.navigationRouter
+            )
+            
+        case .menuAnalysResult:
+            MenuAnalysisResultView(
+                viewModel: .init(
+                    navigationRouter: container.navigationRouter
+                )
+            )
         }
     }
 }

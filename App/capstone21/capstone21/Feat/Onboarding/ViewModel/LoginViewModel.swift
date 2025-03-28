@@ -53,6 +53,7 @@ public class LogInViewModel: ObservableObject {
             
         case .loginButtonDidTap:
             //TODO: 로그인 로직
+            navigationRouter.destinations = []
             windowRouter.switch(to: .home)
 
         case .dismissToastView:

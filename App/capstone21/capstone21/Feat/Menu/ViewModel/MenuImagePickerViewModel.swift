@@ -47,11 +47,8 @@ public class MenuImagePickerViewModel: ObservableObject {
             navigationRouter.pop()
             
         case .nextButtonDidTap:
-            // Process the selected image and navigate to the next screen
-            // For example, you might upload the image to a server or analyze it locally
-            // Then navigate to the next screen in your app flow
-            // navigationRouter.push(to: .nextScreen)
-            break
+            //TODO: 메뉴판 이미지 전송 API
+            navigationRouter.push(to: .menuAnalysisLoading)
             
         case .imageSelected(let imageData):
             if let image = UIImage(data: imageData) {

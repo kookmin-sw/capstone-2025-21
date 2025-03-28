@@ -15,4 +15,8 @@ enum NavigationDestination: Hashable {
     case selectAllergy
     case selectKoreanFood
     case enterIdPassword
+    
+    //Menu
+    case menuAnalysisLoading
+    case menuAnalysResult
 }

@@ -66,6 +66,15 @@ class MenuAnalysisResultViewModel: ObservableObject {
     
     var state = State()
     
+    var navigationRouter: NavigationRoutableType
+    private let cancelBag = CancelBag()
+    
+    init(
+        navigationRouter: NavigationRoutableType
+    ) {
+        self.navigationRouter = navigationRouter
+    }
+    
     func send(_ action: Action) {
         // In a real app, this would handle the actions
         switch action {
@@ -73,8 +82,7 @@ class MenuAnalysisResultViewModel: ObservableObject {
             // Navigate to parsed menu view
             break
         case .returnHomeTapped:
-            // Return to home screen
-            break
+            navigationRouter.popToRootView()
         }
     }
 }

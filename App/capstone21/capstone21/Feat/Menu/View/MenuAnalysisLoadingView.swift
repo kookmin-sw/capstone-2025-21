@@ -1,21 +1,17 @@
-//
-//  MenuAnalysisLoadingView.swift
-//  capstone21
-//
-//  Created on 3/26/25.
-//
-
 import SwiftUI
 
 public struct MenuAnalysisLoadingView: View {
     @EnvironmentObject var container: DIContainer
+    var navigationRouter: NavigationRoutableType
     
     @State private var isAnimating = false
     @State private var dotOpacity1 = 0.3
     @State private var dotOpacity2 = 0.3
     @State private var dotOpacity3 = 0.3
     
-    public init() {}
+    init(navigationRouter: NavigationRoutableType) {
+        self.navigationRouter = navigationRouter
+    }
     
     public var body: some View {
         VStack(alignment: .center) {
@@ -23,16 +19,12 @@ public struct MenuAnalysisLoadingView: View {
                 .frame(height: 92)
             
             VStack(spacing: 40) {
-                // Loading animation
                 VStack(spacing: 16) {
-                    // Animated cute image
                     ZStack {
-                        // Outer spinning circle
                         Circle()
                             .stroke(Color.heyMain.opacity(0.3), lineWidth: 5)
                             .frame(width: 100, height: 100)
                         
-                        // Inner spinning circle (opposite direction)
                         Circle()
                             .stroke(Color.heyMain.opacity(0.7), lineWidth: 3)
                             .frame(width: 70, height: 70)
@@ -43,7 +35,6 @@ public struct MenuAnalysisLoadingView: View {
                                 value: isAnimating
                             )
                         
-                        // Cute food icon
                         Image(systemName: "fork.knife")
                             .font(.system(size: 40))
                             .foregroundColor(.heyMain)
@@ -67,7 +58,6 @@ public struct MenuAnalysisLoadingView: View {
                         value: isAnimating
                     )
                     
-                    // Loading text
                     VStack(spacing: 8) {
                         Text("Analyzing Menu")
                             .font(.semibold_18)
@@ -79,7 +69,6 @@ public struct MenuAnalysisLoadingView: View {
                             .multilineTextAlignment(.center)
                     }
                     
-                    // Animated dots
                     HStack(spacing: 8) {
                         Circle()
                             .fill(Color.heyMain)
@@ -103,7 +92,6 @@ public struct MenuAnalysisLoadingView: View {
                 .background(Color.heyGray5.opacity(0.3))
                 .cornerRadius(16)
                 
-                // Analysis information
                 VStack(alignment: .leading, spacing: 16) {
                     Text("We're working on it...")
                         .font(.semibold_16)
@@ -131,15 +119,16 @@ public struct MenuAnalysisLoadingView: View {
         .background(Color.heyWhite)
         .ignoresSafeArea(edges: .vertical)
         .navigationBarBackButtonHidden(true)
+        .toolbar(.hidden, for: .tabBar)
         .onAppear {
             startLoadingAnimation()
+            navigateToResult()
         }
     }
     
     private func startLoadingAnimation() {
         isAnimating = true
         
-        // Animate the dots
         withAnimation(Animation.easeInOut(duration: 0.6).repeatForever().delay(0.0)) {
             dotOpacity1 = 1.0
         }
@@ -152,9 +141,10 @@ public struct MenuAnalysisLoadingView: View {
             dotOpacity3 = 1.0
         }
     }
-}
-
-#Preview {
-    MenuAnalysisLoadingView()
-        .environmentObject(DIContainer.stub)
+    
+    private func navigateToResult() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            navigationRouter.push(to: .menuAnalysResult)
+        }
+    }
 }
