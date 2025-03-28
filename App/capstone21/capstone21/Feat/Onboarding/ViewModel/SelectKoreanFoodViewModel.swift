@@ -79,9 +79,8 @@ public class SelectKoreanFoodViewModel: ObservableObject {
             updateFilteredItems()
             
         case .nextButtonDidTap:
-            // Save selected foods and navigate to next screen
-            // This would be implemented based on your app's flow
-            break
+            //TODO: 선호하는 한국 음식 저장
+            navigationRouter.push(to: .enterIdPassword)
             
         case .toggleFood(let food):
             if selectedFoods.contains(where: { $0.id == food.id }) {

@@ -9,7 +9,10 @@ import Foundation
 
 enum NavigationDestination: Hashable {
     // Onboarding
-    case logIn    
+    case logIn
+    
     case selectNationality
-    case SelectAllergy
+    case selectAllergy
+    case selectKoreanFood
+    case enterIdPassword
 }

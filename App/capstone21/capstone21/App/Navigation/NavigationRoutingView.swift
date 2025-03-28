@@ -23,8 +23,16 @@ struct NavigationRoutingView: View {
             )
         case .selectNationality:
             SelectNationalityView(viewModel: .init(navigationRouter: container.navigationRouter))
-        case .SelectAllergy:
+            
+        case .selectAllergy:
             SelectAllergyView(viewModel: .init(navigationRouter: container.navigationRouter))
+            
+        case .selectKoreanFood:
+            SelectKoreanFoodView(
+                viewModel: .init(navigationRouter: container.navigationRouter)
+                )
+        case .enterIdPassword:
+            EnterIdPasswordView(viewModel: .init(navigationRouter: container.navigationRouter, windowRouter: container.windowRouter))
         }
     }
 }

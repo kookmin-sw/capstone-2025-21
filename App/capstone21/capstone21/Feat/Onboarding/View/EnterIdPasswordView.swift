@@ -55,7 +55,8 @@ public struct EnterIdPasswordView: View {
 #Preview {
     let container = DIContainer.stub
     return EnterIdPasswordView(viewModel: .init(
-        navigationRouter: container.navigationRouter
+        navigationRouter: container.navigationRouter,
+        windowRouter: container.windowRouter
     )
     )
     .environmentObject(DIContainer.stub)

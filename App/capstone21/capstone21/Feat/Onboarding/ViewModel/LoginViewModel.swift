@@ -12,7 +12,6 @@ public class LogInViewModel: ObservableObject {
     
     enum Action {
         case onAppear
-        case closeButtonDidTap
         case loginButtonDidTap
         case dismissToastView
         case forgotPasswordButtonDidTap
@@ -49,38 +48,20 @@ public class LogInViewModel: ObservableObject {
     func send(_ action: Action) {
         switch action {
         case .onAppear:
+            //TODO: 자동 로그인 로직
             break
-//            useCase.checkAccessTokenExisted()
-//                .receive(on: RunLoop.main)
-//                .map { [weak self] isTokenExisted in
-//                    guard let self else { return false }
-//                    return !(windowRouter.destination != WindowDestination.onboarding && !isTokenExisted)
-//                }
-//                .assign(to: \.state.showCloseBtn, on: self)
-//                .store(in: cancelBag)
             
-        case .closeButtonDidTap:
-            if windowRouter.destination == WindowDestination.onboarding {
-                navigationRouter.pop()
-            } else {
-//                windowRouter.switch(to: .timetable)
-            }
         case .loginButtonDidTap:
-            break
-//            useCase.logIn(id, password)
-//                .receive(on: RunLoop.main)
-//                .assignLoading(to: \.state.isLoading, on: self)
-//                .sink(receiveValue: { [weak self] _ in
-//                    Analytics.shared.track(.userLoggedIn)
-//                    self?.windowRouter.switch(to: .timetable)
-//                })
-//                .store(in: cancelBag)
+            //TODO: 로그인 로직
+            windowRouter.switch(to: .home)
+
         case .dismissToastView:
             state.errMessage = ""
         case .forgotPasswordButtonDidTap:
             break
 //            navigationRouter.push(to: .enterEmail)
         case .signUpButtonDidTap:
+            navigationRouter.push(to: .selectNationality)
             break
 //            navigationRouter.push(to: .selectUniversity)
         }

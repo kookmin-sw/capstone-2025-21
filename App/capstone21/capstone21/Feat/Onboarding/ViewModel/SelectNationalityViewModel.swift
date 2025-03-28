@@ -67,10 +67,8 @@ public class SelectNationalityViewModel: ObservableObject {
             state.filteredItems = allNationalityItems
             
         case .nextButtonDidTap:
-            break
-//            guard let university = university else { return }
-//            useCase.userInfo.university = university.rawValue
-//            navigationRouter.push(to: .verifyEmail)
+            //TODO: 회원가입 정보에 나라 추가
+            navigationRouter.push(to: .selectAllergy)
             
         case .selectNationality(let nationality):
             self.nationality = nationality

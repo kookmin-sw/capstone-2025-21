@@ -85,10 +85,8 @@ public class SelectAllergyViewModel: ObservableObject {
             updateFilteredItems()
             
         case .nextButtonDidTap:
-            // Save selected allergies and navigate to next screen
-            // This would be implemented based on your app's flow
-//            navigationRouter.push(to: .nextScreen)
-            break
+            //TODO: 맵기 및 알러지 정보 얻기
+            navigationRouter.push(to: .selectKoreanFood)
             
         case .toggleAllergy(let allergy):
             if allergy == "➕ Etc" {
