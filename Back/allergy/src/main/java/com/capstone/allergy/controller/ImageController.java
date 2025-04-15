@@ -1,5 +1,9 @@
 package com.capstone.allergy.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
@@ -25,6 +29,7 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/gallery")
+@Tag(name = "이미지 업로드", description = "이미지 업로드 및 조회 API")
 public class ImageController {
 
     private final String uploadDir;
@@ -37,8 +42,20 @@ public class ImageController {
         }
     }
 
+    @Operation(
+            summary = "이미지 업로드",
+            description = "이미지를 업로드하고 해당 이미지의 조회 URL을 반환합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "업로드 성공, 이미지 URL 반환"),
+                    @ApiResponse(responseCode = "400", description = "파일이 비어 있음"),
+                    @ApiResponse(responseCode = "500", description = "서버 오류로 업로드 실패")
+            }
+    )
+
     @PostMapping("/upload")
-    public ResponseEntity<Map<String, String>> uploadImage(@RequestParam("image") MultipartFile file) {
+    public ResponseEntity<Map<String, String>> uploadImage(
+            @Parameter(description = "업로드할 이미지 파일", required = true)
+            @RequestParam("image") MultipartFile file) {
         if (file.isEmpty()) {
             return ResponseEntity.badRequest().body(Collections.singletonMap("error", "파일이 없습니다."));
         }
@@ -61,8 +78,20 @@ public class ImageController {
         }
     }
 
+    @Operation(
+            summary = "이미지 조회",
+            description = "파일명을 통해 이미지를 반환합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "이미지 반환"),
+                    @ApiResponse(responseCode = "400", description = "이미지 없음"),
+                    @ApiResponse(responseCode = "500", description = "서버 오류")
+            }
+    )
+
     @GetMapping("/images/{fileName}")
-    public ResponseEntity<Resource> getImage(@PathVariable String fileName) {
+    public ResponseEntity<Resource> getImage(
+            @Parameter(description = "조회할 이미지 파일명", required = true)
+            @PathVariable String fileName) {
         try {
             Path filePath = Paths.get(uploadDir).resolve(fileName).normalize();
             Resource resource = new UrlResource(filePath.toUri());
