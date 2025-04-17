@@ -9,23 +9,6 @@ import Foundation
 import UIKit
 import SwiftUI
 
-enum NationalityInfo: String {
-    case USA
-    case JPN
-    case CHN
-    
-    var image: Image {
-        switch self {
-        case .USA:
-            return Image(.usa)
-        case .JPN:
-            return Image(.japen)
-        case .CHN:
-            return Image(.china)
-        }
-    }
-}
-
 public class SelectNationalityViewModel: ObservableObject {
     struct State {
         var filteredItems: [NationalityInfo] = []

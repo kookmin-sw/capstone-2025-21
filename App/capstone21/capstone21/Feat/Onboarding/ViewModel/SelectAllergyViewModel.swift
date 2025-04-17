@@ -11,58 +11,29 @@ import Combine
 
 public class SelectAllergyViewModel: ObservableObject {
     struct State {
-        var filteredItems: [String] = []
+        var filteredItems: [AllergyInfo] = []
         var continueButtonIsEnabled = false
         var errMessage = ""
         var showingCustomAllergyInput = false
-        var customAllergyText = ""
-        var selectedSpicyLevel: Int = 0 // 0: None, 1: Mild, 2: Medium, 3: Hot
+        var customAllergyText: String = ""
+        var selectedSpicyLevel: String = "" // 0: None, 1: Mild, 2: Medium, 3: Hot
     }
     
     enum Action {
         case backButtonDidTap
         case nextButtonDidTap
-        case textFieldDidTap
-        case toggleAllergy(String)
+        case toggleAllergy(AllergyInfo)
         case showCustomAllergyInput
         case addCustomAllergy
         case updateCustomAllergyText(String)
         case cancelCustomAllergyInput
-        case selectSpicyLevel(Int)
+        case selectSpicyLevel(String)
     }
     
     // MARK: - Properties
     
-    let allAllergyItems: [String] = [
-        "❌ Nothing",
-        "🥛 Milk",
-        "🥚 Eggs",
-        "🥜 Peanuts",
-        "🌰 Tree nuts",
-        "🌱 Soy",
-        "🌾 Wheat",
-        "🐟 Fish",
-        "🦐 Shellfish",
-        "⚫ Sesame",
-        "🌿 Mustard",
-        "🥬 Celery",
-        "🌸 Lupin",
-        "🍷 Sulfites",
-        "🌾 Gluten",
-        "🦀 Crustaceans",
-        "🐚 Molluscs",
-        "🍑 Peach",
-        "🍅 Tomato",
-        "🦑 Squid",
-        "🐓 Chicken",
-        "🐄 Beef",
-        "🐖 Pork",
-        "➕ Etc" // 기타 옵션 추가
-    ]
-
-    
-    @Published var searchText = ""
-    @Published var selectedAllergies: [String] = []
+    let allAllergyItems: [AllergyInfo] = AllergyInfo.allAllergyItems
+    @Published var selectedAllergies: [AllergyInfo] = []
     
     @Published var state = State()
     var navigationRouter: NavigationRoutableType
@@ -81,15 +52,12 @@ public class SelectAllergyViewModel: ObservableObject {
         case .backButtonDidTap:
             navigationRouter.pop()
             
-        case .textFieldDidTap:
-            updateFilteredItems()
-            
         case .nextButtonDidTap:
             //TODO: 맵기 및 알러지 정보 얻기
             navigationRouter.push(to: .selectKoreanFood)
             
         case .toggleAllergy(let allergy):
-            if allergy == "➕ Etc" {
+            if allergy == AllergyInfo.etc {
                 state.showingCustomAllergyInput = true
             } else if selectedAllergies.contains(allergy) {
                 selectedAllergies.removeAll { $0 == allergy }
@@ -102,7 +70,7 @@ public class SelectAllergyViewModel: ObservableObject {
             
         case .addCustomAllergy:
             if !state.customAllergyText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                let customAllergy = "🔖 \(state.customAllergyText.trimmingCharacters(in: .whitespacesAndNewlines))"
+                let customAllergy = AllergyInfo(emoji: "🔖", name: state.customAllergyText.trimmingCharacters(in: .whitespacesAndNewlines))
                 if !selectedAllergies.contains(customAllergy) {
                     selectedAllergies.append(customAllergy)
                 }
@@ -122,16 +90,6 @@ public class SelectAllergyViewModel: ObservableObject {
         }
     }
     
-    private func updateFilteredItems() {
-        if searchText.isEmpty {
-            state.filteredItems = allAllergyItems
-        } else {
-            state.filteredItems = allAllergyItems.filter {
-                $0.localizedCaseInsensitiveContains(searchText)
-            }
-        }
-    }
-    
     private func observe() {
         weak var owner = self
         guard let owner else { return }
@@ -141,13 +99,6 @@ public class SelectAllergyViewModel: ObservableObject {
             .assign(to: \.state.continueButtonIsEnabled, on: self)
             .store(in: cancelBag)
         
-        $searchText
-            .sink { [weak self] _ in
-                self?.updateFilteredItems()
-            }
-            .store(in: cancelBag)
-        
-        // Initialize with all allergies
         state.filteredItems = allAllergyItems
     }
 }

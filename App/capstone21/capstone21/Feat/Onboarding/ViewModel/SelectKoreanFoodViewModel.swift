@@ -139,20 +139,3 @@ public class SelectKoreanFoodViewModel: ObservableObject {
         state.filteredItems = allKoreanFoods
     }
 }
-
-// MARK: - Models
-struct KoreanFood: Identifiable, Hashable {
-    let id: String
-    let name: String
-    let emoji: String
-    let category: String
-    let description: String
-    
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-    
-    static func == (lhs: KoreanFood, rhs: KoreanFood) -> Bool {
-        return lhs.id == rhs.id
-    }
-}
