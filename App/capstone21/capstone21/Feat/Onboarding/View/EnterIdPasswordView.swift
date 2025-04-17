@@ -13,7 +13,7 @@ public struct EnterIdPasswordView: View {
     
     @State var showPassword = false
     
-    public init(viewModel: EnterIdPasswordViewModel) {
+    init(viewModel: EnterIdPasswordViewModel) {
         self.viewModel = viewModel
     }
     
@@ -55,7 +55,9 @@ public struct EnterIdPasswordView: View {
 #Preview {
     let container = DIContainer.stub
     return EnterIdPasswordView(viewModel: .init(
-        navigationRouter: container.navigationRouter
+        navigationRouter: container.navigationRouter,
+        windowRouter: container.windowRouter,
+        userInfo: .empty
     )
     )
     .environmentObject(DIContainer.stub)

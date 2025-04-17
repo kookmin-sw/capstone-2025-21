@@ -10,7 +10,7 @@ import Combine
 
 public class EnterIdPasswordViewModel: ObservableObject {
     struct State {
-        var nickNameIsValid: TextFieldState = .idle
+        var nickNameIsValid: TextFieldState = .valid
         var passwordIsValid: TextFieldState = .idle
         var checkPasswordIsValid: TextFieldState = .idle
         var errorMessage: String = ""
@@ -24,6 +24,8 @@ public class EnterIdPasswordViewModel: ObservableObject {
     }
     
     var navigationRouter: NavigationRoutableType
+    var windowRouter: WindowRoutableType
+    var userInfo :UserInfo
     private let cancelBag = CancelBag()
     
     @Published var state = State()
@@ -31,14 +33,14 @@ public class EnterIdPasswordViewModel: ObservableObject {
     @Published var password = ""
     @Published var checkPassword = ""
     
-//    private var useCase: SignUpUseCaseType
-    
     init(
-        navigationRouter: NavigationRoutableType
-//        useCase: SignUpUseCaseType
+        navigationRouter: NavigationRoutableType,
+        windowRouter: WindowRoutableType,
+        userInfo: UserInfo
     ) {
         self.navigationRouter = navigationRouter
-//        self.useCase = useCase
+        self.windowRouter = windowRouter
+        self.userInfo = userInfo
         
         observe()
         bindState()
@@ -50,19 +52,12 @@ public class EnterIdPasswordViewModel: ObservableObject {
             navigationRouter.pop()
             
         case .nextButtonDidTap:
-            break
-//            useCase.userInfo.nickName = nickName
-//            useCase.userInfo.password = password
-//            navigationRouter.push(to: .termsOfServiceAgreement(useCase.userInfo.university))
+            //TODO: 회원가입 진행 -> 성공하면 홈으로
+            windowRouter.switch(to: .home)
             
         case .checkIDAvailabilityButtonDidTap:
+            //TODO: ID 중복 확인
             break
-//            useCase.checkUserName(nickName)
-//                .receive(on: RunLoop.main)
-//                .sink(receiveValue: { [weak self] available in
-//                    self?.state.nickNameIsValid = available ? .valid : .invalid
-//                })
-//                .store(in: cancelBag)
         }
     }
     

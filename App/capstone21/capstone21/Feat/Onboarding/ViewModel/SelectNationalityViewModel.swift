@@ -9,23 +9,6 @@ import Foundation
 import UIKit
 import SwiftUI
 
-enum NationalityInfo: String {
-    case USA
-    case JPN
-    case CHN
-    
-    var image: Image {
-        switch self {
-        case .USA:
-            return Image(.usa)
-        case .JPN:
-            return Image(.japen)
-        case .CHN:
-            return Image(.china)
-        }
-    }
-}
-
 public class SelectNationalityViewModel: ObservableObject {
     struct State {
         var filteredItems: [NationalityInfo] = []
@@ -42,6 +25,7 @@ public class SelectNationalityViewModel: ObservableObject {
     
     // MARK: - Properties
     
+    private var userInfo = UserInfo.empty
     private let allNationalityItems: [NationalityInfo] = [.USA, .JPN, .CHN]
     @Published var searchText = ""
     @Published var nationality: NationalityInfo? = nil
@@ -67,10 +51,9 @@ public class SelectNationalityViewModel: ObservableObject {
             state.filteredItems = allNationalityItems
             
         case .nextButtonDidTap:
-            break
-//            guard let university = university else { return }
-//            useCase.userInfo.university = university.rawValue
-//            navigationRouter.push(to: .verifyEmail)
+            guard let nationality else { return }
+            userInfo.nationality = nationality.rawValue
+            navigationRouter.push(to: .selectAllergy(userInfo))
             
         case .selectNationality(let nationality):
             self.nationality = nationality

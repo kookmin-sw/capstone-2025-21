@@ -15,33 +15,33 @@ enum OnboardingType {
     var title: String {
         switch self {
         case .timeTable:
-            return "Add a personal schedule to\nyour school timetable"
+            return "blabla"
         case .theme:
-            return "Customize Your Timetable\nwith Your Favorite Color"
+            return "blabla"
         case .alarm:
-            return "Get reminders about\ntoday's lessons"
+            return "blabla"
         }
     }
     
     var description: String {
         switch self {
         case.timeTable:
-            return "Manage your school-related schedules\nall at once!"
+            return "blabla"
         case .theme:
-            return "Customize your timetable with your\nfavorite colors!"
+            return "blabla"
         case .alarm:
-            return "Don’t be late with push alarm"
+            return "blabla"
         }
     }
     
     var image: UIImage {
         switch self {
         case .timeTable:
-            return .graphicsTimeTable
+            return .icAdd
         case .theme:
-            return .graphicsTheme
+            return .icAdd
         case .alarm:
-            return .graphicsAlarm
+            return .icAdd
         }
     }
     
@@ -162,23 +162,6 @@ public struct OnboardingView: View {
                             }
                             .heyBottomButtonStyle(.white)
                             .padding(.bottom, 16)
-                            
-                            Button {
-                                viewModel.send(.alreadyRegisteredButtonDidTap)
-                            } label: {
-                                HStack {
-                                    Spacer()
-                                    Text("Already registered")
-                                        .font(.medium_12)
-                                        .foregroundColor(.heyWhite)
-                                    
-                                    Image(uiImage: .icNext.withRenderingMode(.alwaysTemplate))
-                                        .resizable()
-                                        .tint(.heyWhite)
-                                        .frame(width: 3.5, height: 7)
-                                    Spacer()
-                                }
-                            }
                         }
                         .padding(.horizontal, 16)
                         

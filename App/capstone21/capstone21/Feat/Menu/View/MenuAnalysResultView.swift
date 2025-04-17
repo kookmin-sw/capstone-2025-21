@@ -278,7 +278,9 @@ struct MenuAnalysisResultView: View {
         }
         .navigationBarBackButtonHidden(true)
         .background(Color.heyWhite)
+        .toolbar(.hidden, for: .tabBar)
         .ignoresSafeArea(edges: .bottom)
+        
         .onAppear {
             withAnimation(Animation.easeOut(duration: 0.5).delay(0.2)) {
                 animateCards = true
@@ -359,6 +361,6 @@ struct AnalysisCard<Content: View>: View {
 
 #Preview {
     let container = DIContainer.stub
-    return MenuAnalysisResultView(viewModel: .init())
+    return MenuAnalysisResultView(viewModel: .init(navigationRouter: container.navigationRouter))
         .environmentObject(DIContainer.stub)
 }

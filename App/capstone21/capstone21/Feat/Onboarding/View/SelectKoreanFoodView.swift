@@ -237,7 +237,9 @@ struct KoreanFoodCell: View {
 #Preview {
     let container = DIContainer.stub
     return SelectKoreanFoodView(viewModel: .init(
-        navigationRouter: container.navigationRouter)
+        navigationRouter: container.navigationRouter,
+        userInfo: .empty
+    )
     )
     .environmentObject(DIContainer.stub)
 }

@@ -18,18 +18,19 @@ struct SplashView: View {
             switch viewModel.windowRouter.destination {
             case .splash:
                 splashView
-            case .onboarding: OnboardingView(viewModel: .init(navigationRouter: container.navigationRouter))
-//            case .main:
-//                HomeView(
-//                viewModel: .init(
-//                    roomService: container.service.roomService,
-//                    navigationRouter: container.navigationRouter
-//                )
-//            )
+                
+            case .onboarding:
+                OnboardingView(
+                    viewModel: .init(
+                        navigationRouter: container.navigationRouter
+                    )
+                )
+            case .home:
+                HomeView(viewModel: .init())
             }
         }
     }
-        
+    
     
     var splashView: some View {
         ZStack {

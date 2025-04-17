@@ -23,8 +23,43 @@ struct NavigationRoutingView: View {
             )
         case .selectNationality:
             SelectNationalityView(viewModel: .init(navigationRouter: container.navigationRouter))
-        case .SelectAllergy:
-            SelectAllergyView(viewModel: .init(navigationRouter: container.navigationRouter))
+            
+        case .selectAllergy(let user):
+            SelectAllergyView(
+                viewModel: .init(
+                    navigationRouter: container.navigationRouter,
+                    userInfo: user
+                )
+            )
+            
+        case .selectKoreanFood(let user):
+            SelectKoreanFoodView(
+                viewModel: .init(
+                    navigationRouter: container.navigationRouter,
+                    userInfo: user
+                )
+            )
+            
+        case .enterIdPassword(let user):
+            EnterIdPasswordView(
+                viewModel: .init(
+                    navigationRouter: container.navigationRouter,
+                    windowRouter: container.windowRouter,
+                    userInfo: user
+                )
+            )
+            
+        case .menuAnalysisLoading:
+            MenuAnalysisLoadingView(
+                navigationRouter: container.navigationRouter
+            )
+            
+        case .menuAnalysResult:
+            MenuAnalysisResultView(
+                viewModel: .init(
+                    navigationRouter: container.navigationRouter
+                )
+            )
         }
     }
 }

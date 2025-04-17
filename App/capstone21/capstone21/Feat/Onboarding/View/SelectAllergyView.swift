@@ -49,7 +49,7 @@ public struct SelectAllergyView: View {
                             HStack(spacing: 8) {
                                 ForEach(viewModel.selectedAllergies, id: \.self) { allergy in
                                     AllergyCapsuleView(
-                                        title: allergy,
+                                        allergy: allergy,
                                         isSelected: true
                                     ) {
                                         viewModel.send(.toggleAllergy(allergy))
@@ -60,18 +60,16 @@ public struct SelectAllergyView: View {
                         }
                     }
                     
-                    // Divider
                     Rectangle()
                         .fill(Color.heyGray4)
                         .frame(height: 1)
                         .padding(.vertical, 8)
                     
-                    // Allergy suggestions
                     ScrollView {
                         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                             ForEach(viewModel.state.filteredItems, id: \.self) { allergy in
                                 AllergyCapsuleView(
-                                    title: allergy,
+                                    allergy: allergy,
                                     isSelected: viewModel.selectedAllergies.contains(allergy)
                                 ) {
                                     viewModel.send(.toggleAllergy(allergy))
@@ -163,14 +161,14 @@ struct CustomAllergyInputView: View {
 }
 
 struct AllergyCapsuleView: View {
-    let title: String
+    let allergy: AllergyInfo
     let isSelected: Bool
     let action: () -> Void
     
     var body: some View {
         Button(action: action) {
             HStack(spacing: 4) {
-                Text(title)
+                Text("\(allergy.emoji) \(allergy.name)")
                     .font(.regular_14)
                     .foregroundColor(isSelected ? .white : .heyGray1)
                 
@@ -196,23 +194,23 @@ struct AllergyCapsuleView: View {
 }
 
 struct SpicyLevelSelectionView: View {
-    let selectedLevel: Int
-    let onSelect: (Int) -> Void
+    let selectedLevel: String
+    let onSelect: (String) -> Void
     
     let levels = [
-        (1, "Mild", "🌶️"),
-        (2, "Medium", "🌶️🌶️"),
-        (3, "Hot", "🌶️🌶️🌶️")
+        ("Mild", "🌶️"),
+        ("Medium", "🌶️🌶️"),
+        ("Hot", "🌶️🌶️🌶️")
     ]
     
     var body: some View {
         HStack(spacing: 12) {
-            ForEach(levels, id: \.0) { level, title, emoji in
+            ForEach(levels, id: \.0) { title, emoji in
                 SpicyLevelButton(
-                    level: level,
+                    level: title,
                     title: title,
                     emoji: emoji,
-                    isSelected: selectedLevel == level,
+                    isSelected: selectedLevel == title,
                     onSelect: onSelect
                 )
             }
@@ -221,11 +219,11 @@ struct SpicyLevelSelectionView: View {
 }
 
 struct SpicyLevelButton: View {
-    let level: Int
+    let level: String
     let title: String
     let emoji: String
     let isSelected: Bool
-    let onSelect: (Int) -> Void
+    let onSelect: (String) -> Void
     
     var body: some View {
         Button(action: { onSelect(level) }) {
@@ -254,7 +252,9 @@ struct SpicyLevelButton: View {
 #Preview {
     let container = DIContainer.stub
     return SelectAllergyView(viewModel: .init(
-        navigationRouter: container.navigationRouter)
+        navigationRouter: container.navigationRouter,
+        userInfo: .empty
+    )
     )
     .environmentObject(DIContainer.stub)
 }

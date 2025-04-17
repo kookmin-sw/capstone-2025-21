@@ -9,16 +9,16 @@ import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject var container: DIContainer
-    @StateObject var homeViewModel: HomeViewModel
+    @StateObject var viewModel: HomeViewModel
     
     var body: some View {
         ZStack {
             //탭뷰
-            TabView(selection: $homeViewModel.selectedTab) {
+            TabView(selection: $viewModel.selectedTab) {
                 ArchivingView()
                     .tabItem {
                         VStack {
-                            Image (systemName: homeViewModel.selectedTab == .archiving
+                            Image (systemName: viewModel.selectedTab == .archiving
                                 ? "archivebox.fill"
                                 : "archivebox"
                             )
@@ -32,7 +32,7 @@ struct HomeView: View {
                 MenuImagePickerView(viewModel: .init(navigationRouter: container.navigationRouter))
                     .tabItem {
                         VStack {
-                            Image (systemName: homeViewModel.selectedTab == .menu
+                            Image (systemName: viewModel.selectedTab == .menu
                                 ? "camera.fill"
                                 : "camera"
                             )
@@ -46,7 +46,7 @@ struct HomeView: View {
                     .tabItem {
                         VStack {
                             Image (
-                                systemName: homeViewModel.selectedTab == .mypage
+                                systemName: viewModel.selectedTab == .mypage
                                 ? "person.crop.circle.fill"
                                 : "person.crop.circle"
                             )
@@ -58,8 +58,7 @@ struct HomeView: View {
                     .tag(Tab.mypage)
             }
             
-            //구분선
-            SeperatorLineView()
+            
         }
     }
 }
@@ -84,6 +83,6 @@ private struct SeperatorLineView: View {
 }
 
 #Preview {
-    HomeView(homeViewModel: .init())
+    HomeView(viewModel: .init())
         .environmentObject(DIContainer.stub)
 }
