@@ -25,6 +25,7 @@ public class SelectNationalityViewModel: ObservableObject {
     
     // MARK: - Properties
     
+    private var userInfo = UserInfo.empty
     private let allNationalityItems: [NationalityInfo] = [.USA, .JPN, .CHN]
     @Published var searchText = ""
     @Published var nationality: NationalityInfo? = nil
@@ -50,8 +51,9 @@ public class SelectNationalityViewModel: ObservableObject {
             state.filteredItems = allNationalityItems
             
         case .nextButtonDidTap:
-            //TODO: 회원가입 정보에 나라 추가
-            navigationRouter.push(to: .selectAllergy)
+            guard let nationality else { return }
+            userInfo.nationality = nationality.rawValue
+            navigationRouter.push(to: .selectAllergy(userInfo))
             
         case .selectNationality(let nationality):
             self.nationality = nationality

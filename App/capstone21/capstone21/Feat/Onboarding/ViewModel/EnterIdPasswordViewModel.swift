@@ -25,6 +25,7 @@ public class EnterIdPasswordViewModel: ObservableObject {
     
     var navigationRouter: NavigationRoutableType
     var windowRouter: WindowRoutableType
+    var userInfo :UserInfo
     private let cancelBag = CancelBag()
     
     @Published var state = State()
@@ -32,14 +33,14 @@ public class EnterIdPasswordViewModel: ObservableObject {
     @Published var password = ""
     @Published var checkPassword = ""
     
-//    private var useCase: SignUpUseCaseType
-    
     init(
         navigationRouter: NavigationRoutableType,
-        windowRouter: WindowRoutableType
+        windowRouter: WindowRoutableType,
+        userInfo: UserInfo
     ) {
         self.navigationRouter = navigationRouter
         self.windowRouter = windowRouter
+        self.userInfo = userInfo
         
         observe()
         bindState()

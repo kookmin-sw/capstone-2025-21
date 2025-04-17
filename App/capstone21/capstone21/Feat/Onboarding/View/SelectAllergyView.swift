@@ -252,7 +252,9 @@ struct SpicyLevelButton: View {
 #Preview {
     let container = DIContainer.stub
     return SelectAllergyView(viewModel: .init(
-        navigationRouter: container.navigationRouter)
+        navigationRouter: container.navigationRouter,
+        userInfo: .empty
+    )
     )
     .environmentObject(DIContainer.stub)
 }

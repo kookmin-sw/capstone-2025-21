@@ -12,9 +12,9 @@ enum NavigationDestination: Hashable {
     case logIn
     
     case selectNationality
-    case selectAllergy
-    case selectKoreanFood
-    case enterIdPassword
+    case selectAllergy(UserInfo)
+    case selectKoreanFood(UserInfo)
+    case enterIdPassword(UserInfo)
     
     //Menu
     case menuAnalysisLoading

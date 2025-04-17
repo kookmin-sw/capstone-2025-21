@@ -7,11 +7,24 @@
 
 import Foundation
 
-struct UserInfo: Codable {
-    let username: String
-    let password: String
-    let nationality: String
-    let favoriteFoods: [String]
-    let allergies: [String]
-    let spiceLevel: String
+struct UserInfo: Hashable, Codable {
+    var username: String
+    var password: String
+    var nationality: String
+    var favoriteFoods: [String]
+    var allergies: [String]
+    var spiceLevel: String
+}
+
+extension UserInfo {
+    static var empty: UserInfo {
+        .init(
+            username: "",
+            password: "",
+            nationality: "",
+            favoriteFoods: [],
+            allergies: [],
+            spiceLevel: ""
+        )
+    }
 }

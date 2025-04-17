@@ -32,6 +32,7 @@ public class SelectAllergyViewModel: ObservableObject {
     
     // MARK: - Properties
     
+    private var userInfo :UserInfo
     let allAllergyItems: [AllergyInfo] = AllergyInfo.allAllergyItems
     @Published var selectedAllergies: [AllergyInfo] = []
     
@@ -40,8 +41,12 @@ public class SelectAllergyViewModel: ObservableObject {
     private let cancelBag = CancelBag()
     
     // MARK: - Init
-    init(navigationRouter: NavigationRoutableType) {
+    init(
+        navigationRouter: NavigationRoutableType,
+        userInfo: UserInfo
+    ) {
         self.navigationRouter = navigationRouter
+        self.userInfo = userInfo
         
         observe()
     }
@@ -53,8 +58,8 @@ public class SelectAllergyViewModel: ObservableObject {
             navigationRouter.pop()
             
         case .nextButtonDidTap:
-            //TODO: 맵기 및 알러지 정보 얻기
-            navigationRouter.push(to: .selectKoreanFood)
+            userInfo.allergies = selectedAllergies.map { $0.name }
+            navigationRouter.push(to: .selectKoreanFood(userInfo))
             
         case .toggleAllergy(let allergy):
             if allergy == AllergyInfo.etc {
