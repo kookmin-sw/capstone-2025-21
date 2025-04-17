@@ -26,6 +26,6 @@ public class SignupFullRequest {
     @Schema(description = "알러지 정보", example = "[\"계란\", \"우유\"]")
     private List<String> allergies;
 
-    @Schema(description = "맵기 단계 (medium, low, 1, 3 중 선택)", example = "medium")
-    private String spiceLevel;
+//    @Schema(description = "맵기 단계 (medium, low, 1, 3 중 선택)", example = "medium")
+//    private String spiceLevel;
 }
