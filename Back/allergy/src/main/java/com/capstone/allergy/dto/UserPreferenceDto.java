@@ -13,13 +13,13 @@ import java.util.List;
 public class UserPreferenceDto {
     private List<String> favoriteFoods;
     private List<String> allergies;
-    private String spiceLevel; // ✅ String으로 수정
+//    private String spiceLevel; // ✅ String으로 수정
 
     public static UserPreferenceDto from(User user) {
         return new UserPreferenceDto(
                 user.getFavoriteFoods(),
-                user.getAllergies(),
-                user.getSpiceLevel()
+                user.getAllergies()
+//                user.getSpiceLevel()
         );
     }
 }

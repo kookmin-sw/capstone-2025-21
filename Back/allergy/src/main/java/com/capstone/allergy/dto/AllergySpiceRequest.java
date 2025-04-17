@@ -9,5 +9,5 @@ import java.util.List;
 @Setter
 public class AllergySpiceRequest {
     private List<String> allergies;
-    private String spiceLevel; // ex: "mild", "medium", "hot"
+//    private String spiceLevel; // ex: "mild", "medium", "hot"
 }

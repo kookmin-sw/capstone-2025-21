@@ -34,5 +34,5 @@ public class User {
     @Column(name = "allergy")
     private List<String> allergies;     // 알러지
 
-    private String spiceLevel;          // 맵기 정도 ("mild", "medium", "hot" 등)
+//    private String spiceLevel;          // 맵기 정도 ("mild", "medium", "hot" 등)
 }

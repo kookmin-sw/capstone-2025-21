@@ -25,7 +25,7 @@ public class UserService {
                 .nationality(request.getNationality())
                 .favoriteFoods(request.getFavoriteFoods())
                 .allergies(request.getAllergies())
-                .spiceLevel(request.getSpiceLevel())
+//                .spiceLevel(request.getSpiceLevel())
                 .build();
 
         userRepository.save(user);
