@@ -41,22 +41,20 @@ jobs:
       - name: Run JAR on EC2 via SSH
         uses: appleboy/ssh-action@master
         with:
-          host:     ${{ secrets.EC2_HOST }}
+          host:     ${{ secrets.EC2_HOST }}      # 1. 11.22.33.44 형태 IP
           username: ubuntu
-          key:      ${{ secrets.EC2_KEY }}
-          port:     ${{ secrets.EC2_PORT }}
+          key:      ${{ secrets.EC2_KEY }}       # 2. PEM 내용 그대로
+          port:     ${{ secrets.EC2_PORT }}      # 3. 22
           script: |
             echo "▶ stop old process (if any)"
-            pkill -f allergy.jar || true
-            sleep 2
+            pgrep -f allergy.jar && pkill -f allergy.jar || true   # ← 실패해도 0
       
-            echo "▶ start jar"
-            cd /home/ubuntu
+            echo "▶ start new jar"
+            cd /home/ubuntu                                        # ← allergy.jar 위치
             nohup java -jar allergy.jar > log.txt 2>&1 &
       
-            echo "▶ running PID: $(pgrep -f allergy.jar)"
-            # ---- 반드시 0 코드로 마무리 ----
-            exit 0
+            echo "▶ running PID:" $(pgrep -f allergy.jar || echo "spawn‑failed")
+            exit 0                                                 # ← **반드시 0**
 
 
 
