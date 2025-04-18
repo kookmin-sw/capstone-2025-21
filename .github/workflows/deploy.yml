@@ -46,15 +46,16 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           port: ${{ secrets.EC2_PORT }}
           script: |
-            if pgrep -f allergy.jar; then
-              pkill -f allergy.jar
-              echo "✅ 기존 allergy.jar 종료 완료"
+            if pgrep -f allergy-0.0.1-SNAPSHOT.jar; then
+              pkill -f allergy-0.0.1-SNAPSHOT.jar
+              echo "✅ 기존 allergy-0.0.1-SNAPSHOT.jar 종료 완료"
             else
-              echo "ℹ️ 실행 중인 allergy.jar 없음"
+              echo "ℹ️ 실행 중인 allergy-0.0.1-SNAPSHOT.jar 없음"
             fi
             cd /home/ubuntu
             export DB_USER=${{ secrets.DB_USER }}
             export DB_PASSWORD=${{ secrets.DB_PASSWORD }}
             export JWT_SECRET=${{ secrets.JWT_SECRET }}
-            nohup java -jar allergy.jar > log.txt 2>&1 &
-            echo "🚀 allergy.jar 실행됨!"
+            nohup java -jar allergy-0.0.1-SNAPSHOT.jar > log.txt 2>&1 &
+            echo "🚀 allergy-0.0.1-SNAPSHOT.jar 실행됨!"
+
