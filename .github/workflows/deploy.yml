@@ -48,9 +48,13 @@ jobs:
           script: |
             if pgrep -f allergy.jar; then
               pkill -f allergy.jar
-              echo "기존 allergy.jar 프로세스 종료함"
+              echo "✅ 기존 allergy.jar 종료 완료"
             else
-              echo "기존 allergy.jar 프로세스 없음"
+              echo "ℹ️ 실행 중인 allergy.jar 없음"
             fi
-            cd ${{ secrets.EC2_TARGET_PATH }}
-            nohup java -jar allergy.jar > log.txt 2>&1 
+            cd /home/ubuntu
+            export DB_USER=${{ secrets.DB_USER }}
+            export DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            export JWT_SECRET=${{ secrets.JWT_SECRET }}
+            nohup java -jar allergy.jar > log.txt 2>&1 &
+            echo "🚀 allergy.jar 실행됨!"
