@@ -34,9 +34,9 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_KEY }}
           port: ${{ secrets.EC2_PORT }}
-          source: "build/libs/allergy-0.0.1-SNAPSHOT.jar"
+          source: "Back/allergy/build/libs/allergy-0.0.1-SNAPSHOT.jar"
           target: ${{ secrets.EC2_TARGET_PATH }}
-          working-directory: Back/allergy
+
 
       - name: Run JAR on EC2 via SSH
         uses: appleboy/ssh-action@master
