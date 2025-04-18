@@ -46,12 +46,18 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           port: ${{ secrets.EC2_PORT }}
           script: |
-            pkill -f allergy.jar || true
-            nohup bash -c '
-              export DB_USER="${{ secrets.DB_USER }}"
-              export DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
-              export JWT_SECRET="${{ secrets.JWT_SECRET }}"
-              java -jar allergy.jar > log.txt 2>&1
-            ' &
-
+            set -e
+            echo '[runner] working dir:' $(pwd)
+            ls -l /home/ubuntu/allergy.jar
+      
+            if pgrep -f allergy.jar >/dev/null; then
+              echo '[runner] stop old process'
+              pkill -f allergy.jar
+              sleep 2
+            fi
+      
+            cd /home/ubuntu
+            echo '[runner] start new process'
+            nohup java -jar allergy.jar > log.txt 2>&1 &
+            echo '[runner] started. pid=' $(pgrep -f allergy.jar)
 
