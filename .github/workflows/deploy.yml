@@ -46,9 +46,11 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           port: ${{ secrets.EC2_PORT }}
           script: |
-            pkill -f allergy.jar || true
-            export DB_USER=${{ secrets.DB_USER }}
-            export DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-            export JWT_SECRET=${{ secrets.JWT_SECRET }}
-            nohup java -jar allergy.jar > log.txt 2>&1 &
-            sleep 3
+            if pgrep -f allergy.jar; then
+              pkill -f allergy.jar
+              echo "기존 allergy.jar 프로세스 종료함"
+            else
+              echo "기존 allergy.jar 프로세스 없음"
+            fi
+            cd ${{ secrets.EC2_TARGET_PATH }}
+            nohup java -jar allergy.jar > log.txt 2>&1 
