@@ -1,18 +1,9 @@
-name: Deploy Backend to EC2
+name: Deploy to EC2
 
 on:
   push:
     branches:
       - master
-    paths:
-      - 'Back/allergy/**'
-
-  pull_request:
-    types: [closed]
-    branches:
-      - master
-    paths:
-      - 'Back/allergy/**'
 
 jobs:
   build-and-deploy:
@@ -29,33 +20,22 @@ jobs:
           distribution: 'temurin'
 
       - name: Grant execute permission for gradlew
-        run: chmod +x ./Back/allergy/gradlew
+        run: chmod +x ./gradlew
 
       - name: Build with Gradle (skip tests)
-        run: ./Back/allergy/gradlew -p Back/allergy build -x test
+        run: ./gradlew build -x test
 
-      - name: Stop Running Server on EC2
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
-          key: ${{ secrets.EC2_KEY }}
-          port: ${{ secrets.EC2_PORT }}
-          script: |
-            echo "Stopping currently running allergy.jar..."
-            pkill -f allergy.jar || true
-      
-      - name: Upload JAR to EC2
+      - name: Upload JAR to EC2 via SCP
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_KEY }}
           port: ${{ secrets.EC2_PORT }}
-          source: "Back/allergy/build/libs/allergy-0.0.1-SNAPSHOT.jar"
+          source: "build/libs/allergy-0.0.1-SNAPSHOT.jar"
           target: ${{ secrets.EC2_TARGET_PATH }}
 
-      - name: Run JAR on EC2
+      - name: Run JAR on EC2 via SSH
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
