@@ -58,4 +58,7 @@ jobs:
             export JWT_SECRET=${{ secrets.JWT_SECRET }}
             nohup java -jar allergy-0.0.1-SNAPSHOT.jar > log.txt 2>&1 &
             echo "🚀 allergy-0.0.1-SNAPSHOT.jar 실행됨!"
+            sleep 3
+            exit 0
+
 
