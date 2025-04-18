@@ -51,3 +51,4 @@ jobs:
             export DB_PASSWORD=${{ secrets.DB_PASSWORD }}
             export JWT_SECRET=${{ secrets.JWT_SECRET }}
             nohup java -jar allergy.jar > log.txt 2>&1 &
+            sleep 3
