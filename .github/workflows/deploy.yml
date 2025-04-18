@@ -21,9 +21,11 @@ jobs:
 
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
+        working-directory: Back/allergy
 
       - name: Build with Gradle (skip tests)
         run: ./gradlew build -x test
+        working-directory: Back/allergy
 
       - name: Upload JAR to EC2 via SCP
         uses: appleboy/scp-action@master
