@@ -41,23 +41,23 @@ jobs:
       - name: Run JAR on EC2 via SSH
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.EC2_HOST }}
+          host:  ${{ secrets.EC2_HOST }}
           username: ubuntu
-          key: ${{ secrets.EC2_KEY }}
-          port: ${{ secrets.EC2_PORT }}
+          key:   ${{ secrets.EC2_KEY }}
+          port:  ${{ secrets.EC2_PORT }}
           script: |
-            set -e
-            echo '[runner] working dir:' $(pwd)
-            ls -l /home/ubuntu/allergy.jar
+            # 1) 이전 프로세스 종료 (있을 때만). 실패해도 통과하도록 || true
+            pkill -f allergy.jar || true
+            sleep 2
       
-            if pgrep -f allergy.jar >/dev/null; then
-              echo '[runner] stop old process'
-              pkill -f allergy.jar
-              sleep 2
-            fi
-      
+            # 2) JAR 실행 (필요하면 경로 이동)
             cd /home/ubuntu
-            echo '[runner] start new process'
-            nohup java -jar allergy.jar > log.txt 2>&1 &
-            echo '[runner] started. pid=' $(pgrep -f allergy.jar)
+            nohup bash -c '
+              export DB_USER="${{ secrets.DB_USER }}"
+              export DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
+              export JWT_SECRET="${{ secrets.JWT_SECRET }}"
+              java -jar allergy.jar > log.txt 2>&1
+            ' >/dev/null 2>&1 &
+            echo "🚀  allergy.jar started. PID=$(pgrep -f allergy.jar)"
+
 
