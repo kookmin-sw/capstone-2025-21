@@ -56,9 +56,13 @@ jobs:
             else
               echo "ℹ️ 실행 중인 allergy.jar 없음"
             fi
+          
             cd ${{ secrets.EC2_TARGET_PATH }}
             export DB_USER=${{ secrets.DB_USER }}
             export DB_PASSWORD=${{ secrets.DB_PASSWORD }}
             export JWT_SECRET=${{ secrets.JWT_SECRET }}
+          
             nohup java -jar allergy-0.0.1-SNAPSHOT.jar > log.txt 2>&1 &
             echo "🚀 allergy-0.0.1-SNAPSHOT.jar 실행됨!"
+            sleep 3   # ✅ 안정성 확보
+            exit 0    # ✅ 깃허브에 “성공”으로 인식시키기
