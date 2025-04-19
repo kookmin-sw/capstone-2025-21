@@ -4,10 +4,16 @@ on:
   push:
     branches:
       - master
+    paths:
+      - 'Back/allergy/**'
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: Back/allergy
 
     steps:
       - name: Checkout source code
@@ -21,40 +27,34 @@ jobs:
 
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
-        working-directory: Back/allergy
 
       - name: Build with Gradle (skip tests)
         run: ./gradlew build -x test
-        working-directory: Back/allergy
 
-      - name: Upload JAR to EC2 via SCP
+      - name: Copy JAR to EC2
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_KEY }}
           port: ${{ secrets.EC2_PORT }}
-          source: "Back/allergy/build/libs/allergy-0.0.1-SNAPSHOT.jar"
+          source: "./Back/allergy/build/libs/allergy-0.0.1-SNAPSHOT.jar"
           target: ${{ secrets.EC2_TARGET_PATH }}
 
-
-      - name: Run JAR on EC2 via SSH
+      - name: SSH to EC2 and Run JAR
         uses: appleboy/ssh-action@master
         with:
-          host:     ${{ secrets.EC2_HOST }}      # 1. 11.22.33.44 형태 IP
+          host: ${{ secrets.EC2_HOST }}
           username: ubuntu
-          key:      ${{ secrets.EC2_KEY }}       # 2. PEM 내용 그대로
-          port:     ${{ secrets.EC2_PORT }}      # 3. 22
+          key: ${{ secrets.EC2_KEY }}
+          port: ${{ secrets.EC2_PORT }}
           script: |
-            echo "▶ stop old process (if any)"
-            pgrep -f allergy.jar && pkill -f allergy.jar || true   # ← 실패해도 0
-      
-            echo "▶ start new jar"
-            cd /home/ubuntu                                        # ← allergy.jar 위치
-            nohup java -jar allergy.jar > log.txt 2>&1 &
-      
-            echo "▶ running PID:" $(pgrep -f allergy.jar || echo "spawn‑failed")
-            exit 0                                                 # ← **반드시 0**
+            echo "📦 배포 디렉토리로 이동: ${{ secrets.EC2_TARGET_PATH }}"
+            cd ${{ secrets.EC2_TARGET_PATH }}
 
-
-
+            echo "🛑 실행 중인 allergy 서버 종료 시도"
+            if pgrep -f allergy-0.0.1-SNAPSHOT.jar; then
+              pkill -f allergy-0.0.1-SNAPSHOT.jar
+              echo "✅ 기존 allergy 서버 종료 완료"
+            else
+              echo "
