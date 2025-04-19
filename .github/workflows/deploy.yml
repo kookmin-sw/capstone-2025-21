@@ -6,6 +6,7 @@ on:
       - master
     paths:
       - 'Back/allergy/**'
+      - '.github/workflows/**'
 
 jobs:
   build-and-deploy:
