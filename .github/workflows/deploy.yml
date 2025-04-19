@@ -5,8 +5,8 @@ on:
     branches:
       - master
     paths:
-      - 'Back/allergy/**'
-      - '.github/workflows/**'
+      - 'Back/allergy/**'  # 백엔드에 변경 있을 때만 실행
+      - '.github/workflows/**' 
 
 jobs:
   build-and-deploy:
@@ -50,12 +50,15 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           port: ${{ secrets.EC2_PORT }}
           script: |
-            echo "📦 배포 디렉토리로 이동: ${{ secrets.EC2_TARGET_PATH }}"
-            cd ${{ secrets.EC2_TARGET_PATH }}
-
-            echo "🛑 실행 중인 allergy 서버 종료 시도"
             if pgrep -f allergy-0.0.1-SNAPSHOT.jar; then
               pkill -f allergy-0.0.1-SNAPSHOT.jar
-              echo "✅ 기존 allergy 서버 종료 완료"
+              echo "✅ 기존 allergy.jar 종료 완료"
             else
-              echo "
+              echo "ℹ️ 실행 중인 allergy.jar 없음"
+            fi
+            cd ${{ secrets.EC2_TARGET_PATH }}
+            export DB_USER=${{ secrets.DB_USER }}
+            export DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            export JWT_SECRET=${{ secrets.JWT_SECRET }}
+            nohup java -jar allergy-0.0.1-SNAPSHOT.jar > log.txt 2>&1 &
+            echo "🚀 allergy-0.0.1-SNAPSHOT.jar 실행됨!"
