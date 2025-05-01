@@ -1,18 +1,30 @@
-
+# AI Agent Framework
 crewai==0.30.11
 crewai-tools==0.2.6
-ipykernel==6.29.4
-ipython==8.24.0
-jupyter_client==8.6.2
-jupyter_core==5.7.2
+
+# LLM & OpenAI
+openai==1.13.3  # CrewAI와 호환되는 가장 안정적인 OpenAI 버전
 langchain==0.1.20
 langchain-community==0.0.38
 langchain-core==0.1.52
 langchain-openai==0.0.5
 langchain-text-splitters==0.0.2
 langsmith==0.1.63
-openai==1.30.2
+
+# JSON Parsing & Data Processing
 pydantic==2.7.1
 pydantic_core==2.18.2
-python-dotenv==1.0.1
-tiktoken==0.5.2
+python-dotenv==1.0.1  # 환경 변수 관리
+
+# Tokenization & Optimization
+tiktoken==0.5.2  # OpenAI API 사용 시 필요
+
+# Jupyter 관련 패키지 (로컬 실행용)
+ipykernel==6.29.4
+ipython==8.24.0
+jupyter_client==8.6.2
+jupyter_core==5.7.2
+
+# API 서버 관련 (FastAPI 기반 배포)
+fastapi==0.110.0
+uvicorn==0.27.1
