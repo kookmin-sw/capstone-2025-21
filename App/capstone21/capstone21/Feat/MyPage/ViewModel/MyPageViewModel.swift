@@ -43,9 +43,18 @@ public class MyPageViewModel: ObservableObject {
     @Published var state = State()
     @Published var profileInfo: ProfileInfo = .init()
     
-    public init() {}
     
+    var navigationRouter: NavigationRoutableType
+    var windowRouter: WindowRoutableType
     private let cancelBag = CancelBag()
+
+    init(
+        navigationRouter: NavigationRoutableType,
+        windowRouter: WindowRoutableType
+    ) {
+        self.navigationRouter = navigationRouter
+        self.windowRouter = windowRouter
+    }
     
     func send(_ action: Action) {
         switch action {
@@ -77,7 +86,12 @@ public class MyPageViewModel: ObservableObject {
             break
             
         case .logout:
-            break
+            Providers.HomeProvider.request(target: .logout, instance: BaseResponse<EmptyResponseDTO>.self) { [weak self] data in
+                if data.success {
+                    self?.navigationRouter.destinations = []
+                    self?.windowRouter.switch(to: .onboarding)
+                }
+            }
             
         case .dismissLogoutAlertView:
             break
@@ -90,4 +104,3 @@ public class MyPageViewModel: ObservableObject {
         }
     }
 }
-

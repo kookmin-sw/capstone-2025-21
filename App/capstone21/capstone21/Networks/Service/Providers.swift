@@ -9,12 +9,8 @@ import Foundation
 import Moya
 
 struct Providers {
-    static let networkProvider = NetworkProvider<
-//    static let challengeProvider = NetworkProvider<ChallengeRouter>(withAuth: true)
-//    static let myPageProvider = NetworkProvider<MyPageRouter>(withAuth: true)
-//    static let AuthProvider = NetworkProvider<AuthRouter>(withAuth: false)
-//    static let pointProvider = NetworkProvider<PointRouter>(withAuth: false)
-//    static let bannerProvider = NetworkProvider<BannerRouter>(withAuth: true)
+    static let HomeProvider = NetworkProvider<AuthRouter>(withAuth: true)
+    static let AuthProvider = NetworkProvider<AuthRouter>(withAuth: false)
 }
 
 extension MoyaProvider {

@@ -60,10 +60,6 @@ extension APIConstants {
     }
     
     static var signUpHeader: [String: String] {
-        return [contentType: applicationJSON,
-                       auth: appleAccessToken,
-                         OS: iOS,
-                   timeZone: seoul,
-        ]
+        return [contentType: applicationJSON]
     }
 }

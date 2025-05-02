@@ -7,9 +7,9 @@
 
 import Foundation
 
-struct SocialLogineResponseDTO: Codable {
-    let userId: Int
-    let token: Token
+struct LoginDTO: Codable {
+    let id: String
+    let password: String
 }
 
 struct Token: Codable {

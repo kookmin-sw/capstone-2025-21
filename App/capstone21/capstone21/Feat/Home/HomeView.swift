@@ -42,7 +42,10 @@ struct HomeView: View {
                     }
                     .tag(Tab.menu)
                 
-                MyPageView(viewModel: .init())
+                MyPageView(viewModel: .init(
+                    navigationRouter: container.navigationRouter,
+                    windowRouter: container.windowRouter
+                ))
                     .tabItem {
                         VStack {
                             Image (

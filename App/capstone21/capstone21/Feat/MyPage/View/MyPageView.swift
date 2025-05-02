@@ -127,7 +127,7 @@ public struct MyPageTopView: View {
     }
 }
 
-#Preview {
-    MyPageView(viewModel: .init())
-        .environmentObject(DIContainer.default)
-}
+//#Preview {
+//    MyPageView(viewModel: .init())
+//        .environmentObject(DIContainer.default)
+//}

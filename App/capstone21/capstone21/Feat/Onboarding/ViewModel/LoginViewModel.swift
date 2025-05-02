@@ -52,19 +52,20 @@ public class LogInViewModel: ObservableObject {
             break
             
         case .loginButtonDidTap:
-            //TODO: 로그인 로직
-            navigationRouter.destinations = []
-            windowRouter.switch(to: .home)
-
+            let request = LoginDTO(id: id, password: password)
+            Providers.HomeProvider.request(target: .login(request), instance: BaseResponse<EmptyResponseDTO>.self) { [weak self] data in
+                if data.success {
+                    self?.navigationRouter.destinations = []
+                    self?.windowRouter.switch(to: .home)
+                }
+            }
+            
         case .dismissToastView:
             state.errMessage = ""
         case .forgotPasswordButtonDidTap:
             break
-//            navigationRouter.push(to: .enterEmail)
         case .signUpButtonDidTap:
             navigationRouter.push(to: .selectNationality)
-            break
-//            navigationRouter.push(to: .selectUniversity)
         }
     }
     

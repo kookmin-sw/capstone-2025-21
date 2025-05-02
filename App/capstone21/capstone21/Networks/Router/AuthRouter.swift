@@ -10,7 +10,7 @@ import Moya
 
 enum AuthRouter {
     case signUp(UserInfo)
-    case login
+    case login(LoginDTO)
     case logout
 }
 
@@ -52,8 +52,8 @@ extension AuthRouter: BaseTargetType {
         switch self {
         case .signUp(let request):
             return .requestJSONEncodable(request)
-        case .login:
-            return .requestPlain
+        case .login(let request):
+            return .requestJSONEncodable(request)
         case .logout:
             return .requestPlain
         }
