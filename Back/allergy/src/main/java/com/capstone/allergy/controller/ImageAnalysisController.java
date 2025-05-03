@@ -1,5 +1,6 @@
 package com.capstone.allergy.controller;
 
+import com.capstone.allergy.dto.ImageAnalysisRequestDto;
 import com.capstone.allergy.dto.ImageAnalysisResultDto;
 import com.capstone.allergy.dto.MenuTranslationResultDto;
 import com.capstone.allergy.service.ImageAnalysisService;
@@ -16,12 +17,11 @@ public class ImageAnalysisController {
     private final ImageAnalysisService imageAnalysisService;
 
     @PostMapping("/analyze")
-    @Operation(summary = "이미지 분석", description = "알러지, 맵기 정도, 추천 메뉴를 분석합니다.")
+    @Operation(summary = "이미지 분석", description = "알러지와 추천 메뉴를 분석합니다.")
     public ResponseEntity<ImageAnalysisResultDto> analyzeImage(
-            @RequestParam String imagePath,
-            @RequestParam Long userId
-    ) {
-        ImageAnalysisResultDto result = imageAnalysisService.analyzeImage(imagePath, userId);
+            @RequestBody ImageAnalysisRequestDto requestDto
+            ) {
+        ImageAnalysisResultDto result = imageAnalysisService.analyzeImage(requestDto);
         return ResponseEntity.ok(result);
     }
 
