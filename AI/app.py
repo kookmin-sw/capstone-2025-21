@@ -2,7 +2,7 @@ import os
 import json
 import uuid
 import numpy as np
-from fastapi import FastAPI, HTTPException, File, UploadFile, Form
+from fastapi import FastAPI, HTTPException
 from typing import List, Optional
 from paddleocr import PaddleOCR
 from sentence_transformers import SentenceTransformer
@@ -35,36 +35,11 @@ emb_model = SentenceTransformer("paraphrase-multilingual-mpnet-base-v2")
 
 app = FastAPI()
 
-@app.post("/analyze")
-async def analyze(
-    image: UploadFile = File(...),
-    userId: int = Form(...),
-    nationality: str = Form(...),
-    favoriteFoods: str = Form("[]"),   # JSON string, e.g. '["비빔밥","불고기"]'
-    allergies: str = Form("[]"),       # JSON string, e.g. '["땅콩"]'
-    top_k: int = Form(5)
-):
-    """
-    메뉴판 이미지와 사용자 정보를 받아:
-    1) OCR로 메뉴명 추출
-    2) 메뉴명-메타데이터 매칭
-    3) 사용자 취향 임베딩 및 유사도 계산
-    4) 알러지 제외 후 top_k 메뉴 추천
-    """
-    # A) OCR 처리를 위한 임시 파일 저장
-    temp_fname = f"temp_{uuid.uuid4().hex}.jpg"
-    temp_path = os.path.join(script_dir, temp_fname)
-    with open(temp_path, "wb") as tmp:
-        tmp.write(await image.read())
-
-    # B) OCR: 메뉴명 추출
+def _process_image(temp_path: str, fav_list: List[str], allergy_set: set, nationality: str, top_k: int):
+    # OCR 수행
     ocr_result = ocr_model.ocr(temp_path, cls=True)
     scanned_lines = [(line[1][0], line[0]) for line in ocr_result]
-
-    # 임시 파일 삭제
-    os.remove(temp_path)
-
-    # C) 유효한 메뉴명 필터링
+    # 유효한 메뉴명 필터링
     seen = set()
     valid_scanned = []
     for name, bbox in scanned_lines:
@@ -74,36 +49,24 @@ async def analyze(
             seen.add(name)
     if not valid_scanned:
         raise HTTPException(status_code=400, detail="No valid menu names extracted")
-
-    # D) 사용자 취향·알러지 정보 파싱
-    fav_list = json.loads(favoriteFoods)
-    allergy_set = set(json.loads(allergies))
-
-    # E) 스캔된 메뉴 임베딩 수집
+    # 임베딩 및 사용자 임베딩 계산
     scanned_idxs = [idx for idx, _, _ in valid_scanned]
     scanned_embs = menu_embeddings[scanned_idxs]
-
-    # F) 사용자 임베딩 계산
     if fav_list:
         user_emb = emb_model.encode([" ".join(fav_list)])[0]
     else:
         user_emb = np.mean(scanned_embs, axis=0)
     user_emb = user_emb.astype(np.float32)
-
-    # G) 스캔된 메뉴와 유사도 계산
+    # 유사도 계산
     sims = cosine_similarity(user_emb.reshape(1, -1), scanned_embs)[0]
-    # 인덱스별 유사도 쌍 생성
     scored = list(zip(valid_scanned, sims))
-    # 유사도 내림차순 정렬
     scored.sort(key=lambda x: x[1], reverse=True)
-
-    # H) 알러지 제외 후 추천 생성
+    # 추천 생성
     recs = []
     for (idx, name, bbox), score in scored:
         item = menu_metadata[idx]
         ingredients_str = item.get("ingredients", {}).get("ko", "")
         ing_list = [i.strip() for i in ingredients_str.split(",") if i.strip()]
-        # 알러지 필터링
         if allergy_set and any(allergen in ing_list for allergen in allergy_set):
             continue
         recs.append({
@@ -114,21 +77,51 @@ async def analyze(
         })
         if len(recs) >= top_k:
             break
-
-    # I) 메뉴명을 사용자 언어로 번역
+    # 번역 처리
     dest_lang = langs.get(nationality, "ko")
-    translated_recs = []
     for rec in recs:
         name = rec["menu_name"]
         if dest_lang != "ko":
             try:
-                translated_name = translator.translate(name, dest=dest_lang).text
-            except Exception:
-                translated_name = name # 번역 실패 시 그대로 사용
-        else:
-            translated_name = name
-        rec["menu_name"] = translated_name
-        translated_recs.append(rec)
-    recs = translated_recs
+                rec["menu_name"] = translator.translate(name, dest=dest_lang).text
+            except:
+                rec["menu_name"] = name
+    return recs
+
+import httpx
+from pydantic import BaseModel
+
+class AnalyzeRequest(BaseModel):
+    image_url: str
+    userId: int
+    nationality: str
+    favoriteFoods: List[str] = []
+    allergies: List[str] = []
+    top_k: int = 5
+
+@app.post("/analyze")
+async def analyze(req: AnalyzeRequest):
+    """
+    JSON 바디로 이미지 URL과 사용자 정보를 받아:
+    1) 이미지 다운로드
+    2) OCR로 메뉴명 추출
+    3) 메뉴명-메타데이터 매칭
+    4) 사용자 취향 임베딩 및 유사도 계산
+    5) 알러지 제외 후 top_k 메뉴 추천
+    6) 메뉴명 번역
+    """
+    # A) 이미지 다운로드 및 임시 파일 저장
+    image_bytes = httpx.get(req.image_url).content
+    temp_fname = f"temp_{uuid.uuid4().hex}.jpg"
+    temp_path = os.path.join(script_dir, temp_fname)
+    with open(temp_path, "wb") as tmp:
+        tmp.write(image_bytes)
+
+    # B~I) 추천 로직 호출
+    recs = _process_image(temp_path, req.favoriteFoods, set(req.allergies), req.nationality, req.top_k)
+
+    # 임시 파일 삭제
+    os.remove(temp_path)
 
     return {"recommendations": recs}
+application = app
