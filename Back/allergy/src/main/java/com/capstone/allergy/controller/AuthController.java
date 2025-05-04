@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
@@ -166,7 +167,11 @@ public class AuthController {
 
 
     // ✅ 로그아웃 (토큰 삭제는 클라이언트가 처리)
-    @Operation(summary = "로그아웃", description = "서버에서 별도 처리 없이 클라이언트가 토큰을 삭제하면 됩니다.")
+    @Operation(
+            summary = "로그아웃",
+            description = "서버에서 별도 처리 없이 클라이언트가 토큰을 삭제하면 됩니다.",
+            security = @SecurityRequirement(name = "bearerAuth") // 🔐 자물쇠 표시 추가
+    )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -195,4 +200,5 @@ public class AuthController {
                         .build()
         );
     }
+
 }
