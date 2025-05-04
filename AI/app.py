@@ -1,83 +1,124 @@
 import os
 import json
+import uuid
 import numpy as np
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from fastapi import FastAPI, HTTPException, File, UploadFile, Form
 from typing import List, Optional
+from paddleocr import PaddleOCR
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
-# Set paths for data files
+# 번역을 위한 Translator 초기화
+from googletrans import Translator
+translator = Translator()
+# 언어 매핑: 사용자 국적에 따른 언어 코드
+langs = {"한국어": "ko", "영어": "en", "중국어": "zh-cn", "일본어": "ja"}
+
+# 1) 작업 디렉터리 결정
 script_dir = os.path.dirname(os.path.abspath(__file__))
+
+# 2) 사전 계산된 데이터 경로 설정
 embeddings_path = os.path.join(script_dir, "menu_embeddings.npy")
-metadata_path = os.path.join(script_dir, "menu_metadata.json")
-name_index_path = os.path.join(script_dir, "menu_name_index.json")
+metadata_path   = os.path.join(script_dir, "menu_metadata.json")
+index_path      = os.path.join(script_dir, "menu_name_index.json")
 
-# Load precomputed menu embeddings
+# 3) 임베딩·메타데이터·이름→인덱스 맵 로드
 menu_embeddings = np.load(embeddings_path)
+with open(metadata_path, "r", encoding="utf-8") as f_meta:
+    menu_metadata = json.load(f_meta)
+with open(index_path, "r", encoding="utf-8") as f_idx:
+    name_to_index = json.load(f_idx)
 
-# Load menu metadata
-with open(metadata_path, "r", encoding="utf-8") as f:
-    menu_metadata = json.load(f)
-
-# Load menu name-to-index map
-with open(name_index_path, "r", encoding="utf-8") as f:
-    name_to_index = json.load(f)
-
-# Load sentence transformer model for user embedding
-model = SentenceTransformer('jhgan/ko-sroberta-multitask')
+# 4) OCR 및 임베딩 모델 초기화
+ocr_model = PaddleOCR(use_angle_cls=True, lang="korean")
+emb_model = SentenceTransformer("paraphrase-multilingual-mpnet-base-v2")
 
 app = FastAPI()
 
-class RecommendRequest(BaseModel):
-    scanned: List[str]
-    favorites: Optional[List[str]] = []
-    allergies: Optional[List[str]] = []
-    top_k: Optional[int] = 5
+@app.post("/analyze")
+async def analyze(
+    image: UploadFile = File(...),
+    userId: int = Form(...),
+    nationality: str = Form(...),
+    favoriteFoods: str = Form("[]"),   # JSON string, e.g. '["비빔밥","불고기"]'
+    allergies: str = Form("[]"),       # JSON string, e.g. '["땅콩"]'
+    top_k: int = Form(5)
+):
+    """
+    메뉴판 이미지와 사용자 정보를 받아:
+    1) OCR로 메뉴명 추출
+    2) 메뉴명-메타데이터 매칭
+    3) 사용자 취향 임베딩 및 유사도 계산
+    4) 알러지 제외 후 top_k 메뉴 추천
+    """
+    # A) OCR 처리를 위한 임시 파일 저장
+    temp_fname = f"temp_{uuid.uuid4().hex}.jpg"
+    temp_path = os.path.join(script_dir, temp_fname)
+    with open(temp_path, "wb") as tmp:
+        tmp.write(await image.read())
 
-@app.post("/recommend")
-def recommend(request: RecommendRequest):
-    # Filter scanned menu names by those present in the index
-    valid_scanned = [name for name in request.scanned if name in name_to_index]
+    # B) OCR: 메뉴명 추출
+    ocr_result = ocr_model.ocr(temp_path, cls=True)
+    scanned_lines = [line[1][0] for line in ocr_result]
+
+    # 임시 파일 삭제
+    os.remove(temp_path)
+
+    # C) 유효한 메뉴명 필터링
+    valid_scanned = [name for name in scanned_lines if name in name_to_index]
     if not valid_scanned:
-        raise HTTPException(status_code=400, detail="No valid scanned menu names found.")
-    # Get indices of scanned menu names
-    scanned_indices = [name_to_index[name] for name in valid_scanned]
-    # Get embeddings for the scanned menus
-    scanned_embeddings = menu_embeddings[scanned_indices]
-    # Compute user embedding as mean of scanned embeddings
-    user_embedding = np.mean(scanned_embeddings, axis=0, keepdims=True)
-    # Compute cosine similarity between user embedding and all menu embeddings
-    similarities = cosine_similarity(user_embedding, menu_embeddings)[0]
+        raise HTTPException(status_code=400, detail="No valid menu names extracted")
 
-    # Filter out menus matching allergy ingredients (Korean extraction and filtering)
-    allergy_set = set(request.allergies or [])
-    recommendations = []
-    for idx, meta in enumerate(menu_metadata):
-        # 1) Extract Korean ingredients string
-        ingredients_ko = meta.get('ingredients', {}).get('ko', '')
-        # 2) Tokenize into individual ingredients
-        ing_list = [ing.strip() for ing in ingredients_ko.split(',') if ing.strip()]
-        ing_set = set(ing_list)
+    # D) 사용자 취향·알러지 정보 파싱
+    fav_list = json.loads(favoriteFoods)
+    allergy_set = set(json.loads(allergies))
 
-        # 3) Allergy filter: skip if any allergen appears in ingredients
-        if allergy_set and any(allergen in ing_set for allergen in allergy_set):
+    # E) 스캔된 메뉴 임베딩 수집
+    scanned_idxs = [name_to_index[name] for name in valid_scanned]
+    scanned_embs = menu_embeddings[scanned_idxs]
+
+    # F) 사용자 임베딩 계산
+    if fav_list:
+        user_emb = emb_model.encode([" ".join(fav_list)])[0]
+    else:
+        user_emb = np.mean(scanned_embs, axis=0)
+    user_emb = user_emb.astype(np.float32)
+
+    # G) 스캔된 메뉴와 유사도 계산
+    sims = cosine_similarity(user_emb.reshape(1, -1), scanned_embs)[0]
+    # 인덱스별 유사도 쌍 생성
+    scored = list(zip(scanned_idxs, sims))
+    # 유사도 내림차순 정렬
+    scored.sort(key=lambda x: x[1], reverse=True)
+
+    # H) 알러지 제외 후 추천 생성
+    recs = []
+    for idx, score in scored:
+        item = menu_metadata[idx]
+        ingredients_str = item.get("ingredients", {}).get("ko", "")
+        ing_list = [i.strip() for i in ingredients_str.split(",") if i.strip()]
+        # 알러지 필터링
+        if allergy_set and any(allergen in ing_list for allergen in allergy_set):
             continue
-
-        # 4) Append recommendation entry
-        recommendations.append({
-            "menu_name": meta.get("menu_name", {}).get("ko", str(meta.get("menu_name"))),
+        recs.append({
+            "menu_name": item.get("menu_name", {}).get("ko", ""),
             "ingredients": ing_list,
-            "similarity": float(similarities[idx])
+            "similarity": float(score)
         })
-    # Sort by similarity descending
-    recommendations.sort(key=lambda x: x["similarity"], reverse=True)
-    # Remove scanned menu items from recommendations
-    scanned_names = set(valid_scanned)
-    recommendations = [rec for rec in recommendations if rec["menu_name"] not in scanned_names]
-    # Return top_k recommendations
-    return {"recommendations": recommendations[:request.top_k]}
+        if len(recs) >= top_k:
+            break
 
-if __name__ == '__main__':
-    import uvicorn
-    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
+    # I) 메뉴명을 사용자 언어로 번역
+    dest_lang = langs.get(nationality, "ko")
+    translated_recs = []
+    for rec in recs:
+        name = rec["menu_name"]
+        if dest_lang != "ko":
+            translated_name = translator.translate(name, dest=dest_lang).text
+        else:
+            translated_name = name
+        rec["menu_name"] = translated_name
+        translated_recs.append(rec)
+    recs = translated_recs
+
+    return {"recommendations": recs}
