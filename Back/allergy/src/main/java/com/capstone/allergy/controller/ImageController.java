@@ -40,8 +40,14 @@ public class ImageController {
 
     @Operation(
             summary = "이미지 업로드",
-            description = "이미지를 multipart/form-data 형식으로 업로드합니다. "
-                    + "폼 데이터의 key는 'image', value는 파일입니다.",
+            description = """
+이미지를 업로드합니다.
+이미지를 `multipart/form-data` 형식으로 업로드하며,
+폼 데이터의 key는 `'image'`, value는 업로드할 파일입니다.
+
+- `Content-Type`: `multipart/form-data`
+- `Authorization`: Bearer {Token}
+""",
             security = @SecurityRequirement(name = "bearerAuth"), // ✅ JWT 인증 명시
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "업로드할 이미지 파일",
@@ -152,7 +158,12 @@ public class ImageController {
 
     @Operation(
             summary = "이미지 조회",
-            description = "파일명을 통해 이미지를 반환합니다. JWT 토큰 인증이 필요합니다.",
+            description = """
+업로드된 이미지를 조회합니다.
+
+- `Content-Type`: 필요 없음
+- `Authorization`: Bearer {Token}
+""",
             security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(

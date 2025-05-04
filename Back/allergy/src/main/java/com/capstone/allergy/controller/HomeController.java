@@ -28,7 +28,12 @@ public class HomeController {
 
     @Operation(
             summary = "추천 음식 리스트 조회",
-            description = "JWT를 통해 로그인한 사용자의 선호 데이터를 기반으로 추천된 한국 음식 리스트를 반환합니다.",
+            description = """
+사용자 선호를 기반으로 음식 추천을 제공합니다.
+
+- `Content-Type`: 필요 없음
+- `Authorization`: Bearer {Token}
+""",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponse(

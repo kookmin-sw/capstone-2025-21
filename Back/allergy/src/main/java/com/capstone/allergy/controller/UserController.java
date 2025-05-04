@@ -25,7 +25,12 @@ public class UserController {
 
     @Operation(
             summary = "내 프로필 조회",
-            description = "현재 로그인한 사용자의 로그인 아이디와 국적 정보를 반환합니다.",
+            description = """
+현재 로그인한 사용자의 ID와 국적 정보를 반환합니다.
+
+- `Content-Type`: 필요 없음
+- `Authorization`: Bearer {Token}
+""",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponse(

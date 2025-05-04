@@ -28,7 +28,12 @@ public class ImageAnalysisController {
     @PostMapping("/analyze")
     @Operation(
             summary = "이미지 분석",
-            description = "이미지를 분석하여 알러지와 추천 메뉴 정보를 반환합니다.",
+            description = """
+이미지를 분석해 알러지 경고와 추천 메뉴를 반환합니다.
+
+- `Content-Type`: `application/json`
+- `Authorization`: Bearer {Token}
+""",
             security = @SecurityRequirement(name = "bearerAuth"),
             requestBody = @RequestBody(
                     required = true,
@@ -107,7 +112,12 @@ public class ImageAnalysisController {
     @PostMapping("/translate")
     @Operation(
             summary = "이미지 번역",
-            description = "이미지를 분석하여 번역된 메뉴 리스트를 반환합니다.",
+            description = """
+이미지 경로를 기반으로 메뉴를 번역합니다.
+
+- `Content-Type`: `application/json`
+- `Authorization`: Bearer {Token}
+""",
             security = @SecurityRequirement(name = "bearerAuth"), // ✅ JWT 인증 필요 추가
             requestBody = @RequestBody(
                     required = true,
