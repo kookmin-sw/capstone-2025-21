@@ -25,9 +25,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/api/auth/**",              // 기존 허용 경로
-                                "/swagger-ui/**",            // Swagger UI 정적 리소스
-                                "/v3/api-docs/**",           // OpenAPI 문서 경로
-                                "/swagger-ui.html"           // Swagger HTML 진입점
+                                "/swagger-ui/**",           // Swagger UI 정적 리소스
+                                "/v3/api-docs/**",          // OpenAPI 문서 경로
+                                "/swagger-ui.html",         // Swagger HTML 진입점
+                                "/api/gallery/images/**"    // 이미지 조회 경호 익명 허용
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

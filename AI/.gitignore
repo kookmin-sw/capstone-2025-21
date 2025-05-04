@@ -1,5 +1,6 @@
 env/
 .env
+
 translated_menu_structured.json
 menu_embeddings.npy
 menu_metadata.json
