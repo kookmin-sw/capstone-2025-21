@@ -11,14 +11,14 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ImageAnalysisResultDto {
     private String allergyAlert;
-    private String actualSpiceLevel;
+    //private String actualSpiceLevel;
     private String recommendedMenu;
 
     @Override
     public String toString() {
         return "ImageAnalysisResultDto{" +
                 "allergyAlert='" + allergyAlert + '\'' +
-                ", spiceLevel='" + actualSpiceLevel + '\'' +
+                //", spiceLevel='" + actualSpiceLevel + '\'' +
                 ", recommendedMenu='" + recommendedMenu + '\'' +
                 '}';
     }
