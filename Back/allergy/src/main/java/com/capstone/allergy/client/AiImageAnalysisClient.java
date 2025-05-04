@@ -8,6 +8,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -30,11 +32,18 @@ public class AiImageAnalysisClient {
 
         HttpEntity<ImageAnalysisRequestDto> request = new HttpEntity<>(requestDto, headers);
 
-        ResponseEntity<ImageAnalysisResultDto> response = restTemplate.exchange(
-                ANALYSIS_URL, HttpMethod.POST, request, ImageAnalysisResultDto.class
-        );
-
-        return response.getBody();
+        try {
+            ResponseEntity<ImageAnalysisResultDto> response = restTemplate.exchange(
+                    ANALYSIS_URL, HttpMethod.POST, request, ImageAnalysisResultDto.class
+            );
+            return response.getBody();
+        } catch (HttpStatusCodeException e) {
+            // AI 서버가 응답은 했지만 HTTP 오류 (예: 400, 500)
+            throw new RuntimeException("AI 서버 오류 응답: " + e.getStatusCode() + " - " + e.getResponseBodyAsString());
+        } catch (RestClientException e) {
+            // AI 서버와 연결 자체가 안 되는 경우
+            throw new RuntimeException("AI 서버에 연결할 수 없습니다. 서버가 실행 중인지 확인해주세요.");
+        }
     }
 
     public MenuTranslationResultDto requestTranslation(String imagePath) {
@@ -46,10 +55,15 @@ public class AiImageAnalysisClient {
 
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, headers);
 
-        ResponseEntity<MenuTranslationResultDto> response = restTemplate.exchange(
-                TRANSLATE_URL, HttpMethod.POST, request, MenuTranslationResultDto.class
-        );
-
-        return response.getBody();
+        try {
+            ResponseEntity<MenuTranslationResultDto> response = restTemplate.exchange(
+                    TRANSLATE_URL, HttpMethod.POST, request, MenuTranslationResultDto.class
+            );
+            return response.getBody();
+        } catch (HttpStatusCodeException e) {
+            throw new RuntimeException("AI 서버 오류 응답(번역): " + e.getStatusCode() + " - " + e.getResponseBodyAsString());
+        } catch (RestClientException e) {
+            throw new RuntimeException("AI 서버에 연결할 수 없습니다 (번역 요청). 서버가 실행 중인지 확인해주세요.");
+        }
     }
 }
