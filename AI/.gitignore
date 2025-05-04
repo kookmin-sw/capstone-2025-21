@@ -1,3 +1,6 @@
 env/
 .env
-recommended_restaurants.json
+
+translated_menu_structured.json
+menu_embeddings.npy
+menu_metadata.json
