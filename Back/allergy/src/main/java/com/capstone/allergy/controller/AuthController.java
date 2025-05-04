@@ -54,7 +54,7 @@ public class AuthController {
                             mediaType = "application/json",
                             schema = @Schema(implementation = CommonResponse.class),
                             examples = @ExampleObject(
-                                    value = "{ \"success\": false, \"message\": \"이미 존재하는 사용자입니다\", \"data\": null }"
+                                    value = "{ \"success\": false, \"message\": \"이미 존재하는 아이디입니다\", \"data\": null }"
                             )
                     )
             )
