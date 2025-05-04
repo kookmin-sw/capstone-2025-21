@@ -1,6 +1,7 @@
 package com.capstone.allergy.controller;
 
 import com.capstone.allergy.dto.*;
+import com.capstone.allergy.jwt.CustomUserDetails;
 import com.capstone.allergy.service.ImageAnalysisService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -8,10 +9,12 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -26,6 +29,7 @@ public class ImageAnalysisController {
     @Operation(
             summary = "이미지 분석",
             description = "이미지를 분석하여 알러지와 추천 메뉴 정보를 반환합니다.",
+            security = @SecurityRequirement(name = "bearerAuth"),
             requestBody = @RequestBody(
                     required = true,
                     content = @Content(
@@ -35,7 +39,6 @@ public class ImageAnalysisController {
                                     name = "요청 예시",
                                     value = "{\n" +
                                             "  \"imagePath\": \"/api/gallery/images/uuid_filename.jpg\",\n" +
-                                            "  \"userId\": 1,\n" +
                                             "  \"nationality\": \"USA\",\n" +
                                             "  \"favoriteFoods\": [\"비빔밥\", \"불고기\"],\n" +
                                             "  \"allergies\": [\"계란\", \"우유\"]\n" +
@@ -59,8 +62,7 @@ public class ImageAnalysisController {
                                                     "  }\n" +
                                                     "}"
                                     )
-                            )
-                    ),
+                            )),
                     @ApiResponse(responseCode = "500", description = "서버 오류",
                             content = @Content(
                                     mediaType = "application/json",
@@ -69,16 +71,21 @@ public class ImageAnalysisController {
                                             name = "서버 오류 예시",
                                             value = "{\n" +
                                                     "  \"success\": false,\n" +
-                                                    "  \"message\": \"이미지 분석 중 오류 발생\",\n" +
+                                                    "  \"message\": \"ai 연결 실패\",\n" +
                                                     "  \"data\": null\n" +
                                                     "}"
                                     )
-                            )
-                    )
+                            ))
             }
     )
-    public ResponseEntity<CommonResponse<ImageAnalysisResultDto>> analyzeImage(@RequestBody ImageAnalysisRequestDto requestDto) {
+    public ResponseEntity<CommonResponse<ImageAnalysisResultDto>> analyzeImage(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestBody ImageAnalysisRequestDto requestDto) {
+
         try {
+            Long userId = userDetails.getUser().getId();
+            requestDto.setUserId(userId); // DTO에 사용자 ID 주입
+
             ImageAnalysisResultDto result = imageAnalysisService.analyzeImage(requestDto);
             return ResponseEntity.ok(
                     CommonResponse.<ImageAnalysisResultDto>builder()
@@ -91,7 +98,7 @@ public class ImageAnalysisController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(CommonResponse.<ImageAnalysisResultDto>builder()
                             .success(false)
-                            .message("이미지 분석 중 오류 발생")
+                            .message("ai 연결 실패")
                             .data(null)
                             .build());
         }
@@ -101,6 +108,7 @@ public class ImageAnalysisController {
     @Operation(
             summary = "이미지 번역",
             description = "이미지를 분석하여 번역된 메뉴 리스트를 반환합니다.",
+            security = @SecurityRequirement(name = "bearerAuth"), // ✅ JWT 인증 필요 추가
             requestBody = @RequestBody(
                     required = true,
                     content = @Content(
@@ -129,25 +137,26 @@ public class ImageAnalysisController {
                                                     "  }\n" +
                                                     "}"
                                     )
-                            )
-                    ),
+                            )),
                     @ApiResponse(responseCode = "500", description = "서버 오류",
                             content = @Content(
                                     mediaType = "application/json",
                                     schema = @Schema(implementation = CommonResponse.class),
                                     examples = @ExampleObject(
-                                            name = "서버 오류 예시",
+                                            name = "ai 연결 실패",
                                             value = "{\n" +
                                                     "  \"success\": false,\n" +
-                                                    "  \"message\": \"메뉴 번역 중 오류 발생\",\n" +
+                                                    "  \"message\": \"ai 연결 실패\",\n" +
                                                     "  \"data\": null\n" +
                                                     "}"
                                     )
-                            )
-                    )
+                            ))
             }
     )
-    public ResponseEntity<CommonResponse<MenuTranslationResultDto>> translateImage(@RequestBody ImagePathRequestDto requestDto) {
+    public ResponseEntity<CommonResponse<MenuTranslationResultDto>> translateImage(
+            @AuthenticationPrincipal CustomUserDetails userDetails, // ✅ 토큰에서 사용자 정보 추출
+            @RequestBody ImagePathRequestDto requestDto) {
+
         try {
             MenuTranslationResultDto result = imageAnalysisService.getTranslatedMenu(requestDto.getImagePath());
             return ResponseEntity.ok(
@@ -161,7 +170,7 @@ public class ImageAnalysisController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(CommonResponse.<MenuTranslationResultDto>builder()
                             .success(false)
-                            .message("메뉴 번역 중 오류 발생")
+                            .message("ai 연결 실패")
                             .data(null)
                             .build());
         }

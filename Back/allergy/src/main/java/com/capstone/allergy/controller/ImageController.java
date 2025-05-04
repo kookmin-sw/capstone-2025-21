@@ -40,7 +40,9 @@ public class ImageController {
 
     @Operation(
             summary = "이미지 업로드",
-            description = "이미지를 업로드하고 해당 이미지의 조회 URL을 반환합니다.",
+            description = "이미지를 multipart/form-data 형식으로 업로드합니다. "
+                    + "폼 데이터의 key는 'image', value는 파일입니다.",
+            security = @SecurityRequirement(name = "bearerAuth"), // ✅ JWT 인증 명시
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "업로드할 이미지 파일",
                     required = true,
@@ -156,7 +158,7 @@ public class ImageController {
                     @ApiResponse(
                             responseCode = "200",
                             description = "이미지 반환 성공 (바이너리 형식)",
-                            content = @Content(mediaType = "image/jpeg") // 또는 image/png 등으로 자동 처리됨
+                            content = @Content(mediaType = "image/jpeg")
                     ),
                     @ApiResponse(
                             responseCode = "404",
@@ -193,7 +195,7 @@ public class ImageController {
             }
     )
     @GetMapping("/images/{fileName}")
-    public ResponseEntity<Resource> getImage(
+    public ResponseEntity<?> getImage(
             @Parameter(description = "조회할 이미지 파일명", required = true)
             @PathVariable String fileName) {
         try {
@@ -201,7 +203,13 @@ public class ImageController {
             Resource resource = new UrlResource(filePath.toUri());
 
             if (!resource.exists() || !resource.isReadable()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                        CommonResponse.builder()
+                                .success(false)
+                                .message("이미지를 찾을 수 없습니다.")
+                                .data(null)
+                                .build()
+                );
             }
 
             String contentType = Files.probeContentType(filePath);
@@ -212,10 +220,15 @@ public class ImageController {
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType(contentType))
                     .body(resource);
-        } catch (MalformedURLException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+
         } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    CommonResponse.builder()
+                            .success(false)
+                            .message("이미지 로드 중 서버 오류가 발생했습니다.")
+                            .data(null)
+                            .build()
+            );
         }
     }
 }
