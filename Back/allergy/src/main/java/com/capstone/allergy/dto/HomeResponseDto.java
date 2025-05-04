@@ -10,5 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class HomeResponseDto {
-    private List<RecommendedMenuDto> recommendedMenus;
+//    private List<RecommendedMenuDto> recommendedMenus;
+    private List<String> menus;
 }
+

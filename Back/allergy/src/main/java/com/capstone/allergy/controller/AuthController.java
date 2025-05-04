@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
@@ -34,7 +35,12 @@ public class AuthController {
     private final JwtTokenProvider jwtTokenProvider;
 
     // ✅ 회원가입
-    @Operation(summary = "회원가입", description = "회원가입 단계의 모든 정보를 받아 회원을 등록합니다.")
+    @Operation(summary = "회원가입", description = """
+회원가입을 위한 API입니다.
+
+- `Content-Type`: `application/json`
+- `Authorization`: 필요 없음
+""")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -54,7 +60,7 @@ public class AuthController {
                             mediaType = "application/json",
                             schema = @Schema(implementation = CommonResponse.class),
                             examples = @ExampleObject(
-                                    value = "{ \"success\": false, \"message\": \"이미 존재하는 사용자입니다\", \"data\": null }"
+                                    value = "{ \"success\": false, \"message\": \"이미 존재하는 아이디입니다\", \"data\": null }"
                             )
                     )
             )
@@ -82,7 +88,12 @@ public class AuthController {
     }
 
     // ✅ 로그인
-    @Operation(summary = "로그인", description = "아이디와 비밀번호를 입력받아 JWT 토큰을 반환합니다.")
+    @Operation(summary = "로그인", description = """
+로그인을 수행하고 JWT 토큰을 반환합니다.
+
+- `Content-Type`: `application/json`
+- `Authorization`: 필요 없음
+""")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -166,7 +177,16 @@ public class AuthController {
 
 
     // ✅ 로그아웃 (토큰 삭제는 클라이언트가 처리)
-    @Operation(summary = "로그아웃", description = "서버에서 별도 처리 없이 클라이언트가 토큰을 삭제하면 됩니다.")
+    @Operation(
+            summary = "로그아웃",
+            description = """
+클라이언트에서 토큰을 삭제하면 됩니다. 서버 처리 없음.
+
+- `Content-Type`: 필요 없음
+- `Authorization`: Bearer {Token}
+""",
+            security = @SecurityRequirement(name = "bearerAuth") // 🔐 자물쇠 표시 추가
+    )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -195,4 +215,5 @@ public class AuthController {
                         .build()
         );
     }
+
 }

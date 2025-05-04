@@ -11,8 +11,15 @@ import java.util.List;
 @AllArgsConstructor
 public class ImageAnalysisRequestDto {
     private String imagePath;
-    private Long userId;
     private String nationality;
     private List<String> favoriteFoods;
     private List<String> allergies;
+
+    private Long userId;  // 내부 주입용
+
+    // 이 메서드를 명시적으로 추가
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 }
+

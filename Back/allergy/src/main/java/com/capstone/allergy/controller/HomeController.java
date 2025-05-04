@@ -28,7 +28,12 @@ public class HomeController {
 
     @Operation(
             summary = "추천 음식 리스트 조회",
-            description = "JWT를 통해 로그인한 사용자의 선호 데이터를 기반으로 추천된 한국 음식 리스트를 반환합니다.",
+            description = """
+사용자 선호를 기반으로 음식 추천을 제공합니다.
+
+- `Content-Type`: 필요 없음
+- `Authorization`: Bearer {Token}
+""",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponse(
@@ -43,27 +48,24 @@ public class HomeController {
                                     "  \"success\": true,\n" +
                                     "  \"message\": \"추천 음식 리스트 반환 성공\",\n" +
                                     "  \"data\": {\n" +
-                                    "    \"menus\": [\n" +
-                                    "      {\n" +
-                                    "        \"name\": \"비빔밥\",\n" +
-                                    "        \"description\": \"각종 채소와 고기를 넣고 비벼먹는 전통 한식\"\n" +
-                                    "      },\n" +
-                                    "      {\n" +
-                                    "        \"name\": \"불고기\",\n" +
-                                    "        \"description\": \"얇게 썬 쇠고기를 양념에 재워 구운 요리\"\n" +
-                                    "      }\n" +
-                                    "    ]\n" +
+                                    "    \"menus\": [\"비빔밥\", \"불고기\"]\n" +
                                     "  }\n" +
                                     "}"
                     )
             )
     )
     @GetMapping
-    public ResponseEntity<HomeResponseDto> getHome(
+    public ResponseEntity<CommonResponse<HomeResponseDto>> getHome(
             @AuthenticationPrincipal CustomUserDetails userDetails) {
 
         Long userId = userDetails.getUser().getId(); // 사용자 ID 추출
         HomeResponseDto response = homeService.getRecommendedMenus(userId);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(
+                CommonResponse.<HomeResponseDto>builder()
+                        .success(true)
+                        .message("추천 음식 리스트 반환 성공")
+                        .data(response)
+                        .build()
+        );
     }
 }
