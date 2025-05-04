@@ -1,4 +1,10 @@
+fastapi==0.95.2
+uvicorn==0.22.0
+python-multipart==0.0.6
+paddlepaddle==2.6.0
+paddleocr==2.6.1
+googletrans==4.0.0-rc1
 sentence-transformers==4.1.0
 numpy==2.2.5
 scikit-learn==1.6.1
-torch==2.7.0 
+torch==2.7.0
