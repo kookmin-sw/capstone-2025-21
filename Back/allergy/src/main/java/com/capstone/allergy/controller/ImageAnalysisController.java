@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/analysis")
 @RequiredArgsConstructor
@@ -36,8 +38,9 @@ public class ImageAnalysisController {
 
     @PostMapping("/translate")
     @Operation(summary = "이미지 번역", description = "이미지에서 메뉴판을 번역합니다.")
-    public ResponseEntity<?> translateImage(@RequestParam String imagePath) {
+    public ResponseEntity<?> translateImage(@RequestBody Map<String, String> request) {
         try {
+            String imagePath = request.get("imagePath");
             MenuTranslationResultDto result = imageAnalysisService.getTranslatedMenu(imagePath);
             return ResponseEntity.ok(result);
         } catch (RuntimeException e) {
