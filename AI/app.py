@@ -59,13 +59,19 @@ async def analyze(
 
     # B) OCR: 메뉴명 추출
     ocr_result = ocr_model.ocr(temp_path, cls=True)
-    scanned_lines = [line[1][0] for line in ocr_result]
+    scanned_lines = [(line[1][0], line[0]) for line in ocr_result]
 
     # 임시 파일 삭제
     os.remove(temp_path)
 
     # C) 유효한 메뉴명 필터링
-    valid_scanned = [name for name in scanned_lines if name in name_to_index]
+    seen = set()
+    valid_scanned = []
+    for name, bbox in scanned_lines:
+        if name in name_to_index and name not in seen:
+            idx = name_to_index[name]
+            valid_scanned.append((idx, name, bbox))
+            seen.add(name)
     if not valid_scanned:
         raise HTTPException(status_code=400, detail="No valid menu names extracted")
 
@@ -74,7 +80,7 @@ async def analyze(
     allergy_set = set(json.loads(allergies))
 
     # E) 스캔된 메뉴 임베딩 수집
-    scanned_idxs = [name_to_index[name] for name in valid_scanned]
+    scanned_idxs = [idx for idx, _, _ in valid_scanned]
     scanned_embs = menu_embeddings[scanned_idxs]
 
     # F) 사용자 임베딩 계산
@@ -87,13 +93,13 @@ async def analyze(
     # G) 스캔된 메뉴와 유사도 계산
     sims = cosine_similarity(user_emb.reshape(1, -1), scanned_embs)[0]
     # 인덱스별 유사도 쌍 생성
-    scored = list(zip(scanned_idxs, sims))
+    scored = list(zip(valid_scanned, sims))
     # 유사도 내림차순 정렬
     scored.sort(key=lambda x: x[1], reverse=True)
 
     # H) 알러지 제외 후 추천 생성
     recs = []
-    for idx, score in scored:
+    for (idx, name, bbox), score in scored:
         item = menu_metadata[idx]
         ingredients_str = item.get("ingredients", {}).get("ko", "")
         ing_list = [i.strip() for i in ingredients_str.split(",") if i.strip()]
@@ -103,7 +109,8 @@ async def analyze(
         recs.append({
             "menu_name": item.get("menu_name", {}).get("ko", ""),
             "ingredients": ing_list,
-            "similarity": float(score)
+            "similarity": float(score),
+            "bbox": bbox
         })
         if len(recs) >= top_k:
             break
@@ -114,7 +121,10 @@ async def analyze(
     for rec in recs:
         name = rec["menu_name"]
         if dest_lang != "ko":
-            translated_name = translator.translate(name, dest=dest_lang).text
+            try:
+                translated_name = translator.translate(name, dest=dest_lang).text
+            except Exception:
+                translated_name = name # 번역 실패 시 그대로 사용
         else:
             translated_name = name
         rec["menu_name"] = translated_name
