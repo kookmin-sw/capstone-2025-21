@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,8 +30,12 @@ public class HomeService {
         // AI 서버로 추천 요청
         List<RecommendedMenuDto> recommendedMenus = aiRecommendClient.requestRecommendation(preference);
 
-        // 응답 DTO로 변환
-        return new HomeResponseDto(recommendedMenus);
+        // 음식 이름만 추출
+        List<String> menuNames = recommendedMenus.stream()
+                .map(RecommendedMenuDto::getName)
+                .collect(Collectors.toList());
+
+        // 응답 DTO 구성
+        return new HomeResponseDto(menuNames);
     }
 }
-
