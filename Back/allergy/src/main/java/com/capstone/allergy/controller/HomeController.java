@@ -29,11 +29,11 @@ public class HomeController {
     @Operation(
             summary = "추천 음식 리스트 조회",
             description = """
-사용자 선호를 기반으로 음식 추천을 제공합니다.
+            JWT를 통해 로그인한 사용자의 선호 데이터를 기반으로 추천된 한국 음식 리스트를 반환합니다.
 
-- `Content-Type`: 필요 없음
-- `Authorization`: Bearer {Token}
-""",
+            - Authorization: Bearer {Token}
+            - Content-Type: 없음
+            """,
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponse(
@@ -54,18 +54,45 @@ public class HomeController {
                     )
             )
     )
+    @ApiResponse(
+            responseCode = "500",
+            description = "AI 서버 연결 실패",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = CommonResponse.class),
+                    examples = @ExampleObject(
+                            name = "AI 서버 오류 예시",
+                            value = "{\n" +
+                                    "  \"success\": false,\n" +
+                                    "  \"message\": \"AI 추천 서버 연결 실패\",\n" +
+                                    "  \"data\": null\n" +
+                                    "}"
+                    )
+            )
+    )
     @GetMapping
     public ResponseEntity<CommonResponse<HomeResponseDto>> getHome(
             @AuthenticationPrincipal CustomUserDetails userDetails) {
 
         Long userId = userDetails.getUser().getId(); // 사용자 ID 추출
-        HomeResponseDto response = homeService.getRecommendedMenus(userId);
-        return ResponseEntity.ok(
-                CommonResponse.<HomeResponseDto>builder()
-                        .success(true)
-                        .message("추천 음식 리스트 반환 성공")
-                        .data(response)
-                        .build()
-        );
+
+        try {
+            HomeResponseDto response = homeService.getRecommendedMenus(userId);
+            return ResponseEntity.ok(
+                    CommonResponse.<HomeResponseDto>builder()
+                            .success(true)
+                            .message("추천 음식 리스트 반환 성공")
+                            .data(response)
+                            .build()
+            );
+        } catch (RuntimeException e) {
+            return ResponseEntity.internalServerError().body(
+                    CommonResponse.<HomeResponseDto>builder()
+                            .success(false)
+                            .message("AI 추천 서버 연결 실패: " + e.getMessage())
+                            .data(null)
+                            .build()
+            );
+        }
     }
 }
