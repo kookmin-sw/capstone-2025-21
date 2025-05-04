@@ -39,10 +39,10 @@ public class AiImageAnalysisClient {
             return response.getBody();
         } catch (HttpStatusCodeException e) {
             // AI 서버가 응답은 했지만 HTTP 오류 (예: 400, 500)
-            throw new RuntimeException("AI 서버 오류 응답: " + e.getStatusCode() + " - " + e.getResponseBodyAsString());
+            throw new RuntimeException("AI server error: " + e.getStatusCode() + " - " + e.getResponseBodyAsString());
         } catch (RestClientException e) {
             // AI 서버와 연결 자체가 안 되는 경우
-            throw new RuntimeException("AI 서버에 연결할 수 없습니다. 서버가 실행 중인지 확인해주세요.");
+            throw new RuntimeException("Cannot connect to AI server. Check if the AI server is running");
         }
     }
 
@@ -61,9 +61,9 @@ public class AiImageAnalysisClient {
             );
             return response.getBody();
         } catch (HttpStatusCodeException e) {
-            throw new RuntimeException("AI 서버 오류 응답(번역): " + e.getStatusCode() + " - " + e.getResponseBodyAsString());
+            throw new RuntimeException("AI server error(translation): " + e.getStatusCode() + " - " + e.getResponseBodyAsString());
         } catch (RestClientException e) {
-            throw new RuntimeException("AI 서버에 연결할 수 없습니다 (번역 요청). 서버가 실행 중인지 확인해주세요.");
+            throw new RuntimeException("Cannot connect to AI server (translation request). Check if the AI server is running.");
         }
     }
 }
