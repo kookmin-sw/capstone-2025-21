@@ -35,31 +35,15 @@ struct APIConstants {
 }
 
 extension APIConstants {
-    static var hasSocialTokenHeader: [String: String] {
-        return [contentType: applicationJSON,
-                       auth: appleAccessToken]
-    }
-    
-    static var hasTokenHeader: [String: String] {
-        return [contentType: applicationJSON,
-                         OS: iOS,
-                       auth: accessToken,
-                   timeZone: seoul
+    static var hasAccessTokenHeader: [String: String] {
+        return [
+            contentType: applicationJSON,
+            auth: accessToken
         ]
     }
     
-    static var hasAccessTokenHeader: [String: String] {
-        return [contentType: applicationJSON,
-                       auth: accessToken,
-                   timeZone: seoul]
-    }
     
-    static var hasRefreshTokenHeader: [String: String] {
-        return [contentType: applicationJSON,
-                       auth: refreshToken]
-    }
-    
-    static var signUpHeader: [String: String] {
+    static var signHeader: [String: String] {
         return [contentType: applicationJSON]
     }
 }

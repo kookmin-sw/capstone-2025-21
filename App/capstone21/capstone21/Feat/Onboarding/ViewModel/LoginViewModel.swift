@@ -48,13 +48,17 @@ public class LogInViewModel: ObservableObject {
     func send(_ action: Action) {
         switch action {
         case .onAppear:
-            //TODO: 자동 로그인 로직
-            break
+            if UserDefaultsManager.accessToken != "" {
+                navigationRouter.destinations = []
+                windowRouter.switch(to: .home)
+            }
             
         case .loginButtonDidTap:
-            let request = LoginDTO(id: id, password: password)
-            Providers.HomeProvider.request(target: .login(request), instance: BaseResponse<EmptyResponseDTO>.self) { [weak self] data in
+            let request = LoginRequest(id: id, password: password)
+            Providers.HomeProvider.request(target: .login(request), instance: BaseResponse<LoginResult>.self) { [weak self] data in
                 if data.success {
+                    UserDefaultsManager.accessToken = data.data?.token ?? ""
+                    UserDefaultsManager.userName = data.data?.username ?? ""
                     self?.navigationRouter.destinations = []
                     self?.windowRouter.switch(to: .home)
                 }

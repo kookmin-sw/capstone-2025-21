@@ -54,7 +54,7 @@ final class AuthInterceptor: RequestInterceptor {
             }
         } else if statusCode == 404 {
             /// 유저를 찾을 수 없는 상태
-            UserManager.shared.appStateString = "login"
+//            UserManager.shared.appStateString = "login"
         } else {
             if request.retryCount > retryLimit {
                 print("🚨재시도 횟수가 너무 많습니다🚨")

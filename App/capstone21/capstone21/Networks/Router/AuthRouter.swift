@@ -10,7 +10,7 @@ import Moya
 
 enum AuthRouter {
     case signUp(UserInfo)
-    case login(LoginDTO)
+    case login(LoginRequest)
     case logout
 }
 
@@ -18,9 +18,9 @@ extension AuthRouter: BaseTargetType {
     var headers: Parameters? {
         switch self {
         case .signUp:
-            return APIConstants.hasAccessTokenHeader
+            return APIConstants.signHeader
         case .login:
-            return APIConstants.hasAccessTokenHeader
+            return APIConstants.signHeader
         case .logout:
             return APIConstants.hasAccessTokenHeader
         }
