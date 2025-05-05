@@ -1,109 +1,21 @@
-# 🐤카나리아 : 모두를 위한 군사보안 경보 시스템
+# menu : 당신의 언어로, 당신의 취향을 기반으로, 메뉴를 추천해줍니다.
 
-<p align='center'>
-<img src="https://github.com/osamhack2021/AI_APP_WEB_Canary_Canary/blob/main/image/canary_2.0.png" alter="LOGO"/><br>
- <img src='https://img.shields.io/badge/Version-1.0.0-blue?style=for-the-badge&logo'>
- <a href='https://github.com/osamhack2021/AI_APP_WEB_Canary_Canary/blob/main/LICENSE'><img src='https://img.shields.io/badge/License-GNU GPL v3.0-blue?style=for-the-badge&logo'></a>
-</p>
-
-Canary는 머신러닝을 활용하여 사진 안의 보안 위반 가능성이 있는 요소를 식별하고, 자동 모자이크 처리를 하고, 이를 사용자에게 경고해주는 통합 보안 경보 시스템입니다. 
-Canary App, Canary in Instagram, Admin logweb으로 구성되어 있으며, 앱에서 처리된 사진에는 QR코드가 들어가 처리 여부를 쉽게 식별할 수 있습니다.
-
-## 🗂️프로젝트 소개
-본 프로젝트는 사진의 보안 내용을 제거하는 기능과 그러한 기능을 가진 카메라를 제공함으로서,  
-* **군 내에서 카메라를 사용 가능하게 함**과 동시에,
-*  SNS에 올릴 사진의 보안 위반 가능성을 경고하여 사용자가 **자발적으로** 보안을 준수 할 수 있게 합니다.
-*  또 현재 SNS올라가 있는 게시물을 검사를 해 **보안에 대한 경각심**을 일으킬 수 있습니다.
+```
+작성예정
+```
 
 
-<details>
- <summary>📃주제 정의 문서</summary>
-  https://github.com/kookmin-sw/capstone-2025-21/wiki/주제-정의-문서
-</details>
+# 🗂️프로젝트 소개
+```
+작성예정
+```
 
-<details>
- <summary>📈market potential</summary>
- 
- ### TAM (Total Addressable Market, 전체 시장 규모)
-  - 글로벌 국제 관광객 전체를 대상으로 한다.
-  - 2024년 국제 관광객 수는 **약 14억 명**으로 집계되었다.
-  - 이 중, 음식 메뉴에 대한 언어적 어려움을 겪을 가능성이 높은 ‘개별 자유 여행자’ 비율을 약 40%로 추정하면, 약 **5억 6천만 명**의 시장이 존재한다.
-### SAM (Serviceable Available Market, 서비스 가능 시장)
-  - 2024년 한국관광공사의 최신 통계에 따르면, 한국을 찾은 전체 외국인 관광객 수는 **약 1,637만 명**이다.
-  - 이 중에서 상위 3개국 관광객 비율:
-      - 중국 관광객: 약 35% (약 573만 명)
-      - 일본 관광객: 약 20% (약 327만 명)
-      - 미국 관광객: 약 10% (약 164만 명)
-          - 이들 중 ios 사용자 미국(55%), 일본(60%), 중국(20%)로 계산하면 미국 315만, 65만, 16만
-          - 총 396만 명
-  - 이 중, 메뉴에 대한 언어적 불편을 겪고 있으며 스마트폰 앱을 활용할 가능성이 높은 여행객 비율을 약 70%로 가정하면, 277만 명
-### SOM (Serviceable Obtainable Market, 목표 시장)
-  - 목표 시장 점유율을 약 15%로 계산하면, 약 42만 명
- 
-</details>
+## 관련 문서 
+- 📃주제 정의 문서 -> <a href="https://github.com/kookmin-sw/capstone-2025-21/wiki/주제-정의-문서">문서 바로가기</a>
+- 📈Market potential & Business model -> <a href="https://github.com/kookmin-sw/capstone-2025-21/wiki/Market-potential-&-Business-model">문서 바로가기</a>
+- 🙋‍♂️ 페르소나 분석 -> <a href="https://github.com/kookmin-sw/capstone-2025-21/wiki/페르소나-분석">문서 바로가기</a>
 
-<details>
- <summary>💰 Business model </summary>
- 
-### 사용자의 만족도를 높이는 것이 최우선 목표
--> 사용자에게 직접 요금을 부여하지 않고도 안정적으로 수익을 창출하는 방식을 선택
-
-### B2B2C 모델
-
-### 관광청/지자체 협력
-한국관광공사나 지자체와 협력하여, 공식 관광앱 내에 우리 기능을 제공
-- 방식: 이를 통해 사업 지원금을 받는 형태
-- 기대 효과: 수익 구조와 마케팅 및 광고 효과 기대
-### 예약 어플과 협업
-캐치테이블, 테이블링과 같은 식당 예약 어플과 제휴
-- 방식: 추천된 식당을 바로 예약할 수 있게 연결해주는 서비스를 제공하고 수익을 창출하는 형태
-- 기대 효과: 예약에서의 편리함이 증가, 수익 창출 가능
-### 식당과 제휴
-식당과 직접 제휴
-- 방식: 광고를 원하는 식당을 앱 내에서 상위 노출되게 해주는 방식
-- 기대 효과: 월 구독료 형태로 지속적 수익 창출 가능
- 
-</details>
-
-<details>
- <summary>🗒사용자 정의 문서</summary>
- 
- ### 페르소나
- ![페르소나](https://user-images.githubusercontent.com/40621030/134792500-00226c5c-592b-4298-aeb8-fb155704278f.png)
- 
- ### 시나리오
- 
- #### #1
- *막 자대배치를 받은 안준호 이병. 택배로 스마트폰을 받는다.*
-
- 0. 안준호 이병은 처음으로 어플리케이션을 실행한다. 
-  0-1. 군번, 이름, 계급을 입력하여 자신의 정보를 저장한다.
- 1. 드디어 스마트폰을 받아 두근대는 마음으로 사진을 찍기 위해 어플리케이션을 켠다.
- 2. 촬영 모드로 들어가서 카메라를 켠 후 생활관 TV를 배경으로 사진을 찍는다.
- 3. 잠시 후, TV 모니터가 모자이크 된 사진과 함께 경고 문구가 출력된다.
- 4. 사진 저장 시 사진에 QR코드가 새겨진다. QR코드에는 안준호 이병의 군번이 암호화되어 들어간다.
- 5. 모자이크가 된 사진을 SNS에 올려 자랑한다.
- 
- #### #2
- *긴 군생활을 끝내고 드디어 전역한 최종훈 병장. 같이 전역하는 동기들과 기념 사진을 찍는다.*
- 
- 0. 최종훈 병장과 동기들은 부대 앞에서 기념 사진을 촬영한다.
- 1. SNS에 이 글을 게시하기 전, 최종훈 병장은 혹시 사진에 군사보안 위반은 없는지 걱정된다.
- 2. 어플리케이션을 실행한 후, 방금 전 찍은 사진을 갤러리에서 선택한다.
- 3. 잠시 후, 부대마크와 군 표지판 부분이 모자이크 된 사진과 함께 경고 문구가 출력된다.
- 4. 사진 저장 시 사진에 QR코드가 새겨진다. QR코드에는 최종훈 병장의 군번이 암호화되어 들어간다.
- 5. 최종훈 병장은 안심하면서 SNS에 사진을 업로드 한다.
- 
- #### #3
- *예비군 유시진 씨. 인스타그램에 올렸던 군대 사진들을 본다.*
- 
- 0. 유시진 씨는 인스타그램에 올렸던 훈련 사진을 본다.
- 1. 옛날 사진을 보던 중, 한 사진에 탱크가 찍힌 것을 본다.
- 2. Canary Instagram bot에 이 사진을 검토해 줄 것을 메시지로 요청한다.
- 3. 잠시 후, 탱크가 모자이크 된 사진과 함께 경고 문구를 메시지로 받는다.
- 4. 유시진 씨는 SNS 사진을 수정한다.
- 
-</details>
+### 🗒사용자 정의 문서
 
 <details>
  <summary>📈시스템 흐름도</summary>
@@ -135,25 +47,27 @@ Canary App, Canary in Instagram, Admin logweb으로 구성되어 있으며, 앱�
 
 </details>
 
+# 🗂️ 개발 과정 설명
 
-## 📔기능 설명
+## AI
+```
+작성예정
+```
+## Front
+```
+작성예정
+```
+## Back
+```
+작성예정
+```
 
-<!--
-### 🖥화면 정의
-<table>
- <tr>
-  <td><img src="https://user-images.githubusercontent.com/40621030/134689804-f72fc601-00cb-462b-a332-a1bcb62ad8a1.png" width="230"/></td>
-  <td><img src="https://user-images.githubusercontent.com/40621030/134689811-03fca8d5-26fd-4678-a398-df31655ebae5.png" width="230"/></td>
-  <td><img src="https://user-images.githubusercontent.com/40621030/134689813-b89f9162-4e74-48c7-9ac6-57e22f355827.png" width="230"/></td>
- </tr>
- <tr>
-  <td><img src="https://user-images.githubusercontent.com/40621030/134689816-4aeb35f6-ca24-4bc4-a4b5-902318b8d895.png" width="230"/></td>
-  <td><img src="https://user-images.githubusercontent.com/40621030/134766861-33bf44f8-1330-43d2-91af-4a68f2432507.png" width="230"/></td>
- </tr>
-</table>
--->
 
- ### 🐤**Canary app**
+
+
+# 📔기능 설명
+
+ ### 🐤**Menu app**
 
  앱을 처음 실행 시, 사용자는 자신의 성명과 군번을 통해 회원가입을 진행합니다. 이 정보는 암호화되어 저장됩니다.  
 
@@ -198,45 +112,6 @@ Canary App, Canary in Instagram, Admin logweb으로 구성되어 있으며, 앱�
    <td><img src="https://user-images.githubusercontent.com/86545225/137919328-6390d7ea-207c-49c9-a0b8-97c4eab44d47.PNG" width="200"/></td>
   </tr>
  <table>
-
- ### 🐤**Admin Server**
-
- Canary app의 사용 log를 보고와 model, dataset version관리를 할 수 있는 API Server입니다.  
- node js에서도 해당 기능을 쓰는 만큼 여러 플랫폼에서 접근 가능하도록 REST API Server로 구성했습니다.
- 
- <p align='center'><img src="https://user-images.githubusercontent.com/40621030/137884075-bed5c980-72db-472e-820d-6754080d704c.PNG" height="250"/></p>
- Canary app 사용 날짜와 사용자 id, 이미지에서 검출된 객체에 대한 기록이 남습니다.
- 
- <p align='center'><img src="https://user-images.githubusercontent.com/40621030/137884362-a8e7f87f-167c-4294-ba99-07ebadb3d6e2.PNG" height="250"/></p>
- 성능이 가장 좋은 모델의 weight 주소를 조회하여 canary server의 모델을 최신모델로 업데이트 할 수 있습니다.
- 
- Django를 사용했기 때문에 Django admin 또한 사용할 수 있습니다.
- <p align='center'><img src="https://user-images.githubusercontent.com/86545225/137576790-1e7b5459-fdbd-4cc8-9e3b-d27a3bd3b1b4.jpg" height="250"/></p>
-
-
- ### 🐤**Canary in instagram**
-
- <p align='center'><img src="https://user-images.githubusercontent.com/35412648/137631605-571bf913-a365-408c-9469-8e16ce806443.PNG"/></p>
-
- 주요 sns 중 하나인 인스타그램 사용자의 보안 위반 여부를 탐지하고, 사용자에게 direct message로 경고해줍니다.  
-
- Canary app에서 사용되는 동일한 model로 위협 요소를 탐지하고, 처리된 사진과 경고문을 DM으로 보냅니다.  
-
- 비동기적 처리를 통해 동시에 여러 Request가 들어와도 대응할 수 있게 개발되었습니다.
-
- 현재 지원되는 검사 기능은 게시물 검사와 스토리 검사입니다.
- 
- ### 지원하는 기능
- * 도움 (또는 Help)
- > 1. 사용자에게 사용법을 DM으로 안내합니다.
- * 게시물 검사하기
- > 1. Canary가 사용자가 올린 Post 중, 검사 되지 않은 가장 최근 3개를 검사합니다.
- > 2. 검사가 완료되면 적절히 모자이크 된 이미지와 경고 문구를 DM으로 보내줍니다. + Canary가 해당 Post를 Like 합니다.
- * 스토리 검사하기
- > 1. Canary가 사용자의 Story 중, osam_canary가 태그 된 story를 검사합니다.
- > 2. 검사가 완료되면 적절히 모자이크 된 이미지와 경고 문구를 DM으로 보내줍니다.
-
-
 ---
 
 ## 컴퓨터 구성 / 필수 조건 안내 (Prerequisites)
@@ -264,93 +139,11 @@ Canary App, Canary in Instagram, Admin logweb으로 구성되어 있으며, 앱�
 
 <details>
  <summary>Node js 설명</summary>
+
+ ```
+작성예정
+```
  
- ### MySQL 데이터베이스 구성
- - Database 명 : Node_db
- - DB 관리자 명 : node_admin
-
- - User Table
-   - id : 유저 id
-   - name : 유저 이름
-   - d_num : 유저 군번
-   - password : 유저 비밀번호
-   - time : 유저 생성 TimeStamp
- ```
- mysql> desc user_t;
- +----------+-------------+------+-----+-------------------+----------------+
- | Field    | Type        | Null | Key | Default           | Extra          |
- +----------+-------------+------+-----+-------------------+----------------+
- | id       | int(10)     | NO   | PRI | NULL              | auto_increment |
- | name     | varchar(20) | NO   |     | NULL              |                |
- | d_num    | varchar(10) | NO   | UNI | NULL              |                |
- | password | varchar(70) | NO   |     | NULL              |                |
- | time     | datetime    | YES  |     | CURRENT_TIMESTAMP |                |
- +----------+-------------+------+-----+-------------------+----------------+
-
- mysql> select * from user_t;
- +----+-------------+------------+--------------------------------------------------------------+---------------------+
- | id | name        | d_num      | password                                                     | time                |
- +----+-------------+------------+--------------------------------------------------------------+---------------------+
- | 23 | test user   | 2000001111 | 1234                                                         | 2021-10-15 14:19:17 |
- | 24 | 211015User2 | 2001112234 | $2b$08$lXHyNYavVlyr71UyREC54eppxSfTZGq41by4o9VeeqFfmE8oETJbO | 2021-10-15 14:47:18 |
- | 25 | 오삼핵      | 2176032332 | $2b$08$B85JF1HCTvsYcGvZlFuG2OXlBNvascx6sD/La/k1x.VxO35whIa1i | 2021-10-15 14:50:49 |
- | 26 | 211012User  | 2012341234 | $2b$08$8OBxs8J3Qu9VKyno4KltXuVykBIOYUgX0Apf9NXdECF4cWt4XzVuC | 2021-10-16 07:53:41 |
- +----+-------------+------------+--------------------------------------------------------------+---------------------+
- ```
-
- - Upload Table
-   - uploader_d_num : 업로드 유저의 군번
-   - img_id : 유저 업로드 img id
-   - upload_time : img 업로드 TimeStamp
- ```
- mysql> desc upload_t;
- +----------------+-------------+------+-----+-------------------+-------+
- | Field          | Type        | Null | Key | Default           | Extra |
- +----------------+-------------+------+-----+-------------------+-------+
- | uploader_d_num | varchar(10) | NO   | MUL | NULL              |       |
- | img_id         | varchar(30) | NO   | PRI | NULL              |       |
- | upload_time    | datetime    | YES  |     | CURRENT_TIMESTAMP |       |
- +----------------+-------------+------+-----+-------------------+-------+
-
- mysql> select * from upload_t;
- +----------------+-----------------------+---------------------+
- | uploader_d_num | img_id                | upload_time         |
- +----------------+-----------------------+---------------------+
- | 2176000528     | decoded_1634309470576 | 2021-10-15 14:51:10 |
- | 2176000528     | decoded_1634309639604 | 2021-10-15 14:53:59 |
- | 2176000528     | decoded_1634309884641 | 2021-10-15 14:58:04 |
- | 2176000528     | decoded_1634310044242 | 2021-10-15 15:00:44 |
- | 2001112234     | decoded_1634370069825 | 2021-10-16 07:41:09 |
- | 2001112234     | decoded_1634370191443 | 2021-10-16 07:43:11 |
- +----------------+-----------------------+---------------------+
- ```
-
- ***
-  ### API문서
-  *auth - Authentication Handling*
-
-  **POST /auth/create-user**  
-  > parameters: {"name": "string", "d_num":"string", "password": "string"}   
-  > status: 201   
-  > respose: {"status":201,"user_name":name,"msg":'User Created Successful'}
-
-  **POST /auth/login**  
-  > parameters: {"d_num": "string", "password": "string"}   
-  > status: 200   
-  > respose: {"status":200,"msg":"User : ${db_result[0].name} => Login Successful"}
-
-
-  *img - Images Handling*
-
-  **POST /img/upload**
-  > parameters: {"img_binary":"base64 encoded string","d_num":"string"}   
-  > status: 200 -> 204 or 205로 변경 고려   
-  > respose: {"status":200,"imd_id":img_id,"user_d_num":d_num}
-
-  **GET /img/output-params/:img_id/:d_num**
-  > parameters: {"name": "string", "d_num":"string", "password": "string"}   
-  > status: 200   
-  > respose: {"status":201,"user_name":name,"msg":'User Created Successful'}
  </details>
  
 ### Front-end
@@ -501,88 +294,6 @@ YOLOv5, Efficientnet, SSGlite 등의 모델들을 고려.
  
  ### 실행 및 예시 ([link](https://github.com/osamhack2021/AI_APP_WEB_Canary_Canary/tree/main/AI(BE)/deeplearning/kwoledge_distillation_yolov5))
 </details>
-
-
-### MLOps 
-<table>
- <tr>
-  <td align='center'><a href='https://www.djangoproject.com/'><img src='https://user-images.githubusercontent.com/40621030/136699403-d6ac76a2-7294-4936-acef-163f8c40ed96.png' height=80/></a></td>
-  <td align='center'><a href='https://www.django-rest-framework.org/'><img src='https://user-images.githubusercontent.com/40621030/136699327-88e2bfb9-72d9-4f44-b6b0-8d5911777dbf.png' height=80/></a></td>
-  <td align='center'><a href='https://aws.amazon.com/ko/'><img src='https://user-images.githubusercontent.com/40621030/136699330-313bfbb5-8d53-4aae-b5c1-cb39392a027e.png' height=80/></a></td>
- </tr>
- <tr>
-  <td align='center'>Node js</td>
-  <td align='center'>MySQL</td>
-  <td align='center'>AWS</td>
- </tr>
-</table>
-<details>
- <summary>📝MLOps 설명</summary>
- <p align='center'><img src='https://user-images.githubusercontent.com/40621030/137613564-50a7af1b-bd68-4deb-8aed-b839e0bbe8fd.PNG' width='500'><p>  
- 
- 다양한 플랫폼으로 모델 학습을 자동화 할 수 있도록 REST API서버로 구성했습니다. 데이터, 모델 버전관리를 자동으로 해주고, 최신 버전의 모델을 detection code가 자동으로 업데이트 되도록 구성했습니다.  
- 
- ### Model Architecture
- <p align='center'><img src='https://user-images.githubusercontent.com/40621030/137886632-edd9ca08-831e-4b29-97da-62b6bae0982b.PNG' height='300'><p>  
- 
- API호출을 통해 file(dataset) upload, train model, check model version, donwload model, insert & select detection log를 할 수 있습니다. 
- 대략적인 flow는 다음과 같습니다.  
- 
- 1. file upload를 통해 데이터셋을 추가합니다.
- 2. train model을 이용하여 AzureML에 모델 학습을 등록하고 학습이 완료되면 모델 weight와 함께 평가 matrix가 저장됩니다.
- 3. node js에서 best model을 조회한 후 자신(node js)보다 좋은 모델이 있으면 모델을 업데이트 합니다. 
- 4. node js에서 보안위반물체를 찾으면 log를 보내 django에 log를 쌓습니다.
- 5. api 호출을 통해 log를 확인할 수 있습니다.
- 
- 해당 서버는 REST API서버이고, 메모리를 사용하면서까지 세션을 유지할 필요가 없다고 판단되어 JWT Authorization을 선택했습니다.  
- 
- ### Admin Page
- ```bash
- python manage.py createsuperuser
- ```
- 
- **GET /admin**  
- 
- ### API문서
- *account*
- **POST /account/login**  
- > parameters: {"username": "string", "password": string"}   
- > status: 201   
- > respose: {"message": "string", "token": string}   
- 
- *deeplearning*
- **GET /deeplearning/files**  
- > status: 200  
- > response: { "count": 0, "next": "string", "previous": "string", "results": [{"file": "string"}]}   
- 
- **POST /deeplearning/files**  
- > parameters: {"file": [FILE]}  
- > status: 200  
- > response: {"file": "string"}  
- 
- **GET /deeplearning/log**
- > response {"count": 0, "next": "string", "previous": "string", "results": [{"username": "string", "log": "string", "create_at": "2021-10-14T13:50:37.279Z"}]}  
- 
- **POST /deeplearning/log**
- > parameters: {"username": "string", "log": "string", "create_at": "2021-10-14T13:52:33.709Z"}  
- > status: 201  
- > response: {"username": "string", "log": "string", "create_at": "2021-10-14T13:52:33.709Z"}  
- 
- **GET /deeplearning/models**  
- > status: 200  
- > response: {"file": "string", "result": "string", "version": 0, "matrix": 0}  
- 
- **POST /deeplearning/train**
- > headers: {'Authorization': 'Bearer [TOKEN]'}  
- > status: 201  
- > response: {"file": "string"}  
- 
- ### Database Diagram
- <p align='center'><img src='https://user-images.githubusercontent.com/40621030/137896939-47149c22-b126-46f0-b993-fcc9666db8ce.jpg' width='500'><p>  
-
- ### 코드 및 실행 ([link](https://github.com/osamhack2021/AI_APP_WEB_Canary_Canary/tree/main/AI(BE)))
-</details>
-
 ---
 
 ## 💽설치 안내 (Installation Process)
@@ -616,15 +327,6 @@ node app.js # (일회성 시행)
  pip install -r requirements.txt
  ```
 
-### MLOps
-  ```bash
-  git clone https://github.com/osamhack2021/AI_APP_WEB_Canary_Canary/
-  cd AI_APP_WEB_Canary_Canary/'AI(BE)'/
-  pip install -r requirements.txt
-  python manage.py createsuperuser
-  python manage.py migrate
-  python manage.py runserver 0.0.0.0:8080
-  ```
 ---
 
 ## 📱프로젝트 사용법 (Getting Started)
@@ -654,25 +356,7 @@ node app.js # (일회성 시행)
   
   [시연 영상](https://youtu.be/MTlwTyfn_xI)
   
-  #### 🐤**Admin logweb**
-  ```bash
-  git clone https://github.com/osamhack2021/AI_APP_WEB_Canary_Canary/
-  cd AI_APP_WEB_Canary_Canary/'AI(BE)'/
-  pip install -r requirements.txt
-  python manage.py migrate
-  python manage.py createsuperuser
-  python manage.py runserver 0.0.0.0:8080
-  ```
-  [API문서](https://github.com/osamhack2021/AI_APP_WEB_Canary_Canary/tree/main/AI(BE)##API) 참고
-  
-  #### 🐤**Canary in instagram**
-  ##### 시작하기 전에
-  instagram에서 'osam_canary'를 follow 한 후, 명령어를 Direct Message로 보낸다
-  ##### 지원 명령어
-  1. 게시물 검사 명령어(최대 3개씩) : 게시물 검사하기
-  2. 스토리 검사 명령어 : 스토리 검사하기  
-  > 2.1 스토리 검사 시 주의 사항 : @osam_canary 계정을 스토리에 태그해주세요!  
-  > 2.2 스토리는 한 번에 최대 10개 검사 가능  
+ 
 ---
 
 ## 📈프로젝트 전망
@@ -827,17 +511,3 @@ Object detection의 장점이 드러나는 부분입니다. 저희 팀은 군 �
 
    
 </table>
- 
-
-
-## 저작권 및 사용권 정보 (Copyleft / End User License)
- * [GNU GPL v3](https://github.com/osamhack2021/AI_APP_WEB_Canary_Canary/blob/main/LICENSE)
-
-This project is licensed under the terms of the GNU GPLv3 license.
-  
-  ### GPL 선택이유
-  카나리아가 쓴 오픈소스 중 [yolov5](https://github.com/ultralytics/yolov5/)와 [Distilling-Object-Detectors](https://github.com/twangnh/Distilling-Object-Detectors/)가 있습니다.
-  이들은 각각 GNU GPL, MIT 라이센스를 쓰고 있습니다.
-  MIT 라이센스는 상업적이용, 소스코드 공개의무에서 자유로우나, GNU GPL 라이센스는 코드의 상업적으로 이용 가능하나 변경된 프로그램 역시 소스코드를 공개해야합니다.
-  따라서 '카나리아'는 GNU GPL이 더 강력한 라이센스이기 때문에 GNU GPL 라이센스를 따르기로 했습니다.
-
