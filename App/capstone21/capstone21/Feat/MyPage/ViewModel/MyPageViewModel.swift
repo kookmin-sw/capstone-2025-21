@@ -35,7 +35,6 @@ public class MyPageViewModel: ObservableObject {
         case signUpLogInButtonDidTap
         case editSchoolButtonDidTap
         
-        case logout
         case logoutButtonDidTap
         case dismissLogoutAlertView
     }
@@ -86,18 +85,15 @@ public class MyPageViewModel: ObservableObject {
             break
             
         case .logoutButtonDidTap:
-            break
-            
-        case .copyReferralCodeButtonDidTap:
-            break
-            
-        case .logout:
-            Providers.HomeProvider.request(target: .logout, instance: BaseResponse<EmptyResponseDTO>.self) { [weak self] data in
+            Providers.AuthProvider.request(target: .logout, instance: BaseResponse<EmptyResponseDTO>.self) { [weak self] data in
                 if data.success {
                     self?.navigationRouter.destinations = []
                     self?.windowRouter.switch(to: .onboarding)
                 }
             }
+            
+        case .copyReferralCodeButtonDidTap:
+            break
             
         case .dismissLogoutAlertView:
             break

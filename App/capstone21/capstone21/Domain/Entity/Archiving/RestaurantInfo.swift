@@ -14,7 +14,6 @@ struct Restaurant: Identifiable {
     let foodTags: [String]
     let priceRange: PriceRange
     let rating: Double
-    let distance: String
     let recommendedMenu: String?
     let matchPercentage: Int?
     let categories: [FoodCategory]

@@ -54,8 +54,8 @@ public class LogInViewModel: ObservableObject {
             }
             
         case .loginButtonDidTap:
-            let request = LoginRequest(id: id, password: password)
-            Providers.HomeProvider.request(target: .login(request), instance: BaseResponse<LoginResult>.self) { [weak self] data in
+            let request = LoginRequest(username: id, password: password)
+            Providers.AuthProvider.request(target: .login(request), instance: BaseResponse<LoginResult>.self) { [weak self] data in
                 if data.success {
                     UserDefaultsManager.accessToken = data.data?.token ?? ""
                     UserDefaultsManager.userName = data.data?.username ?? ""

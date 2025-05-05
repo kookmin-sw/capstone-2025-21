@@ -54,7 +54,7 @@ public class EnterIdPasswordViewModel: ObservableObject {
         case .nextButtonDidTap:
             userInfo.username = nickName
             userInfo.password = password
-            Providers.HomeProvider.request(target: .signUp(userInfo), instance: BaseResponse<EmptyResponseDTO>.self) { [weak self] _ in
+            Providers.AuthProvider.request(target: .signUp(userInfo), instance: BaseResponse<EmptyResponseDTO>.self) { [weak self] _ in
                 self?.navigationRouter.popToRootView()
             }
             

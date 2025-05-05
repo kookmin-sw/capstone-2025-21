@@ -272,10 +272,6 @@ struct FeaturedRestaurantCard: View {
                     Text("•")
                         .foregroundColor(.heyGray3)
                     
-                    Text(restaurant.distance)
-                        .font(.regular_12)
-                        .foregroundColor(.heyGray2)
-                    
                     Spacer()
                     
                     HStack(spacing: 2) {
@@ -391,10 +387,6 @@ struct RestaurantCard: View {
                     
                     Text("•")
                         .foregroundColor(.heyGray3)
-                    
-                    Text(restaurant.distance)
-                        .font(.regular_12)
-                        .foregroundColor(.heyGray2)
                     
                     Spacer()
                     

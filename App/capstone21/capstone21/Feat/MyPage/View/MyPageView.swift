@@ -82,16 +82,6 @@ public struct MyPageView: View {
             .ignoresSafeArea(.keyboard)
         }
         .navigationBarBackButtonHidden()
-        .heyAlert(
-            isPresented: viewModel.state.logoutAlertViewIsPresented,
-            title: "Are you sure you want\nto logout?",
-            primaryButton: ("Close", .gray, {
-                viewModel.send(.dismissLogoutAlertView)
-            }),
-            secondaryButton: ("Ok", .primary, {
-                viewModel.send(.logout)
-            })
-        )
     }
 }
 

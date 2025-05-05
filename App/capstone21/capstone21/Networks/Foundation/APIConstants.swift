@@ -16,8 +16,7 @@ struct APIConstants {
     static let seoul = "Asia/Seoul"
     
     static var accessToken: String {
-        return "Bearer " 
-//        + (UserManager.shared.accessToken ?? "")
+        return "Bearer \(UserDefaultsManager.accessToken)"
     }
     
     static var refreshToken: String {

@@ -47,8 +47,13 @@ public class MenuImagePickerViewModel: ObservableObject {
             navigationRouter.pop()
             
         case .nextButtonDidTap:
-            //TODO: 메뉴판 이미지 전송 API
-            navigationRouter.push(to: .menuAnalysisLoading)
+            Providers.HomeProvider.request(target: .postMenuImage, instance: BaseResponse<ImageResult>.self) { [weak self] data in
+                if data.success {
+                    guard let data = data.data else { return }
+                    self?.navigationRouter.push(to: .menuAnalysisLoading(data.url))
+                }
+            }
+            
             
         case .imageSelected(let imageData):
             if let image = UIImage(data: imageData) {
