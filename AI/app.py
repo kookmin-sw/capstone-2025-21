@@ -12,7 +12,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from googletrans import Translator
 translator = Translator()
 # 언어 매핑: 사용자 국적에 따른 언어 코드
-langs = {"한국어": "ko", "영어": "en", "중국어": "zh-cn", "일본어": "ja"}
+langs = {"en": "en", "ch": "zh-cn", "jp": "ja"}
 
 # 1) 작업 디렉터리 결정
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -20,14 +20,17 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 # 2) 사전 계산된 데이터 경로 설정
 embeddings_path = os.path.join(script_dir, "menu_embeddings.npy")
 metadata_path   = os.path.join(script_dir, "menu_metadata.json")
-index_path      = os.path.join(script_dir, "menu_name_index.json")
+#index_path      = os.path.join(script_dir, "menu_name_index.json")
 
 # 3) 임베딩·메타데이터·이름→인덱스 맵 로드
 menu_embeddings = np.load(embeddings_path)
 with open(metadata_path, "r", encoding="utf-8") as f_meta:
     menu_metadata = json.load(f_meta)
+'''
 with open(index_path, "r", encoding="utf-8") as f_idx:
     name_to_index = json.load(f_idx)
+'''
+menu_names = [item["menu_name"]["ko"] for item in menu_metadata]
 
 # 4) OCR 및 임베딩 모델 초기화
 ocr_model = PaddleOCR(use_angle_cls=True, lang="korean")
@@ -37,7 +40,7 @@ app = FastAPI()
 
 @app.post("/analyze")
 async def analyze(
-    image: UploadFile = File(...),
+    imagePath: str = Form(...),
     userId: int = Form(...),
     nationality: str = Form(...),
     favoriteFoods: str = Form("[]"),   # JSON string, e.g. '["비빔밥","불고기"]'
@@ -51,25 +54,27 @@ async def analyze(
     3) 사용자 취향 임베딩 및 유사도 계산
     4) 알러지 제외 후 top_k 메뉴 추천
     """
+    '''
     # A) OCR 처리를 위한 임시 파일 저장
     temp_fname = f"temp_{uuid.uuid4().hex}.jpg"
     temp_path = os.path.join(script_dir, temp_fname)
     with open(temp_path, "wb") as tmp:
         tmp.write(await image.read())
+    '''
 
     # B) OCR: 메뉴명 추출
-    ocr_result = ocr_model.ocr(temp_path, cls=True)
+    ocr_result = ocr_model.ocr(imagePath, cls=True)
     scanned_lines = [(line[1][0], line[0]) for line in ocr_result]
 
     # 임시 파일 삭제
-    os.remove(temp_path)
+    #os.remove(temp_path)
 
     # C) 유효한 메뉴명 필터링
     seen = set()
     valid_scanned = []
     for name, bbox in scanned_lines:
-        if name in name_to_index and name not in seen:
-            idx = name_to_index[name]
+        if name in menu_names and name not in seen:
+            idx = menu_names.index()
             valid_scanned.append((idx, name, bbox))
             seen.add(name)
     if not valid_scanned:
