@@ -15,7 +15,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
+
+import java.awt.*;
 
 @RestController
 @RequestMapping("/api/analysis")
@@ -25,164 +28,249 @@ public class ImageAnalysisController {
 
     private final ImageAnalysisService imageAnalysisService;
 
-    @PostMapping("/analyze")
+    @PostMapping("/analyze-image")
     @Operation(
-            summary = "이미지 분석",
-            description = """
-이미지를 분석해 알러지 경고와 추천 메뉴를 반환합니다.
-
-- `Content-Type`: `application/json`
-- `Authorization`: Bearer {Token}
-""",
-            security = @SecurityRequirement(name = "bearerAuth"),
-            requestBody = @RequestBody(
-                    required = true,
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = ImageAnalysisRequestDto.class),
-                            examples = @ExampleObject(
-                                    name = "요청 예시",
-                                    value = "{\n" +
-                                            "  \"imagePath\": \"/api/gallery/images/uuid_filename.jpg\",\n" +
-                                            "  \"nationality\": \"USA\",\n" +
-                                            "  \"favoriteFoods\": [\"비빔밥\", \"불고기\"],\n" +
-                                            "  \"allergies\": [\"계란\", \"우유\"]\n" +
-                                            "}"
-                            )
-                    )
-            ),
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "분석 성공",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = CommonResponse.class),
-                                    examples = @ExampleObject(
-                                            name = "분석 결과 예시",
-                                            value = "{\n" +
-                                                    "  \"success\": true,\n" +
-                                                    "  \"message\": \"이미지 분석 성공\",\n" +
-                                                    "  \"data\": {\n" +
-                                                    "    \"recommendedMenus\": [\"김치찌개\", \"불고기\"],\n" +
-                                                    "    \"allergyWarnings\": [\"계란\"]\n" +
-                                                    "  }\n" +
-                                                    "}"
-                                    )
-                            )),
-                    @ApiResponse(responseCode = "500", description = "서버 오류",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = CommonResponse.class),
-                                    examples = @ExampleObject(
-                                            name = "서버 오류 예시",
-                                            value = "{\n" +
-                                                    "  \"success\": false,\n" +
-                                                    "  \"message\": \"ai 연결 실패\",\n" +
-                                                    "  \"data\": null\n" +
-                                                    "}"
-                                    )
-                            ))
-            }
+            summary = "이미지 분석 요청",
+            description = "이미지 및 사용자 정보를 기반으로 AI 서버에 분석 요청을 보냅니다."
     )
-    public ResponseEntity<CommonResponse<ImageAnalysisResultDto>> analyzeImage(
+    public ResponseEntity<CommonResponse<String>> analyzeImageAndCache(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestBody ImageAnalysisRequestDto requestDto) {
-
+            @RequestBody ImageAnalysisRequestDto requestDto
+    ) {
         try {
             Long userId = userDetails.getUser().getId();
-            requestDto.setUserId(userId); // DTO에 사용자 ID 주입
+            imageAnalysisService.analyzeAndCache(requestDto, userId);
+            return ResponseEntity.ok(
+                    CommonResponse.<String>builder()
+                            .success(true)
+                            .message("AI 분석 요청 성공 및 결과 캐싱 완료")
+                            .data("ok")
+                            .build()
+            );
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(CommonResponse.<String>builder()
+                            .success(false)
+                            .message("AI 요청 실패: " + e.getMessage())
+                            .data(null)
+                            .build());
+        }
+    }
 
-            ImageAnalysisResultDto result = imageAnalysisService.analyzeImage(requestDto);
+    @GetMapping("/analyze")
+    @Operation(
+            summary = "분석 결과 조회",
+            description = "캐시에 저장된 분석 결과를 반환합니다."
+    )
+    public ResponseEntity<CommonResponse<ImageAnalysisResultDto>> getCachedAnalysis(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        try {
+            Long userId = userDetails.getUser().getId();
+            ImageAnalysisResultDto result = imageAnalysisService.getCachedAnalysis(userId);
             return ResponseEntity.ok(
                     CommonResponse.<ImageAnalysisResultDto>builder()
                             .success(true)
-                            .message("이미지 분석 성공")
+                            .message("분석 결과 조회 성공")
                             .data(result)
                             .build()
             );
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(CommonResponse.<ImageAnalysisResultDto>builder()
                             .success(false)
-                            .message("ai 연결 실패")
+                            .message(e.getMessage())
                             .data(null)
                             .build());
         }
     }
 
-    @PostMapping("/translate")
+    @GetMapping("/translate")
     @Operation(
-            summary = "이미지 번역",
-            description = """
-이미지 경로를 기반으로 메뉴를 번역합니다.
-
-- `Content-Type`: `application/json`
-- `Authorization`: Bearer {Token}
-""",
-            security = @SecurityRequirement(name = "bearerAuth"), // ✅ JWT 인증 필요 추가
-            requestBody = @RequestBody(
-                    required = true,
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = ImagePathRequestDto.class),
-                            examples = @ExampleObject(
-                                    name = "요청 예시",
-                                    value = "{\n" +
-                                            "  \"imagePath\": \"/api/gallery/images/uuid_filename.jpg\"\n" +
-                                            "}"
-                            )
-                    )
-            ),
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "번역 성공",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = CommonResponse.class),
-                                    examples = @ExampleObject(
-                                            name = "번역 결과 예시",
-                                            value = "{\n" +
-                                                    "  \"success\": true,\n" +
-                                                    "  \"message\": \"메뉴 번역 성공\",\n" +
-                                                    "  \"data\": {\n" +
-                                                    "    \"translatedMenus\": [\"Kimchi Stew\", \"Bulgogi\"]\n" +
-                                                    "  }\n" +
-                                                    "}"
-                                    )
-                            )),
-                    @ApiResponse(responseCode = "500", description = "서버 오류",
-                            content = @Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(implementation = CommonResponse.class),
-                                    examples = @ExampleObject(
-                                            name = "ai 연결 실패",
-                                            value = "{\n" +
-                                                    "  \"success\": false,\n" +
-                                                    "  \"message\": \"ai 연결 실패\",\n" +
-                                                    "  \"data\": null\n" +
-                                                    "}"
-                                    )
-                            ))
-            }
+            summary = "번역 결과 조회",
+            description = "캐시에 저장된 번역 결과를 반환합니다."
     )
-    public ResponseEntity<CommonResponse<MenuTranslationResultDto>> translateImage(
-            @AuthenticationPrincipal CustomUserDetails userDetails, // ✅ 토큰에서 사용자 정보 추출
-            @RequestBody ImagePathRequestDto requestDto) {
-
+    public ResponseEntity<CommonResponse<MenuTranslationResultDto>> getCachedTranslation(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
         try {
-            MenuTranslationResultDto result = imageAnalysisService.getTranslatedMenu(requestDto.getImagePath());
+            Long userId = userDetails.getUser().getId();
+            MenuTranslationResultDto result = imageAnalysisService.getCachedTranslation(userId);
             return ResponseEntity.ok(
                     CommonResponse.<MenuTranslationResultDto>builder()
                             .success(true)
-                            .message("메뉴 번역 성공")
+                            .message("번역 결과 조회 성공")
                             .data(result)
                             .build()
             );
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(CommonResponse.<MenuTranslationResultDto>builder()
                             .success(false)
-                            .message("ai 연결 실패")
+                            .message(e.getMessage())
                             .data(null)
                             .build());
         }
     }
+
+//    @PostMapping("/analyze")
+//    @Operation(
+//            summary = "이미지 분석",
+//            description = """
+//이미지를 분석해 알러지 경고와 추천 메뉴를 반환합니다.
+//
+//- `Content-Type`: `application/json`
+//- `Authorization`: Bearer {Token}
+//""",
+//            security = @SecurityRequirement(name = "bearerAuth"),
+//            requestBody = @RequestBody(
+//                    required = true,
+//                    content = @Content(
+//                            mediaType = "application/json",
+//                            schema = @Schema(implementation = ImageAnalysisRequestDto.class),
+//                            examples = @ExampleObject(
+//                                    name = "요청 예시",
+//                                    value = "{\n" +
+//                                            "  \"imagePath\": \"/api/gallery/images/uuid_filename.jpg\",\n" +
+//                                            "  \"nationality\": \"USA\",\n" +
+//                                            "  \"favoriteFoods\": [\"비빔밥\", \"불고기\"],\n" +
+//                                            "  \"allergies\": [\"계란\", \"우유\"]\n" +
+//                                            "}"
+//                            )
+//                    )
+//            ),
+//            responses = {
+//                    @ApiResponse(responseCode = "200", description = "분석 성공",
+//                            content = @Content(
+//                                    mediaType = "application/json",
+//                                    schema = @Schema(implementation = CommonResponse.class),
+//                                    examples = @ExampleObject(
+//                                            name = "분석 결과 예시",
+//                                            value = "{\n" +
+//                                                    "  \"success\": true,\n" +
+//                                                    "  \"message\": \"이미지 분석 성공\",\n" +
+//                                                    "  \"data\": {\n" +
+//                                                    "    \"recommendedMenus\": [\"김치찌개\", \"불고기\"],\n" +
+//                                                    "    \"allergyWarnings\": [\"계란\"]\n" +
+//                                                    "  }\n" +
+//                                                    "}"
+//                                    )
+//                            )),
+//                    @ApiResponse(responseCode = "500", description = "서버 오류",
+//                            content = @Content(
+//                                    mediaType = "application/json",
+//                                    schema = @Schema(implementation = CommonResponse.class),
+//                                    examples = @ExampleObject(
+//                                            name = "서버 오류 예시",
+//                                            value = "{\n" +
+//                                                    "  \"success\": false,\n" +
+//                                                    "  \"message\": \"ai 연결 실패\",\n" +
+//                                                    "  \"data\": null\n" +
+//                                                    "}"
+//                                    )
+//                            ))
+//            }
+//    )
+//    public ResponseEntity<CommonResponse<ImageAnalysisResultDto>> analyzeImage(
+//            @AuthenticationPrincipal CustomUserDetails userDetails,
+//            @RequestBody ImageAnalysisRequestDto requestDto) {
+//
+//        try {
+//            Long userId = userDetails.getUser().getId();
+//            requestDto.setUserId(userId); // DTO에 사용자 ID 주입
+//
+//            ImageAnalysisResultDto result = imageAnalysisService.analyzeImage(requestDto);
+//            return ResponseEntity.ok(
+//                    CommonResponse.<ImageAnalysisResultDto>builder()
+//                            .success(true)
+//                            .message("이미지 분석 성공")
+//                            .data(result)
+//                            .build()
+//            );
+//        } catch (RuntimeException e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body(CommonResponse.<ImageAnalysisResultDto>builder()
+//                            .success(false)
+//                            .message("ai 연결 실패")
+//                            .data(null)
+//                            .build());
+//        }
+//    }
+//
+//    @PostMapping("/translate")
+//    @Operation(
+//            summary = "이미지 번역",
+//            description = """
+//이미지 경로를 기반으로 메뉴를 번역합니다.
+//
+//- `Content-Type`: `application/json`
+//- `Authorization`: Bearer {Token}
+//""",
+//            security = @SecurityRequirement(name = "bearerAuth"), // ✅ JWT 인증 필요 추가
+//            requestBody = @RequestBody(
+//                    required = true,
+//                    content = @Content(
+//                            mediaType = "application/json",
+//                            schema = @Schema(implementation = ImagePathRequestDto.class),
+//                            examples = @ExampleObject(
+//                                    name = "요청 예시",
+//                                    value = "{\n" +
+//                                            "  \"imagePath\": \"/api/gallery/images/uuid_filename.jpg\"\n" +
+//                                            "}"
+//                            )
+//                    )
+//            ),
+//            responses = {
+//                    @ApiResponse(responseCode = "200", description = "번역 성공",
+//                            content = @Content(
+//                                    mediaType = "application/json",
+//                                    schema = @Schema(implementation = CommonResponse.class),
+//                                    examples = @ExampleObject(
+//                                            name = "번역 결과 예시",
+//                                            value = "{\n" +
+//                                                    "  \"success\": true,\n" +
+//                                                    "  \"message\": \"메뉴 번역 성공\",\n" +
+//                                                    "  \"data\": {\n" +
+//                                                    "    \"translatedMenus\": [\"Kimchi Stew\", \"Bulgogi\"]\n" +
+//                                                    "  }\n" +
+//                                                    "}"
+//                                    )
+//                            )),
+//                    @ApiResponse(responseCode = "500", description = "서버 오류",
+//                            content = @Content(
+//                                    mediaType = "application/json",
+//                                    schema = @Schema(implementation = CommonResponse.class),
+//                                    examples = @ExampleObject(
+//                                            name = "ai 연결 실패",
+//                                            value = "{\n" +
+//                                                    "  \"success\": false,\n" +
+//                                                    "  \"message\": \"ai 연결 실패\",\n" +
+//                                                    "  \"data\": null\n" +
+//                                                    "}"
+//                                    )
+//                            ))
+//            }
+//    )
+//    public ResponseEntity<CommonResponse<MenuTranslationResultDto>> translateImage(
+//            @AuthenticationPrincipal CustomUserDetails userDetails, // ✅ 토큰에서 사용자 정보 추출
+//            @RequestBody ImagePathRequestDto requestDto) {
+//
+//        try {
+//            MenuTranslationResultDto result = imageAnalysisService.getTranslatedMenu(requestDto.getImagePath());
+//            return ResponseEntity.ok(
+//                    CommonResponse.<MenuTranslationResultDto>builder()
+//                            .success(true)
+//                            .message("메뉴 번역 성공")
+//                            .data(result)
+//                            .build()
+//            );
+//        } catch (RuntimeException e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body(CommonResponse.<MenuTranslationResultDto>builder()
+//                            .success(false)
+//                            .message("ai 연결 실패")
+//                            .data(null)
+//                            .build());
+//        }
+//    }
 }
