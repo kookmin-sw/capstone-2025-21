@@ -59,7 +59,13 @@ public class MyPageViewModel: ObservableObject {
     func send(_ action: Action) {
         switch action {
         case .onAppear:
-            break
+            Providers.HomeProvider.request(target: .getProfile, instance: BaseResponse<ProfileResult>.self) { [weak self] data in
+                if data.success {
+                    guard let data = data.data else { return }
+                    self?.profileInfo.name = data.username
+                    self?.profileInfo.nationality = data.nationality
+                }
+            }
             
         case .changePasswordButtonDidTap:
             break
