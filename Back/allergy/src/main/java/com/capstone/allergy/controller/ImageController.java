@@ -1,7 +1,10 @@
 package com.capstone.allergy.controller;
 
+import com.capstone.allergy.cache.ImagePathCache;
 import com.capstone.allergy.dto.CommonResponse;
 import com.capstone.allergy.dto.UploadImageResponse;
+import com.capstone.allergy.cache.ImagePathCache;
+import com.capstone.allergy.jwt.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -16,6 +19,7 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,8 +33,9 @@ import java.util.UUID;
 public class ImageController {
 
     private final String uploadDir;
+    private final ImagePathCache imagePathCache;
 
-    public ImageController(@Value("${file.upload-dir}") String uploadDir) {
+    public ImageController(@Value("${file.upload-dir}") String uploadDir, ImagePathCache imagePathCache) {
         this.uploadDir = uploadDir;
         File dir = new File(uploadDir);
         if (!dir.exists()) {
@@ -116,6 +121,7 @@ public class ImageController {
     )
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<CommonResponse<UploadImageResponse>> uploadImage(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
             @Parameter(description = "업로드할 이미지 파일", required = true)
             @RequestParam("image") MultipartFile file) {
 
@@ -135,6 +141,9 @@ public class ImageController {
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
             String imageUrl = "/api/gallery/images/" + fileName;
+
+            Long userId = userDetails.getUser().getId();
+            imagePathCache.storeImagePath(userId, imageUrl);
 
             return ResponseEntity.ok(
                     CommonResponse.<UploadImageResponse>builder()
