@@ -41,7 +41,6 @@ extension APIConstants {
         ]
     }
     
-    
     static var signHeader: [String: String] {
         return [contentType: applicationJSON]
     }

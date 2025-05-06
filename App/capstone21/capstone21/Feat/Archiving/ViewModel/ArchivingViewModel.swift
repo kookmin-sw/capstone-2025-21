@@ -39,128 +39,18 @@ class ArchivingViewModel: ObservableObject {
     init() {
         setupSampleData()
         setupObservers()
+        
+        Providers.HomeProvider.request(target: .getRestaurantList, instance: BaseResponse<MenuResult>.self) {  data in
+            if data.success {
+                guard let data = data.data else { return }
+                print("🚨🚨🚨🚨\(data.menus)🚨🚨🚨")
+            }
+        }
     }
     
     private func setupSampleData() {
-        // Sample data for featured recommendations
-        featuredRecommendations = [
-            Restaurant(
-                name: "Seoul Garden",
-                foodTags: ["Korean BBQ", "Banchan", "Bibimbap"],
-                priceRange: .moderate,
-                rating: 4.5,
-                recommendedMenu: "Bulgogi",
-                matchPercentage: 95,
-                categories: [.korean, .bbq],
-                image: Image(systemName: "photo").renderingMode(.original)
-            ),
-            Restaurant(
-                name: "Kimchi House",
-                foodTags: ["Stew", "Kimchi", "Traditional"],
-                priceRange: .budget,
-                rating: 4.2,
-                recommendedMenu: "Kimchi Jjigae",
-                matchPercentage: 90,
-                categories: [.korean, .soup],
-                image: Image(systemName: "photo.fill").renderingMode(.original)
-            ),
-            Restaurant(
-                name: "Gangnam Street",
-                foodTags: ["Tteokbokki", "Kimbap", "Street Food"],
-                priceRange: .budget,
-                rating: 4.8,
-                recommendedMenu: "Spicy Tteokbokki",
-                matchPercentage: 88,
-                categories: [.korean, .street],
-                image: Image(systemName: "fork.knife").renderingMode(.original)
-            )
-        ]
-        
-        // Sample data for all restaurants
-        allRestaurants = [
-            Restaurant(
-                name: "Seoul Garden",
-                foodTags: ["Korean BBQ", "Banchan", "Bibimbap"],
-                priceRange: .moderate,
-                rating: 4.5,
-                recommendedMenu: "Bulgogi",
-                matchPercentage: 95,
-                categories: [.korean, .bbq],
-                image: Image(systemName: "photo").renderingMode(.original)
-            ),
-            Restaurant(
-                name: "Kimchi House",
-                foodTags: ["Stew", "Kimchi", "Traditional"],
-                priceRange: .budget,
-                rating: 4.2,
-                recommendedMenu: "Kimchi Jjigae",
-                matchPercentage: 90,
-                categories: [.korean, .soup],
-                image: Image(systemName: "photo.fill").renderingMode(.original)
-            ),
-            Restaurant(
-                name: "Gangnam Street",
-                foodTags: ["Tteokbokki", "Kimbap", "Street Food"],
-                priceRange: .budget,
-                rating: 4.8,
-                recommendedMenu: "Spicy Tteokbokki",
-                matchPercentage: 88,
-                categories: [.korean, .street],
-                image: Image(systemName: "fork.knife").renderingMode(.original)
-            ),
-            Restaurant(
-                name: "Busan Seafood",
-                foodTags: ["Seafood", "Soup", "Grilled Fish"],
-                priceRange: .expensive,
-                rating: 4.6,
-                recommendedMenu: "Haemul Jeongol",
-                matchPercentage: 82,
-                categories: [.korean, .seafood, .soup],
-                image: Image(systemName: "fish").renderingMode(.original)
-            ),
-            Restaurant(
-                name: "Bibim House",
-                foodTags: ["Bibimbap", "Rice Bowls", "Vegetarian"],
-                priceRange: .moderate,
-                rating: 4.3,
-                recommendedMenu: "Dolsot Bibimbap",
-                matchPercentage: 87,
-                categories: [.korean, .rice],
-                image: Image(systemName: "cup.and.saucer").renderingMode(.original)
-            ),
-            Restaurant(
-                name: "Noodle King",
-                foodTags: ["Naengmyeon", "Japchae", "Ramyeon"],
-                priceRange: .budget,
-                rating: 4.0,
-                recommendedMenu: "Cold Buckwheat Noodles",
-                matchPercentage: 75,
-                categories: [.korean, .noodles],
-                image: Image(systemName: "bowl.fill").renderingMode(.original)
-            ),
-            Restaurant(
-                name: "Sweet Seoul",
-                foodTags: ["Bingsu", "Hotteok", "Tea"],
-                priceRange: .moderate,
-                rating: 4.7,
-                recommendedMenu: "Patbingsu",
-                matchPercentage: 65,
-                categories: [.korean, .dessert],
-                image: Image(systemName: "cup.and.saucer.fill").renderingMode(.original)
-            ),
-            Restaurant(
-                name: "Jeju Island",
-                foodTags: ["Seafood", "BBQ", "Island Specialties"],
-                priceRange: .expensive,
-                rating: 4.9,
-                recommendedMenu: "Black Pork BBQ",
-                matchPercentage: 80,
-                categories: [.korean, .bbq, .seafood],
-                image: Image(systemName: "flame").renderingMode(.original)
-            )
-        ]
-        
-        // Initialize filtered restaurants
+        featuredRecommendations = Restaurant.list
+        allRestaurants = Restaurant.list
         filteredRestaurants = allRestaurants
     }
     
@@ -187,7 +77,7 @@ class ArchivingViewModel: ObservableObject {
                     
                     return matchesSearch && matchesCategory && matchesPrice
                 }
-                .sorted { $0.matchPercentage ?? 0 > $1.matchPercentage ?? 0 }
+                
             }
             .assign(to: \.filteredRestaurants, on: self)
             .store(in: cancelBag)

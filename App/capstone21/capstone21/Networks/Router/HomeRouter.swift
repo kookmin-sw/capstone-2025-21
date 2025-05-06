@@ -11,7 +11,7 @@ import Moya
 enum HomeRouter {
     case getRestaurantList
     case getProfile
-    case postMenuImage
+    case postMenuImage(Data)
     case getMenuImage(String)
     case getTranslateMenuImage
     case getMenuAnalyze
@@ -80,8 +80,15 @@ extension HomeRouter: BaseTargetType {
             return .requestPlain
         case .getProfile:
             return .requestPlain
-        case .postMenuImage:
-            return .requestPlain
+        case .postMenuImage(let file):
+            var multipartFormData: [MultipartFormData] = []
+            let imageData = MultipartFormData(
+                    provider: .data(file),
+                    name: "image",
+                    fileName: "image.jpeg",
+                    mimeType: "image/jpeg")
+            multipartFormData.append(imageData)
+            return .uploadMultipart(multipartFormData)
         case .getMenuImage:
             return .requestPlain
         case .getTranslateMenuImage:

@@ -48,10 +48,11 @@ public class LogInViewModel: ObservableObject {
     func send(_ action: Action) {
         switch action {
         case .onAppear:
-            if UserDefaultsManager.accessToken != "" {
-                navigationRouter.destinations = []
-                windowRouter.switch(to: .home)
-            }
+            break
+//            if UserDefaultsManager.accessToken != "" {
+//                navigationRouter.destinations = []
+//                windowRouter.switch(to: .home)
+//            }
             
         case .loginButtonDidTap:
             let request = LoginRequest(username: id, password: password)

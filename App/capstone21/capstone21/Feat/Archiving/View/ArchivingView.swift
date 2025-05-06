@@ -232,17 +232,6 @@ struct FeaturedRestaurantCard: View {
                     .frame(width: 240, height: 160)
                     .cornerRadius(12)
                     .clipped()
-                
-                if let matchPercentage = restaurant.matchPercentage {
-                    Text("\(matchPercentage)% Match")
-                        .font(.semibold_12)
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color.heyMain)
-                        .cornerRadius(8)
-                        .padding(8)
-                }
             }
             
             VStack(alignment: .leading, spacing: 4) {
@@ -336,19 +325,9 @@ struct RestaurantCard: View {
                 .clipped()
             
             VStack(alignment: .leading, spacing: 4) {
-                HStack {
-                    Text(restaurant.name)
-                        .font(.semibold_16)
-                        .foregroundColor(.heyGray1)
-                    
-                    Spacer()
-                    
-                    if let matchPercentage = restaurant.matchPercentage {
-                        Text("\(matchPercentage)%")
-                            .font(.semibold_14)
-                            .foregroundColor(.heyMain)
-                    }
-                }
+                Text(restaurant.name)
+                    .font(.semibold_16)
+                    .foregroundColor(.heyGray1)
                 
                 HStack(spacing: 4) {
                     ForEach(restaurant.foodTags.prefix(3), id: \.self) { tag in
