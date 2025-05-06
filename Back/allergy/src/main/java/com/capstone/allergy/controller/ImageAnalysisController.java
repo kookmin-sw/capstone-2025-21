@@ -1,7 +1,9 @@
 package com.capstone.allergy.controller;
 
+import com.capstone.allergy.domain.User;
 import com.capstone.allergy.dto.*;
 import com.capstone.allergy.jwt.CustomUserDetails;
+import com.capstone.allergy.repository.UserRepository;
 import com.capstone.allergy.service.ImageAnalysisService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -27,19 +29,36 @@ import java.awt.*;
 public class ImageAnalysisController {
 
     private final ImageAnalysisService imageAnalysisService;
+    private final UserRepository userRepository;
 
     @PostMapping("/analyze-image")
     @Operation(
             summary = "이미지 분석 요청",
-            description = "이미지 및 사용자 정보를 기반으로 AI 서버에 분석 요청을 보냅니다."
+            description = "백엔드에서 사용자 정보를 조회하고, 최근 업로드된 이미지 경로를 이용해 AI 서버에 분석 요청을 보냅니다."
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     public ResponseEntity<CommonResponse<String>> analyzeImageAndCache(
-            @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestBody ImageAnalysisRequestDto requestDto
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         try {
             Long userId = userDetails.getUser().getId();
-            imageAnalysisService.analyzeAndCache(requestDto, userId);
+            User user = userRepository.findById(userId)
+                            .orElseThrow(() -> new RuntimeException("사용자 정보를 찾을 수 없습니다."));
+
+            String imagePath = imagePathCache.getLatestImagePath(userId);
+            if (imagePath == null) {
+                throw new RuntimeException("업로드된 이미지가 없습니다.");
+            }
+
+            ImageAnalysisRequestDto dto = new ImageAnalysisRequestDto();
+            dto.setUserId(userId);
+            dto.setNationality(user.getNatonality());
+            dto.setFavoriteFoods(user.getFavoriteFoods());
+            dto.setAllergies(user.getAllergies());
+            dto.setImagePath(imagePath);
+
+            imageAnalysisService.analyzeAndCache(dto, userId);
+
             return ResponseEntity.ok(
                     CommonResponse.<String>builder()
                             .success(true)
