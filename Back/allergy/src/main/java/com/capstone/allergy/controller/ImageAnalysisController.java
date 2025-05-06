@@ -15,6 +15,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -27,11 +29,15 @@ import java.awt.*;
 @RequestMapping("/api/analysis")
 @RequiredArgsConstructor
 @Tag(name = "이미지 분석 API", description = "AI 기반 이미지 분석 및 번역 API")
+@Slf4j
 public class ImageAnalysisController {
 
     private final ImageAnalysisService imageAnalysisService;
     private final UserRepository userRepository;
     private final ImagePathCache imagePathCache;
+
+    @Value("${app.base-url}")
+    private String baseUrl;
 
     @PostMapping("/analyze-image")
     @Operation(
@@ -47,18 +53,20 @@ public class ImageAnalysisController {
             User user = userRepository.findById(userId)
                             .orElseThrow(() -> new RuntimeException("사용자 정보를 찾을 수 없습니다."));
 
-            String imagePath = imagePathCache.getLatestImagePath(userId);
-            if (imagePath == null) {
+            String relativePath = imagePathCache.getLatestImagePath(userId);
+            if (relativePath == null) {
                 throw new RuntimeException("업로드된 이미지가 없습니다.");
             }
 
+            String absolutePath = baseUrl + relativePath;
+            log.info("[분석 요청] userId: {}, imagePath: {}", userId, absolutePath);
 
             ImageAnalysisRequestDto dto = new ImageAnalysisRequestDto();
             dto.setUserId(userId);
             dto.setNationality(user.getNationality());
             dto.setFavoriteFoods(user.getFavoriteFoods());
             dto.setAllergies(user.getAllergies());
-            dto.setImagePath(imagePath);
+            dto.setImagePath(absolutePath);
 
             imageAnalysisService.analyzeAndCache(dto, userId);
 
