@@ -1,5 +1,6 @@
 package com.capstone.allergy.controller;
 
+import com.capstone.allergy.cache.ImagePathCache;
 import com.capstone.allergy.domain.User;
 import com.capstone.allergy.dto.*;
 import com.capstone.allergy.jwt.CustomUserDetails;
@@ -30,11 +31,12 @@ public class ImageAnalysisController {
 
     private final ImageAnalysisService imageAnalysisService;
     private final UserRepository userRepository;
+    private final ImagePathCache imagePathCache;
 
     @PostMapping("/analyze-image")
     @Operation(
             summary = "이미지 분석 요청",
-            description = "백엔드에서 사용자 정보를 조회하고, 최근 업로드된 이미지 경로를 이용해 AI 서버에 분석 요청을 보냅니다."
+            description = "백엔드에서 사용자 정보를 조회하고, 최근 업로드된 이미지 경로를 이용해 AI 서버에 분석 요청을 보냅니다.",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     public ResponseEntity<CommonResponse<String>> analyzeImageAndCache(
@@ -50,9 +52,10 @@ public class ImageAnalysisController {
                 throw new RuntimeException("업로드된 이미지가 없습니다.");
             }
 
+
             ImageAnalysisRequestDto dto = new ImageAnalysisRequestDto();
             dto.setUserId(userId);
-            dto.setNationality(user.getNatonality());
+            dto.setNationality(user.getNationality());
             dto.setFavoriteFoods(user.getFavoriteFoods());
             dto.setAllergies(user.getAllergies());
             dto.setImagePath(imagePath);
