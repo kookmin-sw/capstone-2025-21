@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -37,6 +38,8 @@ public class ImageController {
 
     public ImageController(@Value("${file.upload-dir}") String uploadDir, ImagePathCache imagePathCache) {
         this.uploadDir = uploadDir;
+        this.imagePathCache = imagePathCache;
+
         File dir = new File(uploadDir);
         if (!dir.exists()) {
             dir.mkdirs(); // 업로드 폴더가 없으면 생성
