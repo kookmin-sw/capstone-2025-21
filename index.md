@@ -15,27 +15,6 @@
 - 📈Market potential & Business model -> <a href="https://github.com/kookmin-sw/capstone-2025-21/wiki/Market-potential-&-Business-model">문서 바로가기</a>
 - 🙋‍♂️ 페르소나 분석 -> <a href="https://github.com/kookmin-sw/capstone-2025-21/wiki/페르소나-분석">문서 바로가기</a>
 
-### 🗒사용자 정의 문서
-
-<details>
- <summary>📈시스템 흐름도</summary>
- 
- ### User-case Diagram
- <p align='center'><img src="https://user-images.githubusercontent.com/40621030/134690667-abe8f797-01a8-44db-ae89-ef7809c22d64.png"/></p>
- 
- ### Sequence Diagram
-  <p align='center'><img src="https://user-images.githubusercontent.com/40621030/136720501-bbe98072-abbc-4797-a0c2-c66771f7e04a.png"/></p>
- 
- ### Architecture
-  <p align='center'><img src="https://user-images.githubusercontent.com/40621030/136720255-0456ffd4-4d7d-4d2e-b5c5-09387c5861fa.png"/></p>
-</details>
-
-<details>
- <summary>🖊개발 문서</summary>
-
-
-
-</details>
 
 # 📈 설계 다이어그램
 ## UseCase Diagram
