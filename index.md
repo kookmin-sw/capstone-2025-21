@@ -37,6 +37,18 @@
 
 </details>
 
+# 📈 설계 다이어그램
+## UseCase Diagram
+<img src="https://github.com/user-attachments/assets/872286c5-f019-4657-9d2a-822916f1a834" width="400"/>
+
+## Sequence Diagram
+<img src="https://github.com/user-attachments/assets/cd93c758-010c-4f25-a3b0-b8df76a6e2e5" width="400"/>
+
+## Architecture
+<img src="https://github.com/user-attachments/assets/edd16e72-e021-4023-a246-96a15f9995c4" width="430"/>
+
+
+
 # 🗂️ 개발 과정 설명
 
 ## AI
@@ -92,7 +104,7 @@
   </tr>
  <table>
  
-
+### ➡️ 메뉴분석 Flow
  ### 메뉴판 업로드 & 로딩 뷰 & 메뉴판 분석
  갤러리에서 메뉴판 이미지를 업로드 하고 분석하는 동안 로딩뷰를 보여준다
  메뉴판 분석 페이지에서는 해당 메뉴판에서 추천하는 음식과 알러지와 관련된 메뉴들을 한눈에 보기 편하도록 보여준다
@@ -106,6 +118,7 @@
   </tr>
 <table>
 
+### ➡️ 맛집 아카이빙 & 마이페이지 Flow
 ### 마이페이지 & 맛집 아카이빙 뷰
 마이페이지에서 회원정보 확인, 로그아웃, 회원탈퇴 등의 정보를 확인할 수 있으며
 맛집 아카이빙 뷰에서는 자신의 선호음식을 기반으로 맛집 리스트를 추천해주고 해당 맛집을 누르면 인터넷을 통해서 정보를 확인할 수 있도록 연결해준다.
