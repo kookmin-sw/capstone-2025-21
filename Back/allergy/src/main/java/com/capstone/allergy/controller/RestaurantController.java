@@ -28,7 +28,11 @@ public class RestaurantController {
 
     @Operation(
             summary = "선호 음식 기반 맛집 추천",
-            description = "JWT 인증된 사용자의 선호 음식 목록을 기반으로 맛집 1곳씩 추천합니다.",
+            description = """
+                JWT 인증된 사용자의 선호 음식 목록을 기반으로 맛집 리스트를 보여줍니다.
+                
+                - Authorization: Bearer <JWT 토큰>
+                """,
             security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "추천 맛집 리스트 반환 성공",
