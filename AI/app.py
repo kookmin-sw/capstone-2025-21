@@ -4,6 +4,7 @@ import uuid
 import numpy as np
 from fastapi import FastAPI, HTTPException, File, UploadFile, Form
 from typing import List, Optional
+import torch
 from paddleocr import PaddleOCR
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -20,17 +21,41 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 # 2) 사전 계산된 데이터 경로 설정
 embeddings_path = os.path.join(script_dir, "menu_embeddings.npy")
 metadata_path   = os.path.join(script_dir, "menu_metadata.json")
+translated_path = os.path.join(script_dir, "ingredients_translated.json")
+related_path    = os.path.join(script_dir, "allergy_related_ingredients.json")
 #index_path      = os.path.join(script_dir, "menu_name_index.json")
 
 # 3) 임베딩·메타데이터·이름→인덱스 맵 로드
 menu_embeddings = np.load(embeddings_path)
 with open(metadata_path, "r", encoding="utf-8") as f_meta:
     menu_metadata = json.load(f_meta)
+with open(translated_path, "r", encoding="utf-8") as f:
+    allergy_translation = json.load(f)
+with open(related_path, "r", encoding="utf-8") as f:
+    allergy_map = json.load(f)
 '''
 with open(index_path, "r", encoding="utf-8") as f_idx:
     name_to_index = json.load(f_idx)
 '''
 menu_names = [item["menu_name"]["ko"] for item in menu_metadata]
+
+# reverse lookup table을 만들어 빠른 매칭
+ingredient_to_allergy = {}
+for allergy, ingredients in allergy_map.items():
+    for ing in ingredients:
+        ingredient_to_allergy[ing] = allergy
+
+ko_to_multilang = {item["ko"]: item for item in allergy_translation}
+
+def translate_allergens(allergen_list, lang_code="en"):
+    translated = []
+    for allergen in allergen_list:
+        item = ko_to_multilang.get(allergen)
+        if item:
+            translated.append(item.get(lang_code, allergen))
+        else:
+            translated.append(allergen)  # 못 찾으면 원문 유지
+    return translated
 
 # 4) OCR 및 임베딩 모델 초기화
 ocr_model = PaddleOCR(use_angle_cls=True, lang="korean")
@@ -64,28 +89,55 @@ async def analyze(
 
     # B) OCR: 메뉴명 추출
     ocr_result = ocr_model.ocr(imagePath, cls=True)
-    scanned_lines = [(line[1][0], line[0]) for line in ocr_result]
+    scanned_lines = [(line[1][0], line[0]) for line in ocr_result[0]]
 
     # 임시 파일 삭제
     #os.remove(temp_path)
 
     # C) 유효한 메뉴명 필터링
+    dest_lang = langs.get(nationality, "ko")
     seen = set()
     valid_scanned = []
+    all_menu_items = []
+    user_allergy_set = set(json.loads(allergies))
     for name, bbox in scanned_lines:
         if name in menu_names and name not in seen:
-            idx = menu_names.index()
-            valid_scanned.append((idx, name, bbox))
+            matched_allergies = set()
+            idx = menu_names.index(name)
+            item = menu_metadata[idx]
+            ingredients_str = item.get("ingredients", {}).get("ko", "")
+            ing_list = [i.strip() for i in ingredients_str.split(",") if i.strip()]
+            # 알러지 검사
+            for ing in ingredient_to_allergy:
+                if ing in ing_list:
+                    matched_allergies.add(ingredient_to_allergy[ing])
+            user_matched_allergies = matched_allergies & user_allergy_set
+            # 메뉴명 번역
+            if dest_lang != "ko":
+                try:
+                    translated_name = translator.translate(name, dest=dest_lang).text
+                except Exception:
+                    translated_name = name # 번역 실패 시 그대로 사용
+            else:
+                translated_name = name
+            valid_scanned.append((idx, translated_name, bbox, bool(user_matched_allergies)))
+            user_matched_allergies_translated = translate_allergens(user_matched_allergies, lang_code=nationality)
+            
             seen.add(name)
+            all_menu_items.append({
+                "menu_name": translated_name,
+                "has_allergy": bool(user_matched_allergies_translated),
+                "allergy_types": user_matched_allergies_translated,
+                "bbox": bbox
+            })
     if not valid_scanned:
         raise HTTPException(status_code=400, detail="No valid menu names extracted")
 
-    # D) 사용자 취향·알러지 정보 파싱
+    # D) 사용자 취향 정보 파싱
     fav_list = json.loads(favoriteFoods)
-    allergy_set = set(json.loads(allergies))
 
     # E) 스캔된 메뉴 임베딩 수집
-    scanned_idxs = [idx for idx, _, _ in valid_scanned]
+    scanned_idxs = [idx for idx, _, _, _ in valid_scanned]
     scanned_embs = menu_embeddings[scanned_idxs]
 
     # F) 사용자 임베딩 계산
@@ -104,36 +156,15 @@ async def analyze(
 
     # H) 알러지 제외 후 추천 생성
     recs = []
-    for (idx, name, bbox), score in scored:
-        item = menu_metadata[idx]
-        ingredients_str = item.get("ingredients", {}).get("ko", "")
-        ing_list = [i.strip() for i in ingredients_str.split(",") if i.strip()]
+    for (idx, name, bbox, has_allergy), score in scored:
         # 알러지 필터링
-        if allergy_set and any(allergen in ing_list for allergen in allergy_set):
+        if has_allergy:
             continue
         recs.append({
-            "menu_name": item.get("menu_name", {}).get("ko", ""),
-            "ingredients": ing_list,
-            "similarity": float(score),
-            "bbox": bbox
+            "menu_name": name,
+            "similarity": float(score)
         })
         if len(recs) >= top_k:
             break
 
-    # I) 메뉴명을 사용자 언어로 번역
-    dest_lang = langs.get(nationality, "ko")
-    translated_recs = []
-    for rec in recs:
-        name = rec["menu_name"]
-        if dest_lang != "ko":
-            try:
-                translated_name = translator.translate(name, dest=dest_lang).text
-            except Exception:
-                translated_name = name # 번역 실패 시 그대로 사용
-        else:
-            translated_name = name
-        rec["menu_name"] = translated_name
-        translated_recs.append(rec)
-    recs = translated_recs
-
-    return {"recommendations": recs}
+    return {"recommendations": recs, "all_menu_items": all_menu_items}
