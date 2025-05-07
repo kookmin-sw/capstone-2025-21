@@ -57,9 +57,64 @@
 
 # 📔기능 설명
 
-```
-작성예정
-```
+## **🍽️ Menu app**
+
+### ➡️ 회원가입 Flow
+
+### 1. 온보딩 뷰 & 로그인 뷰
+ 앱을 처음 실행 시, 앱을 설명하는 온보딩 화면이 나타나고, start 버튼을 누르게 되면 로그인 화면으로 이동하게 됩니다!
+ <table>
+  <tr>
+   <td><img src="https://github.com/user-attachments/assets/20e44560-5baa-426d-9dd7-1a4e27c95314" width="600"/></td>
+   <td><img src="https://github.com/user-attachments/assets/771542ab-0228-4320-9c75-36b0283a947c" width="200"/></td>
+  </tr>
+ </table>
+
+ ### ➡️ 회원가입 Flow
+ 로그인 화면에서 sign up 버튼을 누르면 회원가입으로 연결된다
+
+ ### 1. 국적 & 알러지 선택 뷰
+ 현재 국적은 미국, 일본, 중국으로 세 나라를 선택할 수 있으며, 알러지는 총 25개 중에서 중복적으로 선택할 수 있습니다
+  <table>
+  <tr>
+   <td><img src="https://github.com/user-attachments/assets/9d6d1ab1-2a96-4c09-a1f5-d000db355ef7" width="400"/></td>
+   <td><img src="https://github.com/user-attachments/assets/a62c62cf-7c44-4f89-a944-2bcf14994790" width="400"/></td>
+  </tr>
+ <table>
+
+ ### 2. 선호하는 음식 선택 & 개인정보 입력 뷰
+ 메뉴판 분석을 통해서 선호하는 음식 추천 및 맛집 추천 아카이빙 뷰에서 사용하기 위한 정보인 선호하는 한국 음식을 받는다
+ 마지막으로는 username, password를 받고 회원가입을 실행한다.
+  <table>
+  <tr>
+   <td><img src="https://github.com/user-attachments/assets/0d08c2d4-cb4d-49e2-b302-32295f55f33f" width="400"/></td>
+   <td><img src="https://github.com/user-attachments/assets/04f58b54-2fc2-4cd5-b56c-0b0cd1dbbe86" width="200"/></td>
+  </tr>
+ <table>
+ 
+
+ ### 메뉴판 업로드 & 로딩 뷰 & 메뉴판 분석
+ 갤러리에서 메뉴판 이미지를 업로드 하고 분석하는 동안 로딩뷰를 보여준다
+ 메뉴판 분석 페이지에서는 해당 메뉴판에서 추천하는 음식과 알러지와 관련된 메뉴들을 한눈에 보기 편하도록 보여준다
+ 또한 메뉴판 번역 이미지를 제공해줌으로써 확인할 수 있도록 한다
+
+ <table>
+  <tr>
+   <td><img src="https://github.com/user-attachments/assets/22b876d1-d527-4be1-a4ac-ce99267bc5a1" width="400"/></td>
+   <td><img src="https://github.com/user-attachments/assets/46367d31-1093-4849-a82d-0854a53bfcac" width="200"/></td>
+   <td><img src="https://github.com/user-attachments/assets/7c692e67-476d-4c57-b197-4acb1b2e551d" width="400"/></td>
+  </tr>
+<table>
+
+### 마이페이지 & 맛집 아카이빙 뷰
+마이페이지에서 회원정보 확인, 로그아웃, 회원탈퇴 등의 정보를 확인할 수 있으며
+맛집 아카이빙 뷰에서는 자신의 선호음식을 기반으로 맛집 리스트를 추천해주고 해당 맛집을 누르면 인터넷을 통해서 정보를 확인할 수 있도록 연결해준다.
+<table>
+  <tr>
+   <td><img src="https://github.com/user-attachments/assets/cdf5dcaf-ae61-41f8-b83f-60ad3e1aa14e" width="200"/></td>
+   <td><img src="https://github.com/user-attachments/assets/262afbb9-28b1-463c-b0b6-6c71243c7cd4" width="400"/></td>
+  </tr>
+<table>
 
 ---
 
