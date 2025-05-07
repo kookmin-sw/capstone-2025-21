@@ -172,9 +172,15 @@
 ---
 
 ## 💽설치 안내 (Installation Process)
-```
-작성예정
-```
+### Swift
+
+#### Xcode 시뮬레이터로 실행하기
+```bash 
+git clone https://github.com/kookmin-sw/capstone-2025-21
+cd App/capstone21/capstone21
+Xcode로 프로젝트 파일 열기
+실행하기
+ ```
 
 ---
 
