@@ -169,21 +169,24 @@ class NavigationRouter: NavigationRoutable, ObservableObjectSettable {
 ### 4. 주요 플로우 & 홈 탭 구조
 <details>
  <summary>자세한 내용</summary>
-    세 개의 탭으로 구성된 메인 애플리케이션 인터페이스:
-    - **ArchivingView** - 사용자 선호 음식을 기반한 맛집 추천 리스트 제공
-    - **MenuImagePickerView** - 메인 메뉴 분석 기능
-    - **MyPageView** - 사용자 프로필 및 설정
-    **온보딩 플로우**
-    다단계 등록 프로세스:
-        - SelectNationalityView - 국가 선택
+ 
+ ### 세 개의 탭으로 구성된 메인 애플리케이션 인터페이스:
+ - **ArchivingView** - 사용자 선호 음식을 기반한 맛집 추천 리스트 제공
+ - **MenuImagePickerView** - 메인 메뉴 분석 기능
+ - **MyPageView** - 사용자 프로필 및 설정
+ 
+ ### 온보딩 플로우
+ 다단계 등록 프로세스:
+ - SelectNationalityView - 국가 선택
         - SelectAllergyView - 알레르기 및 매운 음식 선호도 지정
         - SelectKoreanFoodView - 선호하는 한국 음식 선택
         - EnterIdPasswordView - 계정 인증 정보 생성
-    **메뉴 분석 플로우**
-    사용자가 메뉴 항목을 분석할 수 있는 핵심 기능:
-        - MenuImagePickerView - 메뉴 이미지 업로드
-        - MenuAnalysisLoadingView - 메뉴 분석 중 로딩 화면
-        - MenuAnalysisResultView - 사용자 선호도 기반 추천을 포함한 분석 결과 표시
+        
+ ### 메뉴 분석 플로우
+ 사용자가 메뉴 항목을 분석할 수 있는 핵심 기능:
+ - MenuImagePickerView - 메뉴 이미지 업로드
+ - MenuAnalysisLoadingView - 메뉴 분석 중 로딩 화면
+ - MenuAnalysisResultView - 사용자 선호도 기반 추천을 포함한 분석 결과 표시
 </details>
 
 
