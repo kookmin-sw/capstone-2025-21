@@ -1,25 +1,28 @@
-# menu : 당신의 언어로, 당신의 취향을 기반으로, 메뉴를 추천해줍니다.
+# 🍱 Menu: 당신의 언어로, 당신의 취향에 맞게 메뉴를 추천해드립니다
 
 # 🗂️프로젝트 소개
 한국을 방문하는 외국인을 위한 음식점 메뉴판 번역을 제공하고, 사용자 취향 및 알러지 정보를 이용해서 음식을 추천해주는 애플리케이션
 
-## 관련 문서 
+## 📌 프로젝트 문서
 - 📃주제 정의 문서 -> <a href="https://github.com/kookmin-sw/capstone-2025-21/wiki/주제-정의-문서">문서 바로가기</a>
 - 📈Market potential & Business model -> <a href="https://github.com/kookmin-sw/capstone-2025-21/wiki/Market-potential-&-Business-model">문서 바로가기</a>
 - 🙋‍♂️ 페르소나 분석 -> <a href="https://github.com/kookmin-sw/capstone-2025-21/wiki/페르소나-분석">문서 바로가기</a>
 
 ---
-
-# 📈 설계 다이어그램
-## UseCase Diagram
+# 🏗️ 시스템 설계
+## ✅ UseCase Diagram
 <img src="https://github.com/user-attachments/assets/872286c5-f019-4657-9d2a-822916f1a834" width="400"/>
 
-## Sequence Diagram
+## ✅ Sequence Diagram
 <img src="https://github.com/user-attachments/assets/cd93c758-010c-4f25-a3b0-b8df76a6e2e5" width="400"/>
 
-## Architecture
+## ✅ Architecture
 <img src="https://github.com/user-attachments/assets/edd16e72-e021-4023-a246-96a15f9995c4" width="430"/>
 
+### 관련 문서 
+- Github 컨벤션 <a href="https://github.com/kookmin-sw/capstone-2025-21/wiki/Github-이슈,-PR,-커밋-컨벤션">문서 바로가기</a>
+- 
+- 
 
 
 # 🗂️ 개발 과정 설명
@@ -29,12 +32,170 @@
 작성예정
 ```
 ## Front
+
+### 아키텍쳐 그래프
+<img width="850" alt="image" src="https://github.com/user-attachments/assets/2eca019a-1540-476a-9d65-6fd7c43791ee" />
+
+
+ 
+### 1. DIContainer를 사용하여 의존성 주입을 구현하고 있으며, 다음과 같은 주요 구성 요소에 접근할 수 있게 합니다
+<details>
+ <summary>자세한 내용</summary>
+- NavigationRouter: 특정 플로우 내에서의 화면 이동 관리
+- WindowRouter: 주요 애플리케이션 화면/플로우 간의 전환 관리
+    
+```Swift
+import Foundation
+
+typealias NavigationRoutableType = NavigationRoutable & ObservableObjectSettable
+typealias WindowRoutableType = WindowRoutable & ObservableObjectSettable
+
+final class DIContainer: ObservableObject {
+    var navigationRouter: NavigationRoutableType
+    var windowRouter: WindowRoutableType
+    
+    private init(
+        navigationRouter: NavigationRoutableType = NavigationRouter(),
+        windowRouter: WindowRoutableType = WindowRouter()
+    ) {
+        self.navigationRouter = navigationRouter
+        self.windowRouter = windowRouter
+        
+        navigationRouter.setObjectWillChange(objectWillChange)
+        windowRouter.setObjectWillChange(objectWillChange)
+    }
+}
+
+extension DIContainer {
+    static let `default` = DIContainer()
+    static let stub = DIContainer()
+}
+
 ```
-작성예정
+</details>
+
+### 2. 네비게이션 시스템
+<details>
+ <summary>자세한 내용</summary>
+앱은 다음과 같은 맞춤형 네비게이션 아키텍처를 구현하고 있습니다:
+**1. 윈도우 라우팅 - 주요 애플리케이션 상태 처리:**
+.splash - 앱 초기 로딩 화면
+.onboarding - 사용자 등록 단계
+.home - 메인 애플리케이션 인터페이스
+    
+```Swift
+import Foundation
+import Combine
+
+protocol WindowRoutable {
+    var destination: WindowDestination { get }
+    func `switch`(to destination: WindowDestination)
+}
+
+
+class WindowRouter: WindowRoutable, ObservableObjectSettable {
+    
+    var objectWillChange: ObservableObjectPublisher?
+    
+    var destination: WindowDestination = .splash {
+        didSet {
+            objectWillChange?.send()
+        }
+    }
+    
+    func `switch`(to destination: WindowDestination) {
+        self.destination = destination
+    }
+    
+}
 ```
+
+**2. 내비게이션 라우팅 - 각 플로우 내에서의 화면 이동 처리:**
+```Swift
+import Foundation
+import Combine
+
+protocol NavigationRoutable {
+  var destinations: [NavigationDestination] { get set }
+  
+  func push(to view: NavigationDestination)
+  func pop()
+  func popToRootView()
+}
+
+
+class NavigationRouter: NavigationRoutable, ObservableObjectSettable {
+  
+  var objectWillChange: ObservableObjectPublisher?
+  
+  var destinations: [NavigationDestination] = [] {
+    didSet {
+      objectWillChange?.send()
+    }
+  }
+  
+  func push(to view: NavigationDestination) {
+    destinations.append(view)
+  }
+  
+  func pop() {
+    _ = destinations.popLast()
+  }
+  
+  func popToRootView() {
+    destinations = []
+  }
+}
+```
+
+**3. 스택 기반 접근 방식으로 push/pop 연산 사용**
+- 내비게이션 목적지는 NavigationDestination 열거형에 정의
+- NavigationRoutingView가 목적지를 구체적인 뷰 인스턴스로 변환
+
+</details>
+
+### 3. MVVM 패턴
+<details>
+ <summary>자세한 내용</summary>
+    <img width="754" alt="image" src="https://github.com/user-attachments/assets/1e43b148-2420-430d-9546-15774719d912" />
+
+각 화면은 MVVM(Model-View-ViewModel) 패턴을 따릅니다:
+- 뷰: UI를 표시하고 사용자 입력을 캡처하는 SwiftUI 뷰
+- 뷰모델: 상태 관리, 비즈니스 로직, 서비스와의 통신 담당
+- 모델: 도메인 객체를 나타내는 데이터 구조
+</details>
+
+
+### 4. 주요 플로우 & 홈 탭 구조
+<details>
+ <summary>자세한 내용</summary>
+    세 개의 탭으로 구성된 메인 애플리케이션 인터페이스:
+    - **ArchivingView** - 사용자 선호 음식을 기반한 맛집 추천 리스트 제공
+    - **MenuImagePickerView** - 메인 메뉴 분석 기능
+    - **MyPageView** - 사용자 프로필 및 설정
+    **온보딩 플로우**
+    다단계 등록 프로세스:
+        - SelectNationalityView - 국가 선택
+        - SelectAllergyView - 알레르기 및 매운 음식 선호도 지정
+        - SelectKoreanFoodView - 선호하는 한국 음식 선택
+        - EnterIdPasswordView - 계정 인증 정보 생성
+    **메뉴 분석 플로우**
+    사용자가 메뉴 항목을 분석할 수 있는 핵심 기능:
+        - MenuImagePickerView - 메뉴 이미지 업로드
+        - MenuAnalysisLoadingView - 메뉴 분석 중 로딩 화면
+        - MenuAnalysisResultView - 사용자 선호도 기반 추천을 포함한 분석 결과 표시
+</details>
+
+
+
+
+
+
 ## Back
-### MySQL 데이터베이스
-database 명 : menu_db
+### 1. MySQL 데이터베이스
+<details>
+ <summary>자세한 내용</summary>
+    database 명 : menu_db
 DB 관리자 명 : admin
 - users table
     - id : 사용자 id
@@ -59,14 +220,98 @@ DB 관리자 명 : admin
     - food_name : 식당 대표메뉴 이름
     - restaurant_name : 식당 이름
 <img width="695" alt="image" src="https://github.com/user-attachments/assets/335f834c-e86b-4132-b35d-ab805110c7b9" />
+</details>
+
+### 2. API 문서
+<details>
+ <summary>자세한 내용</summary>
+    
+### POST /api/auth/signup
+    ```jsx
+    status: 200
+    respose: {"success": true, "message": "회원가입 성공", "data": {}}
+    ```
+    
+### POST /api/auth/login
+    
+    ```jsx
+    status: 200
+    respose: { "success": true, "message": "로그인 성공", "data": { "token": "string", "userId": “string”, "username": "string"}}
+    ```
+    
+### POST /api/auth/logout
+    
+    ```jsx
+    status: 200
+    headers: {”Authorization”: “Bearer <JWT>”}
+    respose: {"success": true,"message": "로그아웃 성공: 클라이언트는 토큰 삭제 요망","data": null}
+    ```
+### GET /api/user/profile
+    
+    ```jsx
+    status: 200
+    headers: {”Authorization”: “Bearer <JWT>”}
+    respose: {"success": true,"message": "사용자 프로필 반환 성공", "data": { "username": "string", "nationality":”string"}}
+    ```
+### GET /api/restaurant/recommend
+    
+    ```jsx
+    status: 200
+    headers: {”Authorization”: “Bearer <JWT>”}
+    respose: {"success": true,"message": "사용자 프로필 반환 성공", "data": { "username": "string", "nationality":"string"}}
+    ```
+    
+### POST /api/gallery/upload
+    
+    ```jsx
+    parameters: {”image”: “multipart/form-data, file”}
+    headers: {”Authorization”: “Bearer <JWT>”}
+    status: 200
+    respose: {”success”: true, “message”: “이미지 업로드 성공”, “data”: {”url”: “/api/gallery/images/{filename}”}}
+    ```
+### GET /api/gallery/images/{filename}
+    
+    ```jsx
+    parameters: {”filename”: “string”}
+    headers: {”Authorization”: Bearer <JWT>”}
+    status: 200
+    respose: 이미지 파일 자체 (image/jpeg 등)
+    ```
+    
+### POST /api/analysis/analyze-image
+    
+    ```jsx
+    parameters: 없음
+    headers: {”Authorization”: “Bearer <JWT>”}
+    status: 200
+    respose: {”success”: true, “message”: “AI 분석 요청 성공 및 결과 캐싱 완료”, “data”: “ok”}
+    ```
+### GET /api/analysis/analyze
+    
+    ```jsx
+    parameters: 없음
+    headers: {”Authorization”: “Bearer <JWT>”}
+    status: 200
+    respose: {“success”: true, “message”: “분석 결과 조회 성공”}
+    ```
+    
+### GET /api/analysis/translate
+    
+    ```jsx
+    parameters: 없음
+    headers: {”Authorization” :”Bearer <JWT>”}
+    status: 200
+    respose: {”success”: true, “message”: “번역 결과 조회 성공”}
+    ```
+
+ </details>
 
 
 
 
 
-# 📔기능 설명
 
-## **🍽️ Menu app**
+# 🧩 기능 설명
 
 ### ➡️ 회원가입 Flow
 
