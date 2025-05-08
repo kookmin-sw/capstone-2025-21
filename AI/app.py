@@ -167,4 +167,59 @@ async def analyze(
         if len(recs) >= top_k:
             break
 
-    return {"recommendations": recs, "all_menu_items": all_menu_items}
+    return {"recommendations": recs}
+
+
+# New endpoint to return all menu items with location and allergy info
+@app.post("/analyze/menu")
+async def analyze_menu(
+    imagePath: str = Form(...),
+    userId: int = Form(...),
+    nationality: str = Form(...),
+    favoriteFoods: str = Form("[]"),
+    allergies: str = Form("[]"),
+    top_k: int = Form(5)
+):
+    """
+    FastAPI endpoint to return all menu items with location and allergy info.
+    """
+    # OCR and scanning
+    ocr_result = ocr_model.ocr(imagePath, cls=True)
+    scanned_lines = [(line[1][0], line[0]) for line in ocr_result[0]]
+
+    dest_lang = langs.get(nationality, "ko")
+    seen = set()
+    all_menu_items = []
+    user_allergy_set = set(json.loads(allergies))
+    for name, bbox in scanned_lines:
+        if name in menu_names and name not in seen:
+            matched_allergies = set()
+            idx = menu_names.index(name)
+            item = menu_metadata[idx]
+            ingredients_str = item.get("ingredients", {}).get("ko", "")
+            ing_list = [i.strip() for i in ingredients_str.split(",") if i.strip()]
+            # map ingredients to allergies
+            for ing in ingredient_to_allergy:
+                if ing in ing_list:
+                    matched_allergies.add(ingredient_to_allergy[ing])
+            user_matched_allergies = matched_allergies & user_allergy_set
+            # translate menu_name
+            if dest_lang != "ko":
+                try:
+                    translated_name = translator.translate(name, dest=dest_lang).text
+                except Exception:
+                    translated_name = name
+            else:
+                translated_name = name
+            # translate allergy types
+            allergy_types_translated = translate_allergens(user_matched_allergies, lang_code=nationality)
+            seen.add(name)
+            all_menu_items.append({
+                "menu_name": translated_name,
+                "bbox": bbox,
+                "has_allergy": bool(allergy_types_translated),
+                "allergy_types": allergy_types_translated
+            })
+    if not all_menu_items:
+        raise HTTPException(status_code=400, detail="No valid menu names extracted")
+    return {"menu_items": all_menu_items}
