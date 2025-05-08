@@ -592,7 +592,7 @@ uvicorn app:app --reload
  </tr>
 
  <tr>
-  <td align='center'><img src=""https://github.com/user-attachments/assets/ca7b8144-68b4-4fe0-b8d4-10bc09556c59"" width="50" height="50"></td>
+  <td align='center'><img src="https://github.com/user-attachments/assets/ca7b8144-68b4-4fe0-b8d4-10bc09556c59" width="50" height="50"></td>
   <td align='center'>허서영</td>
   <td align='center'>Back-End (Spring)</td>
   <td align='center'><a href="https://github.com/se0y0ung12"><img src="http://img.shields.io/badge/se0y0ung12-green?style=social&logo=github"/></a></td>
