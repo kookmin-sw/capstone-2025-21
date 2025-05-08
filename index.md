@@ -28,9 +28,48 @@
 # 🗂️ 개발 과정 설명
 
 ## AI
-```
-작성예정
-```
+
+### Task
+
+모델에 필요한 기능은 크게 3가지로 나눌 수 있습니다.
+
+1. 메뉴판 텍스트 인식 및 음식 메뉴 추출
+2. 사용자 알러지 및 취향 기반 음식 추천
+3. 다국어 메뉴 번역
+
+### 1. 메뉴판 텍스트 인식 및 음식 메뉴 추출
+<details>
+ <summary>자세한 내용</summary>
+ 
+ - 초기에는 [AIHub 메뉴 이미지 데이터셋](https://www.aihub.or.kr/aihubdata/data/view.do?currMenu=&topMenu=&aihubDataSe=ty&dataSetSn=71553)을 활용하여 `TrOCR` 모델로 학습을 진행했습니다. [TrOCR 논문](https://ojs.aaai.org/index.php/AAAI/article/view/26538)
+- 그러나 TrOCR는 일반적으로 1줄 정도의 단순 문장 인식에 최적화되어 있어, 실제 메뉴판처럼 **다단 구성** 및 **비정형 배치**를 가진 이미지에 대해 학습 loss가 줄지 않는 문제가 발생했습니다.
+- 이후 `NAVER CRAFT` 모델을 활용하여 메뉴판에서 텍스트 영역을 사전에 검출하고 이를 TrOCR의 입력으로 활용해보았지만, **추론 시간이 이미지당 약 5분 이상** 소요되어 실용성이 떨어졌습니다.
+- 최종적으로 `PaddleOCR`를 도입하였으며, 해당 프레임워크는 빠르고 안정적인 텍스트 영역 검출 및 인식을 동시에 제공하여 실제 서비스 수준의 인식 정확도와 속도를 확보할 수 있었습니다.
+- **LLM**을 이용하여 인식된 텍스트에서 **메뉴명만 추출**하는 방식도 시도했지만, **비결정성**으로 인해 추출 결과가 일관되지 않고 정확도가 낮아 실제 사용에는 어려움이 있었습니다.
+- 메뉴명 추출은 LLM 대신 **2번에서 사용한 KADx 음식/알러지 데이터셋의 메뉴명 리스트**를 활용하여 추출된 텍스트가 데이터셋에 있는 경우 메뉴로 인식하도록 **Rule-based 방식**으로 처리하였습니다.
+</details>
+
+
+### 2. 사용자 알러지 및 취향 기반 음식 추천
+<details>
+ <summary>자세한 내용</summary>
+ 
+- 사용자의 알러지 정보 및 음식 취향을 고려하여, 메뉴판에서 인식된 음식 중 **안전하고 선호 가능한 메뉴**를 추천합니다.
+- 추천 알고리즘 개발을 위해 [KADx 알러지/영양정보 포함 음식 데이터](https://kadx.co.kr/opmk/frn/pmumkproductDetail/PMU_79c6f1a4-56dd-492e-ad67-c5acba0304d2/5)를 수집 및 전처리하였습니다.
+- 각 음식의 메뉴명과 재료 정보를 **Sentence-BERT**를 이용해 임베딩한 후, 사용자의 선호 임베딩 벡터와의 **코사인 유사도**를 계산하여 관련성 높은 메뉴를 추천합니다.
+- **Sentence-BERT**(**SBERT**)는 **문장 임베딩**을 생성하기 위해 사용되는 딥러닝 모델로, 기존의 **BERT**(Bidirectional Encoder Representations from Transformers)를 기반으로 하되, 문장 간의 의미적 유사도 계산을 더 효율적으로 수행할 수 있도록 특별히 설계된 모델입니다.
+- 알러지 유발 성분이 포함된 메뉴는 필터링하여 사용자에게 안전한 선택지를 제공합니다.
+</details>
+
+### 3. 다국어 메뉴 번역
+<details>
+ <summary>자세한 내용</summary>
+ 
+- 1번에서 사용한 AIHub 데이터셋에는 4개 국어(한국어, 영어, 일본어, 중국어) 병렬 문장이 일부 존재하지만, 번역 품질이 고르지 못해 자체 번역 모델 학습에는 적합하지 않았습니다.
+- 또한, 공개된 고품질 음식 메뉴 번역 데이터셋이 없어 대안으로 **Google Translate API**를 사용하여 다국어 번역 기능을 구현했습니다.
+- 이 기능을 통해 외국인 사용자도 자국어로 음식 메뉴를 이해할 수 있으며, 음식명과 간단한 설명 번역을 함께 제공합니다.
+</details>
+
 ## Front
 
 ### 아키텍쳐 그래프
@@ -407,24 +446,21 @@ DB 관리자 명 : admin
   <td align='center'>SwiftUI</td>
  </tr>
 </table>
-<details>
- <summary>Swift Packages</summary>
-
-
-
-</details>
-
-
 
 ### AI
  <table>
  <tr>
   <td><img src='https://user-images.githubusercontent.com/40621030/136698820-2c869052-ff44-4629-b1b9-7e1ae02df669.png' height=80></a></td>
   <td><img src='https://github.com/user-attachments/assets/46546f67-8f4b-48e4-8c1b-5e52f565822c' height=80></a></td>
+  <td><img src='https://github.com/user-attachments/assets/25b7735c-d3f6-411b-bd08-09a7cd3c578a' height=80></a></td>
+  <td><img src='https://github.com/user-attachments/assets/8c031aa8-9940-412e-944f-e6971cea4bdc' height=80></a></td>
+
  </tr>
  <tr>
   <td align='center'>PyTorch</td>
   <td align='center'>Python</td>
+  <td align='center'>FastAPI</td>
+  <td align='center'>PaddleOCR</td>
  </tr>
  </table>
 ---
@@ -477,7 +513,28 @@ $ nohup java -jar allergy-0.0.1-SNAPSHOT.jar &
 # (prod profile로 실행할 경우)
 $ nohup java -jar -Dspring.profiles.active=prod.active allergy-0.0.1-SNAPSHOT.jar &
  ```
+### AI
+- Pytorch 실행
+```bash
+# Python 패키지 관리 도구 최신화 (선택)
+pip install --upgrade pip
+
+# 필수 라이브러리 설치
+pip install torch
+pip install fastapi
+pip install uvicorn
+pip install paddlepaddle-gpu  # GPU 버전 사용 시. CPU 사용시 pip install paddlepaddle
+pip install paddleocr
+pip install sentence-transformers
+pip install scikit-learn
+pip install googletrans==4.0.0-rc1
+```
+- 서버 실행
+```bash
+uvicorn app:app --reload
+```
 ---
+
 
 ## 📱프로젝트 사용법 (Getting Started)
 <!--
@@ -514,7 +571,7 @@ $ nohup java -jar -Dspring.profiles.active=prod.active allergy-0.0.1-SNAPSHOT.ja
  </tr>
 
  <tr>
-  <td align='center'><img src="" width="50" height="50"></td>
+  <td align='center'><img src="https://github.com/user-attachments/assets/88a34296-c5c4-4364-afee-b5a88be65bae" width="50" height="50"></td>
   <td align='center'>손원철 </td>
   <td align='center'>AI</td>
   <td align='center'><a href="https://github.com/sonwon9"><img src="http://img.shields.io/badge/sonwon9-green?style=social&logo=github"/></a></td>
