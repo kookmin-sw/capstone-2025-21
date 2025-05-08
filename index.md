@@ -1,20 +1,14 @@
 # menu : 당신의 언어로, 당신의 취향을 기반으로, 메뉴를 추천해줍니다.
 
-```
-작성예정
-```
-
-
 # 🗂️프로젝트 소개
-```
-작성예정
-```
+한국을 방문하는 외국인을 위한 음식점 메뉴판 번역을 제공하고, 사용자 취향 및 알러지 정보를 이용해서 음식을 추천해주는 애플리케이션
 
 ## 관련 문서 
 - 📃주제 정의 문서 -> <a href="https://github.com/kookmin-sw/capstone-2025-21/wiki/주제-정의-문서">문서 바로가기</a>
 - 📈Market potential & Business model -> <a href="https://github.com/kookmin-sw/capstone-2025-21/wiki/Market-potential-&-Business-model">문서 바로가기</a>
 - 🙋‍♂️ 페르소나 분석 -> <a href="https://github.com/kookmin-sw/capstone-2025-21/wiki/페르소나-분석">문서 바로가기</a>
 
+---
 
 # 📈 설계 다이어그램
 ## UseCase Diagram
@@ -39,9 +33,33 @@
 작성예정
 ```
 ## Back
-```
-작성예정
-```
+### MySQL 데이터베이스
+database 명 : menu_db
+DB 관리자 명 : admin
+- users table
+    - id : 사용자 id
+    - nationality : 사용자 국적
+    - password : 사용자 비밀번호
+    - username : 사용자 이름
+<img width="780" alt="image" src="https://github.com/user-attachments/assets/c3df5d97-e3f9-48fe-bba9-a1393e089cb3" />
+
+- user_allergies table
+    - user_id : 사용자 id
+    - allergy : 사용자가 가지고 있는 알러지
+<img width="225" alt="image" src="https://github.com/user-attachments/assets/46ba2393-0177-4433-a4ab-0c9bf399fec2" />
+
+- user_favorite_foods
+    - user_id : 사용자 id
+    - food : 사용자가 좋아하는 한국 음식
+<img width="220" alt="image" src="https://github.com/user-attachments/assets/b5c22b7e-64e2-42f2-8b02-0b7a69f4228a" />
+
+- restaurants (평점, 이미지 추가 예정)
+    - id : 식당 id
+    - address : 식당 주소
+    - food_name : 식당 대표메뉴 이름
+    - restaurant_name : 식당 이름
+<img width="695" alt="image" src="https://github.com/user-attachments/assets/335f834c-e86b-4132-b35d-ab805110c7b9" />
+
 
 
 
@@ -110,10 +128,10 @@
 
 ---
 ## 컴퓨터 구성 / 필수 조건 안내 (Prerequisites)
-* 
-* 
 * iOS >= 16.0 
 * swift >= 4.2
+* MySQL 8.0 (AWS RDS)
+* Spring Boot 3.4.4
 
 
 ## 🔨기술 스택 (Technique Used) 
@@ -174,6 +192,43 @@ Xcode로 프로젝트 파일 열기
 실행하기
  ```
 
+### 서버 실행
+- Git clone
+```bash 
+# EC2로 접속
+$ ssh -i ~/capstone2025-key.pem ubuntu@<EC2-IP>
+
+# git clone
+$ git clone https://github.com/kookmin-sw/capstone-2025-21.git
+
+# 프로젝트 디렉토리로 이동 후, 빌드한 JAR 파일 업로드
+ ```
+- Build - 로컬 (intelliJ)에서 실행
+```bash 
+# Gradle 빌드
+./gradlew bootJar
+
+# 생성된 JAR 위치 (예시)
+build/libs/allergy-0.0.1-SNAPSHOT.jar
+ ```
+- EC2 서버에 JAR 업로드 (SCP or FileZilla)
+```bash 
+# 1. scp 사용
+$ scp -i capstone2025-key.pem allergy-0.0.1-SNAPSHOT.jar ubuntu@<EC2-IP>:~/
+
+# 2. 혹은 FileZilla에서 호스트에 IP, 사용자명, 키 파일 PEM 설정 후 접속해서 ~/ 경로에 업로드
+ ```
+- 서버 실행
+ ```bash 
+# EC2에 접속
+$ ssh -i ~/capstone2025-key.pem ubuntu@<EC2-IP>
+
+# JAR 실행 (백그라운드 실행)
+$ nohup java -jar allergy-0.0.1-SNAPSHOT.jar &
+
+# (prod profile로 실행할 경우)
+$ nohup java -jar -Dspring.profiles.active=prod.active allergy-0.0.1-SNAPSHOT.jar &
+ ```
 ---
 
 ## 📱프로젝트 사용법 (Getting Started)
