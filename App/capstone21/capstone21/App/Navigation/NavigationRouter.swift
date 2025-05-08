@@ -38,8 +38,6 @@ class NavigationRouter: NavigationRoutable, ObservableObjectSettable {
   func popToRootView() {
     destinations = []
   }
-  
-  
 }
 
 
