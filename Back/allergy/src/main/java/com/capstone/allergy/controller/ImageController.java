@@ -106,7 +106,7 @@ public class ImageController {
                     ),
                     @ApiResponse(
                             responseCode = "500",
-                            description = "서버 오류",
+                            description = "서버 내부 오류",
                             content = @Content(
                                     mediaType = "application/json",
                                     schema = @Schema(implementation = CommonResponse.class),
@@ -114,7 +114,7 @@ public class ImageController {
                                             name = "서버 오류 예시",
                                             value = "{\n" +
                                                     "  \"success\": false,\n" +
-                                                    "  \"message\": \"파일 업로드 실패\",\n" +
+                                                    "  \"message\": \"서버 내부 오류가 발생했습니다.\",\n" +
                                                     "  \"data\": null\n" +
                                                     "}"
                                     )
@@ -209,7 +209,7 @@ public class ImageController {
                     ),
                     @ApiResponse(
                             responseCode = "500",
-                            description = "서버 오류",
+                            description = "서버 내부 오류",
                             content = @Content(
                                     mediaType = "application/json",
                                     schema = @Schema(implementation = CommonResponse.class),
@@ -217,7 +217,23 @@ public class ImageController {
                                             name = "서버 오류 예시",
                                             value = "{\n" +
                                                     "  \"success\": false,\n" +
-                                                    "  \"message\": \"이미지 로드 중 서버 오류가 발생했습니다.\",\n" +
+                                                    "  \"message\": \"서버 내부 오류가 발생했습니다.\",\n" +
+                                                    "  \"data\": null\n" +
+                                                    "}"
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "413",
+                            description = "파일 크기 초과",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = CommonResponse.class),
+                                    examples = @ExampleObject(
+                                            name = "파일 크기 초과 예시",
+                                            value = "{\n" +
+                                                    "  \"success\": false,\n" +
+                                                    "  \"message\": \"업로드 가능한 최대 파일 크기는 5MB입니다.\",\n" +
                                                     "  \"data\": null\n" +
                                                     "}"
                                     )
