@@ -29,7 +29,7 @@ public class ImageAnalysisService {
         requestDto.setUserId(userId);
 
         ImageAnalysisResultDto analysisResult = aiImageAnalysisClient.requestAnalysis(requestDto);
-        MenuTranslationResultDto translationResult = aiImageAnalysisClient.requestTranslation(requestDto.getImagePath());
+        MenuTranslationResultDto translationResult = aiImageAnalysisClient.requestTranslation(requestDto);
 
         analysisCache.put(userId, analysisResult);
         translationCache.put(userId, translationResult);
