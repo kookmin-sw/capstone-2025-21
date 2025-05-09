@@ -24,6 +24,7 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.awt.*;
+import java.io.File;
 
 @RestController
 @RequestMapping("/api/analysis")
@@ -36,8 +37,11 @@ public class ImageAnalysisController {
     private final UserRepository userRepository;
     private final ImagePathCache imagePathCache;
 
-    @Value("${app.base-url}")
-    private String baseUrl;
+//    @Value("${app.base-url}")
+//    private String baseUrl;
+
+    @Value("${file.uplaod-dir}")
+    private String uploadDir;
 
     @PostMapping("/analyze-image")
     @Operation(
@@ -84,15 +88,22 @@ public class ImageAnalysisController {
                 throw new RuntimeException("업로드된 이미지가 없습니다.");
             }
 
-            String absolutePath = baseUrl + relativePath;
-            log.info("[분석 요청] userId: {}, imagePath: {}", userId, absolutePath);
+            // 파일 이름 추출
+            String fileName = relativePath.substring(relativePath.lastIndexOf("/") + 1);
+
+            // 로컬 절대 경로로 변환
+            String localPath = uploadDir + File.separator + fileName;
+
+            //String absolutePath = baseUrl + relativePath;
+            log.info("[분석 요청] userId: {}, imagePath: {}", userId, localPath);
 
             ImageAnalysisRequestDto dto = new ImageAnalysisRequestDto();
             dto.setUserId(userId);
             dto.setNationality(user.getNationality());
             dto.setFavoriteFoods(user.getFavoriteFoods());
             dto.setAllergies(user.getAllergies());
-            dto.setImagePath(absolutePath);
+            //dto.setImagePath(absolutePath);
+            dto.setImagePath(localPath); // 로컬 경로 세팅
 
             imageAnalysisService.analyzeAndCache(dto, userId);
 
