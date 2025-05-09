@@ -40,8 +40,8 @@ public class ImageAnalysisService {
     private String mapNationalityToLangCode(String nationality) {
         switch (nationality.toUpperCase()) {
             case "USA": return "en";
-            case "JAPAN": return "jp";
-            case "CHINA": return "ch";
+            case "JPN": return "jp";
+            case "CHN": return "ch";
             default: return "ko"; // 기본값
         }
     }
