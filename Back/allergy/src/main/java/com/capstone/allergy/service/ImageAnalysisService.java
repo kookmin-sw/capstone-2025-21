@@ -28,11 +28,22 @@ public class ImageAnalysisService {
 
         requestDto.setUserId(userId);
 
+        requestDto.setNationality(mapNationalityToLangCode(user.getNationality()));
+
         ImageAnalysisResultDto analysisResult = aiImageAnalysisClient.requestAnalysis(requestDto);
         MenuTranslationResultDto translationResult = aiImageAnalysisClient.requestTranslation(requestDto);
 
         analysisCache.put(userId, analysisResult);
         translationCache.put(userId, translationResult);
+    }
+
+    private String mapNationalityToLangCode(String nationality) {
+        switch (nationality.toUpperCase()) {
+            case "USA": return "en";
+            case "JAPAN": return "jp";
+            case "CHINA": return "ch";
+            default: return "ko"; // 기본값
+        }
     }
 
     public ImageAnalysisResultDto getCachedAnalysis(Long userId) {
