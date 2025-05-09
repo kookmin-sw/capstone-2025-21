@@ -23,8 +23,8 @@ public class AiImageAnalysisClient {
 
     private final RestTemplate restTemplate;
 
-    private final String ANALYSIS_URL = "http://localhost:8000/api/analyze"; // 실제 엔드포인트로 수정
-    private final String TRANSLATE_URL = "http://localhost:8000/api/translate";
+    private final String ANALYSIS_URL = "http://13.124.255.38:9000/analyze"; // 실제 엔드포인트로 수정
+    private final String TRANSLATE_URL = "http://13.124.255.38:9000/analyze/menu";
 
     public ImageAnalysisResultDto requestAnalysis(ImageAnalysisRequestDto requestDto) {
         HttpHeaders headers = new HttpHeaders();
