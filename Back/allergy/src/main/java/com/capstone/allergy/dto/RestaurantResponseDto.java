@@ -19,4 +19,13 @@ public class RestaurantResponseDto {
 
     @Schema(description = "맛집 주소", example = "서울 종로구 율곡로 10")
     private String address;
+
+    @Schema(description = "평점", example = "4.5")
+    private Double rating;
+
+    @Schema(description = "대표 이미지 URL", example = "/uploads/restaurant001.jpg")
+    private String imageUrl;
+
+    @Schema(description = "홈페이지 주소 또는 구글 지도 링크", example = "https://www.google.com/maps/search/?api=1&query=전주비빔밥집+서울+종로구+율곡로+10")
+    private String homepageUrl;
 }
