@@ -1,67 +1,424 @@
-# menu : 당신의 언어로, 당신의 취향을 기반으로, 메뉴를 추천해줍니다.
-
-```
-작성예정
-```
-
+# 🍱 Menu: 당신의 언어로, 당신의 취향에 맞게 메뉴를 추천해드립니다
 
 # 🗂️프로젝트 소개
-```
-작성예정
-```
+한국을 방문하는 외국인을 위한 음식점 메뉴판 번역을 제공하고, 사용자 취향 및 알러지 정보를 이용해서 음식을 추천해주는 애플리케이션
 
-## 관련 문서 
+## 📌 프로젝트 문서
 - 📃주제 정의 문서 -> <a href="https://github.com/kookmin-sw/capstone-2025-21/wiki/주제-정의-문서">문서 바로가기</a>
 - 📈Market potential & Business model -> <a href="https://github.com/kookmin-sw/capstone-2025-21/wiki/Market-potential-&-Business-model">문서 바로가기</a>
 - 🙋‍♂️ 페르소나 분석 -> <a href="https://github.com/kookmin-sw/capstone-2025-21/wiki/페르소나-분석">문서 바로가기</a>
 
-### 🗒사용자 정의 문서
+---
+# 🏗️ 시스템 설계
+## ✅ UseCase Diagram
+<img src="https://github.com/user-attachments/assets/872286c5-f019-4657-9d2a-822916f1a834" width="400"/>
 
-<details>
- <summary>📈시스템 흐름도</summary>
- 
- ### User-case Diagram
- <p align='center'><img src="https://user-images.githubusercontent.com/40621030/134690667-abe8f797-01a8-44db-ae89-ef7809c22d64.png"/></p>
- 
- ### Sequence Diagram
-  <p align='center'><img src="https://user-images.githubusercontent.com/40621030/136720501-bbe98072-abbc-4797-a0c2-c66771f7e04a.png"/></p>
- 
- ### Architecture
-  <p align='center'><img src="https://user-images.githubusercontent.com/40621030/136720255-0456ffd4-4d7d-4d2e-b5c5-09387c5861fa.png"/></p>
-</details>
+## ✅ Sequence Diagram
+<img src="https://github.com/user-attachments/assets/cd93c758-010c-4f25-a3b0-b8df76a6e2e5" width="400"/>
 
-<details>
- <summary>🖊개발 문서</summary>
+## ✅ Architecture
+<img src="https://github.com/user-attachments/assets/75d2cab4-f629-4518-aab5-f602de005de6" width="430"/>
 
+### 관련 문서 
+- Github 컨벤션 <a href="https://github.com/kookmin-sw/capstone-2025-21/wiki/Github-이슈,-PR,-커밋-컨벤션">문서 바로가기</a>
+- 
+- 
 
-
-</details>
 
 # 🗂️ 개발 과정 설명
 
 ## AI
-```
-작성예정
-```
+
+### Task
+
+모델에 필요한 기능은 크게 3가지로 나눌 수 있습니다.
+
+1. 메뉴판 텍스트 인식 및 음식 메뉴 추출
+2. 사용자 알러지 및 취향 기반 음식 추천
+3. 다국어 메뉴 번역
+
+### 1. 메뉴판 텍스트 인식 및 음식 메뉴 추출
+<details>
+ <summary>자세한 내용</summary>
+ 
+ - 초기에는 [AIHub 메뉴 이미지 데이터셋](https://www.aihub.or.kr/aihubdata/data/view.do?currMenu=&topMenu=&aihubDataSe=ty&dataSetSn=71553)을 활용하여 `TrOCR` 모델로 학습을 진행했습니다. [TrOCR 논문](https://ojs.aaai.org/index.php/AAAI/article/view/26538)
+- 그러나 TrOCR는 일반적으로 1줄 정도의 단순 문장 인식에 최적화되어 있어, 실제 메뉴판처럼 **다단 구성** 및 **비정형 배치**를 가진 이미지에 대해 학습 loss가 줄지 않는 문제가 발생했습니다.
+- 이후 `NAVER CRAFT` 모델을 활용하여 메뉴판에서 텍스트 영역을 사전에 검출하고 이를 TrOCR의 입력으로 활용해보았지만, **추론 시간이 이미지당 약 5분 이상** 소요되어 실용성이 떨어졌습니다.
+- 최종적으로 `PaddleOCR`를 도입하였으며, 해당 프레임워크는 빠르고 안정적인 텍스트 영역 검출 및 인식을 동시에 제공하여 실제 서비스 수준의 인식 정확도와 속도를 확보할 수 있었습니다.
+- **LLM**을 이용하여 인식된 텍스트에서 **메뉴명만 추출**하는 방식도 시도했지만, **비결정성**으로 인해 추출 결과가 일관되지 않고 정확도가 낮아 실제 사용에는 어려움이 있었습니다.
+- 메뉴명 추출은 LLM 대신 **2번에서 사용한 KADx 음식/알러지 데이터셋의 메뉴명 리스트**를 활용하여 추출된 텍스트가 데이터셋에 있는 경우 메뉴로 인식하도록 **Rule-based 방식**으로 처리하였습니다.
+</details>
+
+
+### 2. 사용자 알러지 및 취향 기반 음식 추천
+<details>
+ <summary>자세한 내용</summary>
+ 
+- 사용자의 알러지 정보 및 음식 취향을 고려하여, 메뉴판에서 인식된 음식 중 **안전하고 선호 가능한 메뉴**를 추천합니다.
+- 추천 알고리즘 개발을 위해 [KADx 알러지/영양정보 포함 음식 데이터](https://kadx.co.kr/opmk/frn/pmumkproductDetail/PMU_79c6f1a4-56dd-492e-ad67-c5acba0304d2/5)를 수집 및 전처리하였습니다.
+- 각 음식의 메뉴명과 재료 정보를 **Sentence-BERT**를 이용해 임베딩한 후, 사용자의 선호 임베딩 벡터와의 **코사인 유사도**를 계산하여 관련성 높은 메뉴를 추천합니다.
+- **Sentence-BERT**(**SBERT**)는 **문장 임베딩**을 생성하기 위해 사용되는 딥러닝 모델로, 기존의 **BERT**(Bidirectional Encoder Representations from Transformers)를 기반으로 하되, 문장 간의 의미적 유사도 계산을 더 효율적으로 수행할 수 있도록 특별히 설계된 모델입니다.
+- 알러지 유발 성분이 포함된 메뉴는 필터링하여 사용자에게 안전한 선택지를 제공합니다.
+</details>
+
+### 3. 다국어 메뉴 번역
+<details>
+ <summary>자세한 내용</summary>
+ 
+- 1번에서 사용한 AIHub 데이터셋에는 4개 국어(한국어, 영어, 일본어, 중국어) 병렬 문장이 일부 존재하지만, 번역 품질이 고르지 못해 자체 번역 모델 학습에는 적합하지 않았습니다.
+- 또한, 공개된 고품질 음식 메뉴 번역 데이터셋이 없어 대안으로 **Google Translate API**를 사용하여 다국어 번역 기능을 구현했습니다.
+- 이 기능을 통해 외국인 사용자도 자국어로 음식 메뉴를 이해할 수 있으며, 음식명과 간단한 설명 번역을 함께 제공합니다.
+</details>
+
 ## Front
+
+### 아키텍쳐 그래프
+<img width="850" alt="image" src="https://github.com/user-attachments/assets/2eca019a-1540-476a-9d65-6fd7c43791ee" />
+
+
+ 
+### 1. DIContainer를 사용하여 의존성 주입을 구현하고 있으며, 다음과 같은 주요 구성 요소에 접근할 수 있게 합니다
+<details>
+ <summary>자세한 내용</summary>
+- NavigationRouter: 특정 플로우 내에서의 화면 이동 관리
+- WindowRouter: 주요 애플리케이션 화면/플로우 간의 전환 관리
+    
+```Swift
+import Foundation
+
+typealias NavigationRoutableType = NavigationRoutable & ObservableObjectSettable
+typealias WindowRoutableType = WindowRoutable & ObservableObjectSettable
+
+final class DIContainer: ObservableObject {
+    var navigationRouter: NavigationRoutableType
+    var windowRouter: WindowRoutableType
+    
+    private init(
+        navigationRouter: NavigationRoutableType = NavigationRouter(),
+        windowRouter: WindowRoutableType = WindowRouter()
+    ) {
+        self.navigationRouter = navigationRouter
+        self.windowRouter = windowRouter
+        
+        navigationRouter.setObjectWillChange(objectWillChange)
+        windowRouter.setObjectWillChange(objectWillChange)
+    }
+}
+
+extension DIContainer {
+    static let `default` = DIContainer()
+    static let stub = DIContainer()
+}
+
 ```
-작성예정
+</details>
+
+### 2. 네비게이션 시스템
+<details>
+ <summary>자세한 내용</summary>
+앱은 다음과 같은 맞춤형 네비게이션 아키텍처를 구현하고 있습니다:
+**1. 윈도우 라우팅 - 주요 애플리케이션 상태 처리:**
+.splash - 앱 초기 로딩 화면
+.onboarding - 사용자 등록 단계
+.home - 메인 애플리케이션 인터페이스
+    
+```Swift
+import Foundation
+import Combine
+
+protocol WindowRoutable {
+    var destination: WindowDestination { get }
+    func `switch`(to destination: WindowDestination)
+}
+
+
+class WindowRouter: WindowRoutable, ObservableObjectSettable {
+    
+    var objectWillChange: ObservableObjectPublisher?
+    
+    var destination: WindowDestination = .splash {
+        didSet {
+            objectWillChange?.send()
+        }
+    }
+    
+    func `switch`(to destination: WindowDestination) {
+        self.destination = destination
+    }
+    
+}
 ```
+
+**2. 내비게이션 라우팅 - 각 플로우 내에서의 화면 이동 처리:**
+```Swift
+import Foundation
+import Combine
+
+protocol NavigationRoutable {
+  var destinations: [NavigationDestination] { get set }
+  
+  func push(to view: NavigationDestination)
+  func pop()
+  func popToRootView()
+}
+
+
+class NavigationRouter: NavigationRoutable, ObservableObjectSettable {
+  
+  var objectWillChange: ObservableObjectPublisher?
+  
+  var destinations: [NavigationDestination] = [] {
+    didSet {
+      objectWillChange?.send()
+    }
+  }
+  
+  func push(to view: NavigationDestination) {
+    destinations.append(view)
+  }
+  
+  func pop() {
+    _ = destinations.popLast()
+  }
+  
+  func popToRootView() {
+    destinations = []
+  }
+}
+```
+
+**3. 스택 기반 접근 방식으로 push/pop 연산 사용**
+- 내비게이션 목적지는 NavigationDestination 열거형에 정의
+- NavigationRoutingView가 목적지를 구체적인 뷰 인스턴스로 변환
+
+</details>
+
+### 3. MVVM 패턴
+<details>
+ <summary>자세한 내용</summary>
+    <img width="754" alt="image" src="https://github.com/user-attachments/assets/1e43b148-2420-430d-9546-15774719d912" />
+
+각 화면은 MVVM(Model-View-ViewModel) 패턴을 따릅니다:
+- 뷰: UI를 표시하고 사용자 입력을 캡처하는 SwiftUI 뷰
+- 뷰모델: 상태 관리, 비즈니스 로직, 서비스와의 통신 담당
+- 모델: 도메인 객체를 나타내는 데이터 구조
+</details>
+
+
+### 4. 주요 플로우 & 홈 탭 구조
+<details>
+ <summary>자세한 내용</summary>
+ 
+ ### 세 개의 탭으로 구성된 메인 애플리케이션 인터페이스:
+ - **ArchivingView** - 사용자 선호 음식을 기반한 맛집 추천 리스트 제공
+ - **MenuImagePickerView** - 메인 메뉴 분석 기능
+ - **MyPageView** - 사용자 프로필 및 설정
+ 
+ ### 온보딩 플로우
+ 다단계 등록 프로세스:
+ - SelectNationalityView - 국가 선택
+        - SelectAllergyView - 알레르기 및 매운 음식 선호도 지정
+        - SelectKoreanFoodView - 선호하는 한국 음식 선택
+        - EnterIdPasswordView - 계정 인증 정보 생성
+        
+ ### 메뉴 분석 플로우
+ 사용자가 메뉴 항목을 분석할 수 있는 핵심 기능:
+ - MenuImagePickerView - 메뉴 이미지 업로드
+ - MenuAnalysisLoadingView - 메뉴 분석 중 로딩 화면
+ - MenuAnalysisResultView - 사용자 선호도 기반 추천을 포함한 분석 결과 표시
+</details>
+
+
+
+
+
+
 ## Back
-```
-작성예정
-```
+### 1. MySQL 데이터베이스
+<details>
+ <summary>자세한 내용</summary>
+    database 명 : menu_db
+DB 관리자 명 : admin
+- users table
+    - id : 사용자 id
+    - nationality : 사용자 국적
+    - password : 사용자 비밀번호
+    - username : 사용자 이름
+<img width="780" alt="image" src="https://github.com/user-attachments/assets/c3df5d97-e3f9-48fe-bba9-a1393e089cb3" />
+
+- user_allergies table
+    - user_id : 사용자 id
+    - allergy : 사용자가 가지고 있는 알러지
+<img width="225" alt="image" src="https://github.com/user-attachments/assets/46ba2393-0177-4433-a4ab-0c9bf399fec2" />
+
+- user_favorite_foods
+    - user_id : 사용자 id
+    - food : 사용자가 좋아하는 한국 음식
+<img width="220" alt="image" src="https://github.com/user-attachments/assets/b5c22b7e-64e2-42f2-8b02-0b7a69f4228a" />
+
+- restaurants (평점, 이미지 추가 예정)
+    - id : 식당 id
+    - address : 식당 주소
+    - food_name : 식당 대표메뉴 이름
+    - restaurant_name : 식당 이름
+<img width="695" alt="image" src="https://github.com/user-attachments/assets/335f834c-e86b-4132-b35d-ab805110c7b9" />
+</details>
+
+### 2. API 문서
+<details>
+ <summary>자세한 내용</summary>
+    
+### POST /api/auth/signup
+    ```jsx
+    status: 200
+    respose: {"success": true, "message": "회원가입 성공", "data": {}}
+    ```
+    
+### POST /api/auth/login
+    
+    ```jsx
+    status: 200
+    respose: { "success": true, "message": "로그인 성공", "data": { "token": "string", "userId": “string”, "username": "string"}}
+    ```
+    
+### POST /api/auth/logout
+    
+    ```jsx
+    status: 200
+    headers: {”Authorization”: “Bearer <JWT>”}
+    respose: {"success": true,"message": "로그아웃 성공: 클라이언트는 토큰 삭제 요망","data": null}
+    ```
+### GET /api/user/profile
+    
+    ```jsx
+    status: 200
+    headers: {”Authorization”: “Bearer <JWT>”}
+    respose: {"success": true,"message": "사용자 프로필 반환 성공", "data": { "username": "string", "nationality":”string"}}
+    ```
+### GET /api/restaurant/recommend
+    
+    ```jsx
+    status: 200
+    headers: {”Authorization”: “Bearer <JWT>”}
+    respose: {"success": true,"message": "사용자 프로필 반환 성공", "data": { "username": "string", "nationality":"string"}}
+    ```
+    
+### POST /api/gallery/upload
+    
+    ```jsx
+    parameters: {”image”: “multipart/form-data, file”}
+    headers: {”Authorization”: “Bearer <JWT>”}
+    status: 200
+    respose: {”success”: true, “message”: “이미지 업로드 성공”, “data”: {”url”: “/api/gallery/images/{filename}”}}
+    ```
+### GET /api/gallery/images/{filename}
+    
+    ```jsx
+    parameters: {”filename”: “string”}
+    headers: {”Authorization”: Bearer <JWT>”}
+    status: 200
+    respose: 이미지 파일 자체 (image/jpeg 등)
+    ```
+    
+### POST /api/analysis/analyze-image
+    
+    ```jsx
+    parameters: 없음
+    headers: {”Authorization”: “Bearer <JWT>”}
+    status: 200
+    respose: {”success”: true, “message”: “AI 분석 요청 성공 및 결과 캐싱 완료”, “data”: “ok”}
+    ```
+### GET /api/analysis/analyze
+    
+    ```jsx
+    parameters: 없음
+    headers: {”Authorization”: “Bearer <JWT>”}
+    status: 200
+    respose: {“success”: true, “message”: “분석 결과 조회 성공”}
+    ```
+    
+### GET /api/analysis/translate
+    
+    ```jsx
+    parameters: 없음
+    headers: {”Authorization” :”Bearer <JWT>”}
+    status: 200
+    respose: {”success”: true, “message”: “번역 결과 조회 성공”}
+    ```
+
+ </details>
 
 
 
 
-# 📔기능 설명
 
-```
-작성예정
-```
+
+# 🧩 기능 설명
+
+### ➡️ 회원가입 Flow
+
+### 1. 온보딩 뷰 & 로그인 뷰
+ 앱을 처음 실행 시, 앱을 설명하는 온보딩 화면이 나타나고, start 버튼을 누르게 되면 로그인 화면으로 이동하게 됩니다!
+ <table>
+  <tr>
+   <td><img src="https://github.com/user-attachments/assets/20e44560-5baa-426d-9dd7-1a4e27c95314" width="600"/></td>
+   <td><img src="https://github.com/user-attachments/assets/771542ab-0228-4320-9c75-36b0283a947c" width="200"/></td>
+  </tr>
+ </table>
+
+ ### ➡️ 회원가입 Flow
+ 로그인 화면에서 sign up 버튼을 누르면 회원가입으로 연결된다
+
+ ### 1. 국적 & 알러지 선택 뷰
+ 현재 국적은 미국, 일본, 중국으로 세 나라를 선택할 수 있으며, 알러지는 총 25개 중에서 중복적으로 선택할 수 있습니다
+  <table>
+  <tr>
+   <td><img src="https://github.com/user-attachments/assets/9d6d1ab1-2a96-4c09-a1f5-d000db355ef7" width="400"/></td>
+   <td><img src="https://github.com/user-attachments/assets/a62c62cf-7c44-4f89-a944-2bcf14994790" width="400"/></td>
+  </tr>
+ <table>
+
+ ### 2. 선호하는 음식 선택 & 개인정보 입력 뷰
+ 메뉴판 분석을 통해서 선호하는 음식 추천 및 맛집 추천 아카이빙 뷰에서 사용하기 위한 정보인 선호하는 한국 음식을 받는다
+ 마지막으로는 username, password를 받고 회원가입을 실행한다.
+  <table>
+  <tr>
+   <td><img src="https://github.com/user-attachments/assets/0d08c2d4-cb4d-49e2-b302-32295f55f33f" width="400"/></td>
+   <td><img src="https://github.com/user-attachments/assets/04f58b54-2fc2-4cd5-b56c-0b0cd1dbbe86" width="200"/></td>
+  </tr>
+ <table>
+ 
+### ➡️ 메뉴분석 Flow
+ ### 메뉴판 업로드 & 로딩 뷰 & 메뉴판 분석
+ 갤러리에서 메뉴판 이미지를 업로드 하고 분석하는 동안 로딩뷰를 보여준다
+ 메뉴판 분석 페이지에서는 해당 메뉴판에서 추천하는 음식과 알러지와 관련된 메뉴들을 한눈에 보기 편하도록 보여준다
+ 또한 메뉴판 번역 이미지를 제공해줌으로써 확인할 수 있도록 한다
+
+ <table>
+  <tr>
+   <td><img src="https://github.com/user-attachments/assets/22b876d1-d527-4be1-a4ac-ce99267bc5a1" width="400"/></td>
+   <td><img src="https://github.com/user-attachments/assets/46367d31-1093-4849-a82d-0854a53bfcac" width="200"/></td>
+   <td><img src="https://github.com/user-attachments/assets/7c692e67-476d-4c57-b197-4acb1b2e551d" width="400"/></td>
+  </tr>
+<table>
+
+### ➡️ 맛집 아카이빙 & 마이페이지 Flow
+### 마이페이지 & 맛집 아카이빙 뷰
+마이페이지에서 회원정보 확인, 로그아웃, 회원탈퇴 등의 정보를 확인할 수 있으며
+맛집 아카이빙 뷰에서는 자신의 선호음식을 기반으로 맛집 리스트를 추천해주고 해당 맛집을 누르면 인터넷을 통해서 정보를 확인할 수 있도록 연결해준다.
+<table>
+  <tr>
+   <td><img src="https://github.com/user-attachments/assets/cdf5dcaf-ae61-41f8-b83f-60ad3e1aa14e" width="200"/></td>
+   <td><img src="https://github.com/user-attachments/assets/262afbb9-28b1-463c-b0b6-6c71243c7cd4" width="400"/></td>
+  </tr>
+<table>
 
 ---
+## 컴퓨터 구성 / 필수 조건 안내 (Prerequisites)
+* iOS >= 16.0 
+* swift >= 4.2
+* MySQL 8.0 (AWS RDS)
+* Spring Boot 3.4.4
 
 
 ## 🔨기술 스택 (Technique Used) 
@@ -89,34 +446,95 @@
   <td align='center'>SwiftUI</td>
  </tr>
 </table>
-<details>
- <summary>Swift Packages</summary>
-
-
-
-</details>
-
-
 
 ### AI
  <table>
  <tr>
   <td><img src='https://user-images.githubusercontent.com/40621030/136698820-2c869052-ff44-4629-b1b9-7e1ae02df669.png' height=80></a></td>
   <td><img src='https://github.com/user-attachments/assets/46546f67-8f4b-48e4-8c1b-5e52f565822c' height=80></a></td>
+  <td><img src='https://github.com/user-attachments/assets/25b7735c-d3f6-411b-bd08-09a7cd3c578a' height=80></a></td>
+  <td><img src='https://github.com/user-attachments/assets/8c031aa8-9940-412e-944f-e6971cea4bdc' height=80></a></td>
+
  </tr>
  <tr>
   <td align='center'>PyTorch</td>
   <td align='center'>Python</td>
+  <td align='center'>FastAPI</td>
+  <td align='center'>PaddleOCR</td>
  </tr>
  </table>
 ---
 
 ## 💽설치 안내 (Installation Process)
-```
-작성예정
-```
+### Swift
 
+#### Xcode 시뮬레이터로 실행하기
+```bash 
+git clone https://github.com/kookmin-sw/capstone-2025-21
+cd App/capstone21/capstone21
+Xcode로 프로젝트 파일 열기
+실행하기
+ ```
+
+### 서버 실행
+- Git clone
+```bash 
+# EC2로 접속
+$ ssh -i ~/capstone2025-key.pem ubuntu@<EC2-IP>
+
+# git clone
+$ git clone https://github.com/kookmin-sw/capstone-2025-21.git
+
+# 프로젝트 디렉토리로 이동 후, 빌드한 JAR 파일 업로드
+ ```
+- Build - 로컬 (intelliJ)에서 실행
+```bash 
+# Gradle 빌드
+./gradlew bootJar
+
+# 생성된 JAR 위치 (예시)
+build/libs/allergy-0.0.1-SNAPSHOT.jar
+ ```
+- EC2 서버에 JAR 업로드 (SCP or FileZilla)
+```bash 
+# 1. scp 사용
+$ scp -i capstone2025-key.pem allergy-0.0.1-SNAPSHOT.jar ubuntu@<EC2-IP>:~/
+
+# 2. 혹은 FileZilla에서 호스트에 IP, 사용자명, 키 파일 PEM 설정 후 접속해서 ~/ 경로에 업로드
+ ```
+- 서버 실행
+ ```bash 
+# EC2에 접속
+$ ssh -i ~/capstone2025-key.pem ubuntu@<EC2-IP>
+
+# JAR 실행 (백그라운드 실행)
+$ nohup java -jar allergy-0.0.1-SNAPSHOT.jar &
+
+# (prod profile로 실행할 경우)
+$ nohup java -jar -Dspring.profiles.active=prod.active allergy-0.0.1-SNAPSHOT.jar &
+ ```
+### AI
+- Pytorch 실행
+```bash
+# Python 패키지 관리 도구 최신화 (선택)
+pip install --upgrade pip
+
+# 필수 라이브러리 설치
+pip install torch
+pip install fastapi
+pip install uvicorn
+pip install paddlepaddle-gpu  # GPU 버전 사용 시. CPU 사용시 pip install paddlepaddle
+pip install paddleocr
+pip install sentence-transformers
+pip install scikit-learn
+pip install googletrans==4.0.0-rc1
+```
+- 서버 실행
+```bash
+uvicorn app:app --reload
+```
 ---
+
 
 ## 📱프로젝트 사용법 (Getting Started)
 <!--
@@ -130,19 +548,6 @@
  샘플 에디터 [https://stackedit.io/app#](https://stackedit.io/app#)
 -->
   ```
-작성예정
-```
-  
- 
----
-
-## 📈프로젝트 전망
-```
-작성예정
-```
-
-### 🍎개선할 점
-```
 작성예정
 ```
 ---
@@ -166,7 +571,7 @@
  </tr>
 
  <tr>
-  <td align='center'><img src="" width="50" height="50"></td>
+  <td align='center'><img src="https://github.com/user-attachments/assets/88a34296-c5c4-4364-afee-b5a88be65bae" width="50" height="50"></td>
   <td align='center'>손원철 </td>
   <td align='center'>AI</td>
   <td align='center'><a href="https://github.com/sonwon9"><img src="http://img.shields.io/badge/sonwon9-green?style=social&logo=github"/></a></td>
@@ -187,7 +592,7 @@
  </tr>
 
  <tr>
-  <td align='center'><img src="" width="50" height="50"></td>
+  <td align='center'><img src="https://github.com/user-attachments/assets/ca7b8144-68b4-4fe0-b8d4-10bc09556c59" width="50" height="50"></td>
   <td align='center'>허서영</td>
   <td align='center'>Back-End (Spring)</td>
   <td align='center'><a href="https://github.com/se0y0ung12"><img src="http://img.shields.io/badge/se0y0ung12-green?style=social&logo=github"/></a></td>

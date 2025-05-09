@@ -24,7 +24,7 @@ public class User {
 
     private String nationality;  // 국적
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_favorite_foods", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "food")
     private List<String> favoriteFoods; // 좋아하는 한국 음식
