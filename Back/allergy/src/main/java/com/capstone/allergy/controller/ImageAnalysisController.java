@@ -42,8 +42,34 @@ public class ImageAnalysisController {
     @PostMapping("/analyze-image")
     @Operation(
             summary = "이미지 분석 요청",
-            description = "백엔드에서 사용자 정보를 조회하고, 최근 업로드된 이미지 경로를 이용해 AI 서버에 분석 요청을 보냅니다.",
-            security = @SecurityRequirement(name = "bearerAuth")
+            description = """
+            백엔드에서 사용자 정보를 조회하고, 최근 업로드된 이미지 경로를 이용해 AI 서버에 분석 요청을 보냅니다.
+            
+            ⚠️ 헤더 정보:
+            - Authorization: Bearer {accessToken}
+            - Content-Type: application/json
+            """,
+            security = @SecurityRequirement(name = "bearerAuth"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "성공적으로 분석 요청 후 캐싱됨", content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                    {
+                        "success": true,
+                        "message": "AI 분석 요청 성공 및 결과 캐싱 완료",
+                        "data": "ok"
+                    }
+                    """))),
+                    @ApiResponse(responseCode = "500", description = "분석 요청 실패", content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                    {
+                        "success": false,
+                        "message": "AI 요청 실패: 업로드된 이미지가 없습니다.",
+                        "data": null
+                    }
+                    """)))
+            }
     )
     public ResponseEntity<CommonResponse<String>> analyzeImageAndCache(
             @AuthenticationPrincipal CustomUserDetails userDetails
@@ -51,7 +77,7 @@ public class ImageAnalysisController {
         try {
             Long userId = userDetails.getUser().getId();
             User user = userRepository.findById(userId)
-                            .orElseThrow(() -> new RuntimeException("사용자 정보를 찾을 수 없습니다."));
+                    .orElseThrow(() -> new RuntimeException("사용자 정보를 찾을 수 없습니다."));
 
             String relativePath = imagePathCache.getLatestImagePath(userId);
             if (relativePath == null) {
@@ -90,7 +116,36 @@ public class ImageAnalysisController {
     @GetMapping("/analyze")
     @Operation(
             summary = "분석 결과 조회",
-            description = "캐시에 저장된 분석 결과를 반환합니다."
+            description = """
+            캐시에 저장된 분석 결과를 반환합니다.
+            
+            ⚠️ 헤더 정보:
+            - Authorization: Bearer {accessToken}
+            """,
+            security = @SecurityRequirement(name = "bearerAuth"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "분석 결과 조회 성공", content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                    {
+                        "success": true,
+                        "message": "분석 결과 조회 성공",
+                        "data": {
+                            "allergyWarnings": ["새우", "땅콩"],
+                            "recommendedMenus": ["비빔밥", "잡채"]
+                        }
+                    }
+                    """))),
+                    @ApiResponse(responseCode = "404", description = "결과 없음", content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                    {
+                        "success": false,
+                        "message": "분석 결과를 찾을 수 없습니다.",
+                        "data": null
+                    }
+                    """)))
+            }
     )
     public ResponseEntity<CommonResponse<ImageAnalysisResultDto>> getCachedAnalysis(
             @AuthenticationPrincipal CustomUserDetails userDetails
@@ -118,7 +173,44 @@ public class ImageAnalysisController {
     @GetMapping("/translate")
     @Operation(
             summary = "번역 결과 조회",
-            description = "캐시에 저장된 번역 결과를 반환합니다."
+            description = """
+            캐시에 저장된 번역 결과를 반환합니다.
+            
+            ⚠️ 헤더 정보:
+            - Authorization: Bearer {accessToken}
+            """,
+            security = @SecurityRequirement(name = "bearerAuth"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "번역 결과 조회 성공", content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                    {
+                        "success": true,
+                        "message": "번역 결과 조회 성공",
+                        "data": {
+                            "translatedMenus": [
+                                {
+                                    "original": "비빔밥",
+                                    "translated": "Bibimbap"
+                                },
+                                {
+                                    "original": "불고기",
+                                    "translated": "Bulgogi"
+                                }
+                            ]
+                        }
+                    }
+                    """))),
+                    @ApiResponse(responseCode = "404", description = "결과 없음", content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                    {
+                        "success": false,
+                        "message": "번역 결과를 찾을 수 없습니다.",
+                        "data": null
+                    }
+                    """)))
+            }
     )
     public ResponseEntity<CommonResponse<MenuTranslationResultDto>> getCachedTranslation(
             @AuthenticationPrincipal CustomUserDetails userDetails
@@ -142,165 +234,124 @@ public class ImageAnalysisController {
                             .build());
         }
     }
+}
 
-//    @PostMapping("/analyze")
+
+//@RestController
+//@RequestMapping("/api/analysis")
+//@RequiredArgsConstructor
+//@Tag(name = "이미지 분석 API", description = "AI 기반 이미지 분석 및 번역 API")
+//@Slf4j
+//public class ImageAnalysisController {
+//
+//    private final ImageAnalysisService imageAnalysisService;
+//    private final UserRepository userRepository;
+//    private final ImagePathCache imagePathCache;
+//
+//    @Value("${app.base-url}")
+//    private String baseUrl;
+//
+//    @PostMapping("/analyze-image")
 //    @Operation(
-//            summary = "이미지 분석",
-//            description = """
-//이미지를 분석해 알러지 경고와 추천 메뉴를 반환합니다.
-//
-//- `Content-Type`: `application/json`
-//- `Authorization`: Bearer {Token}
-//""",
-//            security = @SecurityRequirement(name = "bearerAuth"),
-//            requestBody = @RequestBody(
-//                    required = true,
-//                    content = @Content(
-//                            mediaType = "application/json",
-//                            schema = @Schema(implementation = ImageAnalysisRequestDto.class),
-//                            examples = @ExampleObject(
-//                                    name = "요청 예시",
-//                                    value = "{\n" +
-//                                            "  \"imagePath\": \"/api/gallery/images/uuid_filename.jpg\",\n" +
-//                                            "  \"nationality\": \"USA\",\n" +
-//                                            "  \"favoriteFoods\": [\"비빔밥\", \"불고기\"],\n" +
-//                                            "  \"allergies\": [\"계란\", \"우유\"]\n" +
-//                                            "}"
-//                            )
-//                    )
-//            ),
-//            responses = {
-//                    @ApiResponse(responseCode = "200", description = "분석 성공",
-//                            content = @Content(
-//                                    mediaType = "application/json",
-//                                    schema = @Schema(implementation = CommonResponse.class),
-//                                    examples = @ExampleObject(
-//                                            name = "분석 결과 예시",
-//                                            value = "{\n" +
-//                                                    "  \"success\": true,\n" +
-//                                                    "  \"message\": \"이미지 분석 성공\",\n" +
-//                                                    "  \"data\": {\n" +
-//                                                    "    \"recommendedMenus\": [\"김치찌개\", \"불고기\"],\n" +
-//                                                    "    \"allergyWarnings\": [\"계란\"]\n" +
-//                                                    "  }\n" +
-//                                                    "}"
-//                                    )
-//                            )),
-//                    @ApiResponse(responseCode = "500", description = "서버 오류",
-//                            content = @Content(
-//                                    mediaType = "application/json",
-//                                    schema = @Schema(implementation = CommonResponse.class),
-//                                    examples = @ExampleObject(
-//                                            name = "서버 오류 예시",
-//                                            value = "{\n" +
-//                                                    "  \"success\": false,\n" +
-//                                                    "  \"message\": \"ai 연결 실패\",\n" +
-//                                                    "  \"data\": null\n" +
-//                                                    "}"
-//                                    )
-//                            ))
-//            }
+//            summary = "이미지 분석 요청",
+//            description = "백엔드에서 사용자 정보를 조회하고, 최근 업로드된 이미지 경로를 이용해 AI 서버에 분석 요청을 보냅니다.",
+//            security = @SecurityRequirement(name = "bearerAuth")
 //    )
-//    public ResponseEntity<CommonResponse<ImageAnalysisResultDto>> analyzeImage(
-//            @AuthenticationPrincipal CustomUserDetails userDetails,
-//            @RequestBody ImageAnalysisRequestDto requestDto) {
-//
+//    public ResponseEntity<CommonResponse<String>> analyzeImageAndCache(
+//            @AuthenticationPrincipal CustomUserDetails userDetails
+//    ) {
 //        try {
 //            Long userId = userDetails.getUser().getId();
-//            requestDto.setUserId(userId); // DTO에 사용자 ID 주입
+//            User user = userRepository.findById(userId)
+//                            .orElseThrow(() -> new RuntimeException("사용자 정보를 찾을 수 없습니다."));
 //
-//            ImageAnalysisResultDto result = imageAnalysisService.analyzeImage(requestDto);
+//            String relativePath = imagePathCache.getLatestImagePath(userId);
+//            if (relativePath == null) {
+//                throw new RuntimeException("업로드된 이미지가 없습니다.");
+//            }
+//
+//            String absolutePath = baseUrl + relativePath;
+//            log.info("[분석 요청] userId: {}, imagePath: {}", userId, absolutePath);
+//
+//            ImageAnalysisRequestDto dto = new ImageAnalysisRequestDto();
+//            dto.setUserId(userId);
+//            dto.setNationality(user.getNationality());
+//            dto.setFavoriteFoods(user.getFavoriteFoods());
+//            dto.setAllergies(user.getAllergies());
+//            dto.setImagePath(absolutePath);
+//
+//            imageAnalysisService.analyzeAndCache(dto, userId);
+//
+//            return ResponseEntity.ok(
+//                    CommonResponse.<String>builder()
+//                            .success(true)
+//                            .message("AI 분석 요청 성공 및 결과 캐싱 완료")
+//                            .data("ok")
+//                            .build()
+//            );
+//        } catch (RuntimeException e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body(CommonResponse.<String>builder()
+//                            .success(false)
+//                            .message("AI 요청 실패: " + e.getMessage())
+//                            .data(null)
+//                            .build());
+//        }
+//    }
+//
+//    @GetMapping("/analyze")
+//    @Operation(
+//            summary = "분석 결과 조회",
+//            description = "캐시에 저장된 분석 결과를 반환합니다."
+//    )
+//    public ResponseEntity<CommonResponse<ImageAnalysisResultDto>> getCachedAnalysis(
+//            @AuthenticationPrincipal CustomUserDetails userDetails
+//    ) {
+//        try {
+//            Long userId = userDetails.getUser().getId();
+//            ImageAnalysisResultDto result = imageAnalysisService.getCachedAnalysis(userId);
 //            return ResponseEntity.ok(
 //                    CommonResponse.<ImageAnalysisResultDto>builder()
 //                            .success(true)
-//                            .message("이미지 분석 성공")
+//                            .message("분석 결과 조회 성공")
 //                            .data(result)
 //                            .build()
 //            );
 //        } catch (RuntimeException e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND)
 //                    .body(CommonResponse.<ImageAnalysisResultDto>builder()
 //                            .success(false)
-//                            .message("ai 연결 실패")
+//                            .message(e.getMessage())
 //                            .data(null)
 //                            .build());
 //        }
 //    }
 //
-//    @PostMapping("/translate")
+//    @GetMapping("/translate")
 //    @Operation(
-//            summary = "이미지 번역",
-//            description = """
-//이미지 경로를 기반으로 메뉴를 번역합니다.
-//
-//- `Content-Type`: `application/json`
-//- `Authorization`: Bearer {Token}
-//""",
-//            security = @SecurityRequirement(name = "bearerAuth"), // ✅ JWT 인증 필요 추가
-//            requestBody = @RequestBody(
-//                    required = true,
-//                    content = @Content(
-//                            mediaType = "application/json",
-//                            schema = @Schema(implementation = ImagePathRequestDto.class),
-//                            examples = @ExampleObject(
-//                                    name = "요청 예시",
-//                                    value = "{\n" +
-//                                            "  \"imagePath\": \"/api/gallery/images/uuid_filename.jpg\"\n" +
-//                                            "}"
-//                            )
-//                    )
-//            ),
-//            responses = {
-//                    @ApiResponse(responseCode = "200", description = "번역 성공",
-//                            content = @Content(
-//                                    mediaType = "application/json",
-//                                    schema = @Schema(implementation = CommonResponse.class),
-//                                    examples = @ExampleObject(
-//                                            name = "번역 결과 예시",
-//                                            value = "{\n" +
-//                                                    "  \"success\": true,\n" +
-//                                                    "  \"message\": \"메뉴 번역 성공\",\n" +
-//                                                    "  \"data\": {\n" +
-//                                                    "    \"translatedMenus\": [\"Kimchi Stew\", \"Bulgogi\"]\n" +
-//                                                    "  }\n" +
-//                                                    "}"
-//                                    )
-//                            )),
-//                    @ApiResponse(responseCode = "500", description = "서버 오류",
-//                            content = @Content(
-//                                    mediaType = "application/json",
-//                                    schema = @Schema(implementation = CommonResponse.class),
-//                                    examples = @ExampleObject(
-//                                            name = "ai 연결 실패",
-//                                            value = "{\n" +
-//                                                    "  \"success\": false,\n" +
-//                                                    "  \"message\": \"ai 연결 실패\",\n" +
-//                                                    "  \"data\": null\n" +
-//                                                    "}"
-//                                    )
-//                            ))
-//            }
+//            summary = "번역 결과 조회",
+//            description = "캐시에 저장된 번역 결과를 반환합니다."
 //    )
-//    public ResponseEntity<CommonResponse<MenuTranslationResultDto>> translateImage(
-//            @AuthenticationPrincipal CustomUserDetails userDetails, // ✅ 토큰에서 사용자 정보 추출
-//            @RequestBody ImagePathRequestDto requestDto) {
-//
+//    public ResponseEntity<CommonResponse<MenuTranslationResultDto>> getCachedTranslation(
+//            @AuthenticationPrincipal CustomUserDetails userDetails
+//    ) {
 //        try {
-//            MenuTranslationResultDto result = imageAnalysisService.getTranslatedMenu(requestDto.getImagePath());
+//            Long userId = userDetails.getUser().getId();
+//            MenuTranslationResultDto result = imageAnalysisService.getCachedTranslation(userId);
 //            return ResponseEntity.ok(
 //                    CommonResponse.<MenuTranslationResultDto>builder()
 //                            .success(true)
-//                            .message("메뉴 번역 성공")
+//                            .message("번역 결과 조회 성공")
 //                            .data(result)
 //                            .build()
 //            );
 //        } catch (RuntimeException e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND)
 //                    .body(CommonResponse.<MenuTranslationResultDto>builder()
 //                            .success(false)
-//                            .message("ai 연결 실패")
+//                            .message(e.getMessage())
 //                            .data(null)
 //                            .build());
 //        }
 //    }
-}
+//}
