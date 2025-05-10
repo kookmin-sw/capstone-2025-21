@@ -36,13 +36,14 @@ class MenuAnalysisResultViewModel: ObservableObject {
         let matchReasons: [String]
     }
     
-    // Sample data - would be replaced with actual data in a real app
+    //TODO: 서버통신으로 연결
     let allergiesDetected: Bool = true
     let allergiesInfo: [AllergenInfo] = [
         AllergenInfo(allergen: "Nuts", dishes: ["Pad Thai", "Almond Chicken"]),
         AllergenInfo(allergen: "Seafood", dishes: ["Seafood Pasta", "Lobster Bisque"])
     ]
     
+    //TODO: 서버통신으로 연결
     let topRecommendedMenu: RecommendedMenu = RecommendedMenu(
         name: "Signature Bibimbap",
         description: "A colorful mix of vegetables, beef, and rice topped with a fried egg and special sauce.",
@@ -71,17 +72,27 @@ class MenuAnalysisResultViewModel: ObservableObject {
     func send(_ action: Action) {
         switch action {
         case .onAppear:
-            break
-//            Providers.HomeProvider.request(target: .postMenuAnalyzeImage, instance: BaseResponse<MenuAnalyzeResult>.self) { [weak self] data in
-//                guard let self = self else { return }
-//                
-//                if data.success {
-//                    // When data arrives, load the parsed menu image
+            Providers.HomeProvider.request(target: .getMenuAnalyze, instance: BaseResponse<MenuAnalyzeResult>.self) { [weak self] data in
+                guard let self = self else { return }
+                
+                if data.success {
+                    // When data arrives, load the parsed menu image
 //                    if let imageURL = data.result?.parsedMenuImageURL {
 //                        self.loadParsedMenuImage(from: imageURL)
 //                    }
-//                }
-//            }
+                }
+            }
+            
+            Providers.HomeProvider.request(target: .getTranslateMenuImage, instance: BaseResponse<MenuTranslateResult>.self) { [weak self] data in
+                guard let self = self else { return }
+                
+                if data.success {
+                    // When data arrives, load the parsed menu image
+                    if let imageURL = URL(string: data.data!.imageURL) {
+                        self.loadParsedMenuImage(from: imageURL)
+                    }
+                }
+            }
         case .viewParsedMenuTapped:
             // Show the image sheet
             if parsedMenuImage != nil {

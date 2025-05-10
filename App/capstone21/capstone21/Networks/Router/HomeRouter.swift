@@ -54,7 +54,7 @@ extension HomeRouter: BaseTargetType {
                     with: fileName
                 )
         case .getTranslateMenuImage:
-            return "/api/analysis/translate"
+            return "/api/analysis/translate-image"
         case .getMenuAnalyze:
             return "/api/analysis/analyze"
         case .postMenuAnalyzeImage:

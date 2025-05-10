@@ -40,18 +40,19 @@ class ArchivingViewModel: ObservableObject {
         setupSampleData()
         setupObservers()
         
-        Providers.HomeProvider.request(target: .getRestaurantList, instance: BaseResponse<RestuarantResult>.self) {  data in
-            if data.success {
-                guard let data = data.data else { return }
-                print("🚨🚨🚨🚨\(data.menus)🚨🚨🚨")
-            }
-        }
+        
     }
     
     private func setupSampleData() {
-        featuredRecommendations = Restaurant.list
-        allRestaurants = Restaurant.list
-        filteredRestaurants = allRestaurants
+        Providers.HomeProvider.request(target: .getRestaurantList, instance: BaseResponse<[RestuarantResult]>.self) { [weak self] data in
+            if data.success {
+                guard let data = data.data else { return }
+                self?.featuredRecommendations = data.map { $0.toEntity() }
+                self?.allRestaurants = data.map { $0.toEntity() }
+                self?.filteredRestaurants = data.map { $0.toEntity() }
+                
+            }
+        }
     }
     
     private func setupObservers() {
@@ -64,16 +65,16 @@ class ArchivingViewModel: ObservableObject {
                 return self.allRestaurants.filter { restaurant in
                     // Search text filter
                     let matchesSearch = searchText.isEmpty ||
-                                       restaurant.name.localizedCaseInsensitiveContains(searchText) ||
-                                       restaurant.foodTags.contains { $0.localizedCaseInsensitiveContains(searchText) }
+                    restaurant.name.localizedCaseInsensitiveContains(searchText) ||
+                    restaurant.foodTags.contains { $0.localizedCaseInsensitiveContains(searchText) }
                     
                     // Category filter
                     let matchesCategory = categories.isEmpty ||
-                                         restaurant.categories.contains { categories.contains($0) }
+                    restaurant.categories.contains { categories.contains($0) }
                     
                     // Price filter
                     let matchesPrice = prices.isEmpty ||
-                                      prices.contains(restaurant.priceRange)
+                    prices.contains(restaurant.priceRange)
                     
                     return matchesSearch && matchesCategory && matchesPrice
                 }
@@ -86,6 +87,9 @@ class ArchivingViewModel: ObservableObject {
     func selectRestaurant(_ restaurant: Restaurant) {
         // In a real app, this would navigate to a restaurant detail view
         print("Selected restaurant: \(restaurant.name)")
+        if let url = URL(string: restaurant.homepageURL) {
+            UIApplication.shared.open(url)
+        }
     }
     
     func toggleCategory(_ category: FoodCategory) {
