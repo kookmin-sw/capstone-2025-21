@@ -40,7 +40,7 @@ class ArchivingViewModel: ObservableObject {
         setupSampleData()
         setupObservers()
         
-        Providers.HomeProvider.request(target: .getRestaurantList, instance: BaseResponse<MenuResult>.self) {  data in
+        Providers.HomeProvider.request(target: .getRestaurantList, instance: BaseResponse<RestuarantResult>.self) {  data in
             if data.success {
                 guard let data = data.data else { return }
                 print("🚨🚨🚨🚨\(data.menus)🚨🚨🚨")

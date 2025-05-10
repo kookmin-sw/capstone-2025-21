@@ -21,11 +21,13 @@ final class AuthInterceptor: RequestInterceptor {
     
     func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
         print("---adater 진입----")
+        print("---urlRequest: \(urlRequest)----")
         completion(.success(urlRequest))
     }
     
     func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
         print("-------🔧retry 시작🔧-------")
+        print("-------🔧\(request.response)🔧-------")
         guard
             let statusCode = request.response?.statusCode,
             request.retryCount < retryLimit

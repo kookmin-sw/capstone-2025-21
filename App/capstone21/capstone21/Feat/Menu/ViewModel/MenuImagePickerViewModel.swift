@@ -47,11 +47,12 @@ public class MenuImagePickerViewModel: ObservableObject {
             navigationRouter.pop()
             
         case .nextButtonDidTap:
-            guard let image = selectedImage?.jpegData(compressionQuality: 1.0) else { return }
+            guard let image = selectedImage?.jpegData(compressionQuality: 0.3) else { return }
             Providers.HomeProvider.request(target: .postMenuImage(image), instance: BaseResponse<ImageResult>.self) { [weak self] data in
                 if data.success {
                     guard let data = data.data else { return }
                     self?.navigationRouter.push(to: .menuAnalysisLoading(data.url))
+                    self?.selectedImage = nil
                 }
             }
             

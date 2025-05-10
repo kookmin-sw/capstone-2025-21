@@ -60,8 +60,6 @@ struct HomeView: View {
                     }
                     .tag(Tab.mypage)
             }
-            
-            
         }
     }
 }

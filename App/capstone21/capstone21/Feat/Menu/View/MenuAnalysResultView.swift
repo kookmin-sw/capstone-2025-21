@@ -173,188 +173,203 @@ struct MenuAnalysisResultView: View {
                         }
                     }
                     
-                    // Spiciness Level Card
-                    AnalysisCard(
-                        title: "Spiciness Guide",
-                        iconName: "flame.fill",
-                        iconColor: .orange,
-                        iconBackgroundColor: Color.orange.opacity(0.1),
-                        delay: 0.2
-                    ) {
-                        VStack(alignment: .leading, spacing: 16) {
-                            // Your preferred spice level
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text("Your Preferred Spice Level")
-                                    .font(.medium_14)
-                                    .foregroundColor(.heyGray2)
-                                
-                                HStack {
-                                    SpiceLevel(level: viewModel.userSpicePreference, maxLevel: 5)
-                                    
-                                    Text(viewModel.userSpiceLevelDescription)
-                                        .font(.regular_14)
-                                        .foregroundColor(.heyGray2)
-                                        .padding(.leading, 8)
-                                }
-                            }
-                            
-                            Divider()
-                                .padding(.vertical, 8)
-                            
-                            // Spicy dishes found
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text("Spicy Dishes Found")
-                                    .font(.medium_14)
-                                    .foregroundColor(.heyGray2)
-                                
-                                if viewModel.spicyDishes.isEmpty {
-                                    Text("No spicy dishes were detected on this menu.")
-                                        .font(.regular_14)
-                                        .foregroundColor(.heyGray3)
-                                } else {
-                                    ForEach(viewModel.spicyDishes, id: \.name) { dish in
-                                        HStack {
-                                            Text(dish.name)
-                                                .font(.medium_14)
-                                                .foregroundColor(.heyGray1)
-                                            
-                                            Spacer()
-                                            
-                                            SpiceLevel(level: dish.spiceLevel, maxLevel: 5)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                .padding(.horizontal, 16)
-                .padding(.top, 24)
-                .opacity(animateCards ? 1 : 0)
-                .offset(y: animateCards ? 0 : 30)
-                
-                // Action Buttons
-                VStack(spacing: 12) {
-                    // View Parsed Menu Button
-                    Button(action: {
-                        viewModel.send(.viewParsedMenuTapped)
-                    }) {
-                        HStack {
-                            Image(systemName: "doc.text.magnifyingglass")
-                                .font(.body)
-                            
-                            Text("View Parsed Menu")
-                                .font(.semibold_16)
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(Color.heyMain)
-                        .foregroundColor(.white)
-                        .cornerRadius(12)
-                    }
                     
-                    // Return Home Button
-                    Button(action: {
-                        viewModel.send(.returnHomeTapped)
-                    }) {
-                        HStack {
-                            Image(systemName: "house.fill")
-                                .font(.body)
-                            
-                            Text("Return to Home")
-                                .font(.regular_16)
+                    // Action Buttons
+                    VStack(spacing: 12) {
+                        // View Parsed Menu Button
+                        Button(action: {
+                            viewModel.send(.viewParsedMenuTapped)
+                        }) {
+                            HStack {
+                                Image(systemName: "doc.text.magnifyingglass")
+                                    .font(.body)
+                                
+                                Text("View Parsed Menu")
+                                    .font(.semibold_16)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 16)
+                            .background(Color.heyMain)
+                            .foregroundColor(.white)
+                            .cornerRadius(12)
                         }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(Color.heyGray5)
-                        .foregroundColor(.heyGray1)
-                        .cornerRadius(12)
+                        
+                        // Return Home Button
+                        Button(action: {
+                            viewModel.send(.returnHomeTapped)
+                        }) {
+                            HStack {
+                                Image(systemName: "house.fill")
+                                    .font(.body)
+                                
+                                Text("Return to Home")
+                                    .font(.regular_16)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 16)
+                            .background(Color.heyGray5)
+                            .foregroundColor(.heyGray1)
+                            .cornerRadius(12)
+                        }
                     }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 32)
+                    .padding(.bottom, 24)
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 32)
-                .padding(.bottom, 24)
             }
-        }
-        .navigationBarBackButtonHidden(true)
-        .background(Color.heyWhite)
-        .toolbar(.hidden, for: .tabBar)
-        .ignoresSafeArea(edges: .bottom)
-        
-        .onAppear {
-            withAnimation(Animation.easeOut(duration: 0.5).delay(0.2)) {
-                animateCards = true
-            }
+            .navigationBarBackButtonHidden(true)
+            .background(Color.heyWhite)
+            .toolbar(.hidden, for: .tabBar)
+            .ignoresSafeArea(edges: .bottom)
             
-            withAnimation(Animation.easeOut(duration: 0.6).delay(0.5)) {
-                showTopRecommendation = true
-            }
-        }
-    }
-}
-
-// Spice Level Indicator Component
-struct SpiceLevel: View {
-    let level: Int
-    let maxLevel: Int
-    
-    var body: some View {
-        HStack(spacing: 3) {
-            ForEach(1...maxLevel, id: \.self) { index in
-                Image(systemName: "flame.fill")
-                    .font(.system(size: 12))
-                    .foregroundColor(index <= level ? .orange : .gray.opacity(0.3))
-            }
-        }
-    }
-}
-
-// Reusable Analysis Card Component
-struct AnalysisCard<Content: View>: View {
-    let title: String
-    let iconName: String
-    let iconColor: Color
-    let iconBackgroundColor: Color
-    let delay: Double
-    let content: Content
-    @State private var isVisible: Bool = false
-    
-    init(title: String, iconName: String, iconColor: Color, iconBackgroundColor: Color, delay: Double, @ViewBuilder content: () -> Content) {
-        self.title = title
-        self.iconName = iconName
-        self.iconColor = iconColor
-        self.iconBackgroundColor = iconBackgroundColor
-        self.delay = delay
-        self.content = content()
-    }
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            HStack(spacing: 12) {
-                Image(systemName: iconName)
-                    .font(.system(size: 16))
-                    .foregroundColor(iconColor)
-                    .padding(10)
-                    .background(iconBackgroundColor)
-                    .clipShape(Circle())
+            .onAppear {
+                withAnimation(Animation.easeOut(duration: 0.5).delay(0.2)) {
+                    animateCards = true
+                }
                 
-                Text(title)
-                    .font(.semibold_16)
-                    .foregroundColor(.heyGray1)
+                withAnimation(Animation.easeOut(duration: 0.6).delay(0.5)) {
+                    showTopRecommendation = true
+                }
+            }
+            .sheet(isPresented: $viewModel.showImageSheet) {
+                ParsedMenuSheetView(viewModel: viewModel)
+            }
+            .sheet(isPresented: $viewModel.showShareSheet) {
+                if let image = viewModel.parsedMenuImage {
+                    ShareSheet(activityItems: [image])
+                }
+            }
+        }
+    }
+    
+    // Reusable Analysis Card Component
+    struct AnalysisCard<Content: View>: View {
+        let title: String
+        let iconName: String
+        let iconColor: Color
+        let iconBackgroundColor: Color
+        let delay: Double
+        let content: Content
+        @State private var isVisible: Bool = false
+        
+        init(title: String, iconName: String, iconColor: Color, iconBackgroundColor: Color, delay: Double, @ViewBuilder content: () -> Content) {
+            self.title = title
+            self.iconName = iconName
+            self.iconColor = iconColor
+            self.iconBackgroundColor = iconBackgroundColor
+            self.delay = delay
+            self.content = content()
+        }
+        
+        var body: some View {
+            VStack(alignment: .leading, spacing: 16) {
+                HStack(spacing: 12) {
+                    Image(systemName: iconName)
+                        .font(.system(size: 16))
+                        .foregroundColor(iconColor)
+                        .padding(10)
+                        .background(iconBackgroundColor)
+                        .clipShape(Circle())
+                    
+                    Text(title)
+                        .font(.semibold_16)
+                        .foregroundColor(.heyGray1)
+                }
+                
+                content
+            }
+            .padding(20)
+            .background(Color.white)
+            .cornerRadius(16)
+            .shadow(color: Color.black.opacity(0.05), radius: 6, x: 0, y: 2)
+            .opacity(isVisible ? 1 : 0)
+            .offset(y: isVisible ? 0 : 20)
+            .onAppear {
+//                viewModel.send(.onAppear)
+                withAnimation(Animation.easeOut(duration: 0.5).delay(delay)) {
+                    isVisible = true
+                }
+            }
+        }
+    }
+}
+
+// MARK: - ShareSheet Helper
+struct ShareSheet: UIViewControllerRepresentable {
+    var activityItems: [Any]
+    var applicationActivities: [UIActivity]? = nil
+    
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        let controller = UIActivityViewController(
+            activityItems: activityItems,
+            applicationActivities: applicationActivities
+        )
+        return controller
+    }
+    
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
+}
+
+// MARK: - ParsedMenuSheetView
+struct ParsedMenuSheetView: View {
+    @ObservedObject var viewModel: MenuAnalysisResultViewModel
+    
+    var body: some View {
+        VStack {
+            HStack {
+                Button(action: {
+                    viewModel.send(.dismissImageSheet)
+                }) {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.title2)
+                        .foregroundColor(.gray)
+                }
+                
+                Spacer()
+                
+                Text("Parsed Menu")
+                    .font(.headline)
+                
+                Spacer()
+                
+                Button(action: {
+                    viewModel.send(.downloadImageTapped)
+                }) {
+                    Image(systemName: "arrow.down.circle.fill")
+                        .font(.title2)
+                        .foregroundColor(.blue)
+                }
+            }
+            .padding()
+            
+            if let image = viewModel.parsedMenuImage {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFit()
+                    .padding()
+            } else {
+                ProgressView()
+                    .padding()
             }
             
-            content
-        }
-        .padding(20)
-        .background(Color.white)
-        .cornerRadius(16)
-        .shadow(color: Color.black.opacity(0.05), radius: 6, x: 0, y: 2)
-        .opacity(isVisible ? 1 : 0)
-        .offset(y: isVisible ? 0 : 20)
-        .onAppear {
-            withAnimation(Animation.easeOut(duration: 0.5).delay(delay)) {
-                isVisible = true
+            Button(action: {
+                viewModel.send(.downloadImageTapped)
+            }) {
+                HStack {
+                    Image(systemName: "arrow.down.circle.fill")
+                    Text("Download Image")
+                }
+                .font(.headline)
+                .foregroundColor(.white)
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(Color.blue)
+                .cornerRadius(10)
+                .padding(.horizontal)
             }
+            .padding(.bottom)
+            
+            Spacer()
         }
     }
 }

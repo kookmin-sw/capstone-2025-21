@@ -13,8 +13,6 @@ public struct MyPageView: View {
     
     public init(viewModel: MyPageViewModel) {
         self.viewModel = viewModel
-        
-        viewModel.send(.onAppear)
     }
     
     public var body: some View {

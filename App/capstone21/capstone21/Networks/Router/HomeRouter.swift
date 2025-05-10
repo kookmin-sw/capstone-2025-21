@@ -15,6 +15,7 @@ enum HomeRouter {
     case getMenuImage(String)
     case getTranslateMenuImage
     case getMenuAnalyze
+    case postMenuAnalyzeImage
     
 }
 
@@ -26,12 +27,14 @@ extension HomeRouter: BaseTargetType {
         case .getProfile:
             return APIConstants.hasAccessTokenHeader
         case .postMenuImage:
-            return APIConstants.hasAccessTokenHeader
+            return [APIConstants.auth: APIConstants.accessToken]
         case .getMenuImage:
             return APIConstants.hasAccessTokenHeader
         case .getTranslateMenuImage:
             return APIConstants.hasAccessTokenHeader
         case .getMenuAnalyze:
+            return APIConstants.hasAccessTokenHeader
+        case .postMenuAnalyzeImage:
             return APIConstants.hasAccessTokenHeader
         }
     }
@@ -39,7 +42,7 @@ extension HomeRouter: BaseTargetType {
     var path: String {
         switch self {
         case .getRestaurantList:
-            return "/api/home"
+            return "/api/restaurant/recommend"
         case .getProfile:
             return "/api/user/profile"
         case .postMenuImage:
@@ -54,6 +57,8 @@ extension HomeRouter: BaseTargetType {
             return "/api/analysis/translate"
         case .getMenuAnalyze:
             return "/api/analysis/analyze"
+        case .postMenuAnalyzeImage:
+            return "/api/analysis/analyze-image"
         }
     }
     
@@ -71,6 +76,8 @@ extension HomeRouter: BaseTargetType {
             return .get
         case .getMenuAnalyze:
             return .get
+        case .postMenuAnalyzeImage:
+            return .post
         }
     }
     
@@ -95,6 +102,8 @@ extension HomeRouter: BaseTargetType {
             return .requestPlain
         case .getMenuAnalyze:
             return .requestPlain
+        case .postMenuAnalyzeImage:
+            return .requestPlain
         }
     }
     
@@ -111,6 +120,8 @@ extension HomeRouter: BaseTargetType {
         case .getTranslateMenuImage:
             return .successCodes
         case .getMenuAnalyze:
+            return .successCodes
+        case .postMenuAnalyzeImage:
             return .successCodes
         }
     }

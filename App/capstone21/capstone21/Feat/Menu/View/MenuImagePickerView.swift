@@ -13,7 +13,6 @@ public struct MenuImagePickerView: View {
     @ObservedObject var viewModel: MenuImagePickerViewModel
     
     @State private var selectedItem: PhotosPickerItem?
-    @State private var selectedImageData: Data?
     
     public init(viewModel: MenuImagePickerViewModel) {
         self.viewModel = viewModel
@@ -49,6 +48,7 @@ public struct MenuImagePickerView: View {
                                         .cornerRadius(12)
                                     
                                     Button(action: {
+                                        selectedItem = nil
                                         viewModel.send(.removeImage)
                                     }) {
                                         Image(systemName: "xmark.circle.fill")
@@ -124,6 +124,9 @@ public struct MenuImagePickerView: View {
                         viewModel.send(.imageSelected(data))
                     }
                 }
+            }
+            .onDisappear {
+                selectedItem = nil
             }
         }
     }

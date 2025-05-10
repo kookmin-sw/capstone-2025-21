@@ -123,6 +123,13 @@ public struct MenuAnalysisLoadingView: View {
         .onAppear {
             startLoadingAnimation()
             navigateToResult()
+//            Providers.HomeProvider.request(target: .postMenuAnalyzeImage, instance: BaseResponse<EmptyResponseDTO>.self) {  data in
+//                if data.success {
+//                    navigateToResult()
+//                }
+//            }
+            
+            
         }
     }
     

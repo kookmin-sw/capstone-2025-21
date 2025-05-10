@@ -11,6 +11,7 @@ import Moya
 struct APIConstants {
     static let contentType = "Content-Type"
     static let applicationJSON = "application/json"
+    static let multipart = "multipart/form-data"
     static let auth = "Authorization"
     static let timeZone = "Time-Zone"
     static let seoul = "Asia/Seoul"
@@ -18,25 +19,18 @@ struct APIConstants {
     static var accessToken: String {
         return "Bearer \(UserDefaultsManager.accessToken)"
     }
-    
-    static var refreshToken: String {
-        return "Bearer " 
-//        + (UserManager.shared.refreshToken ?? "")
-    }
-    
-    static var appleAccessToken: String {
-        return ""
-//        UserManager.shared.socialToken ?? ""
-    }
-    
-    static let OS = "OS"
-    static let iOS = "iOS"
 }
 
 extension APIConstants {
     static var hasAccessTokenHeader: [String: String] {
         return [
             contentType: applicationJSON,
+            auth: accessToken
+        ]
+    }
+    
+    static var multipartHeader: [String: String] {
+        return [
             auth: accessToken
         ]
     }
