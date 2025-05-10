@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,8 +24,16 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/analysis")
@@ -243,6 +252,79 @@ public class ImageAnalysisController {
                             .message(e.getMessage())
                             .data(null)
                             .build());
+        }
+    }
+
+    @GetMapping("/translate-image")
+    @Operation(
+            summary = "번역 결과 이미지 반환",
+            description = "번역된 메뉴 항목과 위치 정보 기반으로 텍스트가 그려진 이미지를 반환합니다.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    public void getTranslatedImage(
+            HttpServletResponse response,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        try {
+            Long userId = userDetails.getUser().getId();
+            String imagePath = imagePathCache.getLatestImagePath(userId);  // 예: /api/gallery/images/abc.png
+
+            if (imagePath == null) {
+                throw new RuntimeException("업로드된 이미지가 없습니다.");
+            }
+
+            // 실제 로컬 경로로 변환
+            String fileName = Paths.get(imagePath).getFileName().toString(); // abc.png
+            Path fullPath = Paths.get(uploadDir).resolve(fileName);
+            BufferedImage original = ImageIO.read(fullPath.toFile());
+
+            // ARGB 이미지로 복사 및 투명도 처리
+            BufferedImage output = new BufferedImage(original.getWidth(), original.getHeight(), BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = output.createGraphics();
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.6f));
+            g.drawImage(original, 0, 0, null);
+
+            // 텍스트용 설정
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+            g.setFont(new Font("SansSerif", Font.BOLD, 15));
+
+            // 번역 결과 꺼내기
+            MenuTranslationResultDto result = imageAnalysisService.getCachedTranslation(userId);
+            if (result == null || result.getMenuItems() == null) {
+                throw new RuntimeException("번역된 메뉴 결과가 없습니다.");
+            }
+
+            for (MenuItemDto item : result.getMenuItems()) {
+                String label = item.getMenuName();
+                if (item.isHasAllergy()) {
+                    label += "⚠";
+                }
+
+                List<List<Double>> bbox = item.getBbox();
+                int x = bbox.get(0).get(0).intValue();
+                int y = bbox.get(0).get(1).intValue();
+
+                FontMetrics fm = g.getFontMetrics();
+                int textWidth = fm.stringWidth(label);
+                int textHeight = fm.getHeight();
+
+                g.setColor(new Color(255, 255, 255, 200)); // 반투명 흰 배경
+                g.fillRect(x - 2, y - textHeight + 4, textWidth + 4, textHeight);
+
+                g.setColor(item.isHasAllergy() ? Color.RED : Color.BLACK);
+                g.drawString(label, x, y);
+            }
+
+            g.dispose();
+
+            response.setContentType("image/png");
+            OutputStream os = response.getOutputStream();
+            ImageIO.write(output, "png", os);
+            os.close();
+
+        } catch (Exception e) {
+            log.error("번역 이미지 생성 중 오류: {}", e.getMessage(), e);
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
     }
 }
