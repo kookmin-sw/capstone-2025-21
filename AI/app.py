@@ -8,7 +8,7 @@ import torch
 from paddleocr import PaddleOCR
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
-import requests
+from collections import defaultdict
 import cv2
 
 # 번역을 위한 Translator 초기화
@@ -81,11 +81,17 @@ async def analyze(
     3) 사용자 취향 임베딩 및 유사도 계산
     4) 알러지 제외 후 top_k 메뉴 추천
     """
-    # Download image from URL and decode to array
-    response = requests.get(imagePath)
-    response.raise_for_status()
-    img_array = cv2.imdecode(np.frombuffer(response.content, np.uint8), cv2.IMREAD_COLOR)
-    # B) OCR: 메뉴명 추출 from array
+    '''
+    # A) OCR 처리를 위한 임시 파일 저장
+    temp_fname = f"temp_{uuid.uuid4().hex}.jpg"
+    temp_path = os.path.join(script_dir, temp_fname)
+    with open(temp_path, "wb") as tmp:
+        tmp.write(await image.read())
+    '''
+
+    # B) OCR: 메뉴명 추출
+    contents = await imagePath.read()
+    img_array = cv2.imdecode(np.frombuffer(contents, np.uint8), cv2.IMREAD_COLOR)
     ocr_result = ocr_model.ocr(img_array, cls=True)
     scanned_lines = [(line[1][0], line[0]) for line in ocr_result[0]]
 
@@ -164,8 +170,15 @@ async def analyze(
         })
         if len(recs) >= top_k:
             break
+    
+    # I) 알러지 발생 가능성이 있는 음식들 전달하기
+    allergen = defaultdict(list)
+    for item in all_menu_items:
+        if item["has_allergy"]:
+            for allergy_type in item["allergy_types"]:
+                allergen[allergy_type].append(item["menu_name"])
 
-    return {"recommendations": recs}
+    return {"recommendations": recs, "allergen": allergen}
 
 
 # New endpoint to return all menu items with location and allergy info
@@ -181,10 +194,9 @@ async def analyze_menu(
     """
     FastAPI endpoint to return all menu items with location and allergy info.
     """
-    # Download image from URL and decode
-    response = requests.get(imagePath)
-    response.raise_for_status()
-    img_array = cv2.imdecode(np.frombuffer(response.content, np.uint8), cv2.IMREAD_COLOR)
+    # OCR and scanning
+    contents = await imagePath.read()
+    img_array = cv2.imdecode(np.frombuffer(contents, np.uint8), cv2.IMREAD_COLOR)
     ocr_result = ocr_model.ocr(img_array, cls=True)
     scanned_lines = [(line[1][0], line[0]) for line in ocr_result[0]]
 
