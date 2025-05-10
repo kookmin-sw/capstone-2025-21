@@ -154,11 +154,11 @@ public class ImageAnalysisController {
                             "recommendations": [
                                 {
                                     "menu_name": "Squid",
-                                    "similarity": 0.87887673108377254
+                                    "similarity": 87.8
                                 },
                                 {
                                     "menu_name": "Stir-fried",
-                                    "similarity": 0.77385739265724756
+                                    "similarity": 77.3
                                 }
                             ]
                         }
