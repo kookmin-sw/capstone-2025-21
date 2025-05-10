@@ -1,14 +1,12 @@
 import os
 import json
-import uuid
 import numpy as np
 from fastapi import FastAPI, HTTPException, File, UploadFile, Form
 from typing import List, Optional
-import torch
 from paddleocr import PaddleOCR
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
-import requests
+from collections import defaultdict
 import cv2
 
 # 번역을 위한 Translator 초기화
@@ -67,7 +65,7 @@ app = FastAPI()
 
 @app.post("/analyze")
 async def analyze(
-    imagePath: UploadFile = File(...),
+    imagePath: str = Form(...),
     userId: int = Form(...),
     nationality: str = Form(...),
     favoriteFoods: str = Form("[]"),   # JSON string, e.g. '["비빔밥","불고기"]'
@@ -81,9 +79,17 @@ async def analyze(
     3) 사용자 취향 임베딩 및 유사도 계산
     4) 알러지 제외 후 top_k 메뉴 추천
     """
+    '''
+    # A) OCR 처리를 위한 임시 파일 저장
+    temp_fname = f"temp_{uuid.uuid4().hex}.jpg"
+    temp_path = os.path.join(script_dir, temp_fname)
+    with open(temp_path, "wb") as tmp:
+        tmp.write(await image.read())
+    '''
+
+    # B) OCR: 메뉴명 추출
     contents = await imagePath.read()
     img_array = cv2.imdecode(np.frombuffer(contents, np.uint8), cv2.IMREAD_COLOR)
-    # B) OCR: 메뉴명 추출 from array
     ocr_result = ocr_model.ocr(img_array, cls=True)
     scanned_lines = [(line[1][0], line[0]) for line in ocr_result[0]]
 
@@ -96,8 +102,6 @@ async def analyze(
     valid_scanned = []
     all_menu_items = []
     user_allergy_set = set(json.loads(allergies))
-    # build mapping from user allergens to menu items they appear in
-    allergy_matches = {allergen: [] for allergen in user_allergy_set}
     for name, bbox in scanned_lines:
         if name in menu_names and name not in seen:
             matched_allergies = set()
@@ -118,11 +122,7 @@ async def analyze(
                     translated_name = name # 번역 실패 시 그대로 사용
             else:
                 translated_name = name
-            matched_list = list(user_matched_allergies)
-            # record each allergen occurrence
-            for allergen in user_matched_allergies:
-                allergy_matches[allergen].append(translated_name)
-            valid_scanned.append((idx, translated_name, bbox, bool(user_matched_allergies), matched_list))
+            valid_scanned.append((idx, translated_name, bbox, bool(user_matched_allergies)))
             user_matched_allergies_translated = translate_allergens(user_matched_allergies, lang_code=nationality)
             
             seen.add(name)
@@ -139,7 +139,7 @@ async def analyze(
     fav_list = json.loads(favoriteFoods)
 
     # E) 스캔된 메뉴 임베딩 수집
-    scanned_idxs = [idx for idx, _, _, _, _ in valid_scanned]
+    scanned_idxs = [idx for idx, _, _, _ in valid_scanned]
     scanned_embs = menu_embeddings[scanned_idxs]
 
     # F) 사용자 임베딩 계산
@@ -158,7 +158,7 @@ async def analyze(
 
     # H) 알러지 제외 후 추천 생성
     recs = []
-    for (idx, name, bbox, has_allergy, matched_list), score in scored:
+    for (idx, name, bbox, has_allergy), score in scored:
         # 알러지 필터링
         if has_allergy:
             continue
@@ -168,27 +168,21 @@ async def analyze(
         })
         if len(recs) >= top_k:
             break
+    
+    # I) 알러지 발생 가능성이 있는 음식들 전달하기
+    allergen = defaultdict(list)
+    for item in all_menu_items:
+        if item["has_allergy"]:
+            for allergy_type in item["allergy_types"]:
+                allergen[allergy_type].append(item["menu_name"])
 
-    # translate allergen keys into destination language
-    translated_matches = {}
-    for allergen, names in allergy_matches.items():
-        key_trans = allergen
-        if dest_lang != "ko":
-            try:
-                key_trans = translator.translate(allergen, dest=dest_lang).text
-            except Exception:
-                pass
-        translated_matches[key_trans] = names
-    return {
-        "recommendations": recs,
-        "allergy_matches": translated_matches
-    }
+    return {"recommendations": recs, "allergen": allergen}
 
 
 # New endpoint to return all menu items with location and allergy info
 @app.post("/analyze/menu")
 async def analyze_menu(
-    imagePath: UploadFile = File(...),
+    imagePath: str = Form(...),
     userId: int = Form(...),
     nationality: str = Form(...),
     favoriteFoods: str = Form("[]"),
@@ -198,6 +192,7 @@ async def analyze_menu(
     """
     FastAPI endpoint to return all menu items with location and allergy info.
     """
+    # OCR and scanning
     contents = await imagePath.read()
     img_array = cv2.imdecode(np.frombuffer(contents, np.uint8), cv2.IMREAD_COLOR)
     ocr_result = ocr_model.ocr(img_array, cls=True)
