@@ -32,6 +32,8 @@ public class RestaurantController {
             JWT 인증된 사용자의 선호 음식 목록을 기반으로 맛집 리스트를 보여줍니다.
             
             - Authorization: Bearer <JWT 토큰>
+            - <img src={`https://menu-api.myserver.com/restaurant-images/restaurant001.jpg`} alt="비빔밥 맛집" />
+            - 위처럼 사용가능
             """,
             security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
@@ -48,7 +50,7 @@ public class RestaurantController {
                                           "restaurantName": "한식당 불고기명가",
                                           "address": "서울특별시 강남구 도산대로 123",
                                           "rating": 4.5,
-                                          "imageUrl": "/api/gallery/images/restaurant001.jpg",
+                                          "imageUrl": "/restaurant-images/restaurant001.jpg",
                                           "homepageUrl": "https://www.google.com/maps/search/?api=1&query=한식당+불고기명가+서울특별시+강남구+도산대로+123"
                                         },
                                         {
@@ -56,7 +58,7 @@ public class RestaurantController {
                                           "restaurantName": "전주비빔밥마을",
                                           "address": "서울특별시 종로구 세종로 456",
                                           "rating": 4.6,
-                                          "imageUrl": "/api/gallery/images/restaurant002.jpg",
+                                          "imageUrl": "/restaurant-images/restaurant002.jpg",
                                           "homepageUrl": "https://www.google.com/maps/search/?api=1&query=전주비빔밥마을+서울특별시+종로구+세종로+456"
                                         }
                                       ]

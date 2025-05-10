@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,36 +37,37 @@ public class AiImageAnalysisClient {
 
     public ImageAnalysisResultDto requestAnalysis(ImageAnalysisRequestDto requestDto) {
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA); // 파일 전송
 
-        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-        formData.add("imagePath", requestDto.getImagePath());
-        formData.add("userId", String.valueOf(requestDto.getUserId()));
-        formData.add("nationality", requestDto.getNationality());
+        MultiValueMap<String, Object> formData = new LinkedMultiValueMap<>();
 
-        // 리스트를 JSON 문자열로 변환
+        // 실제 파일 경로 (예: /home/ubuntu/uploads/abc.jpg)
+        File imageFile = new File(requestDto.getImagePath());
+        if (!imageFile.exists()) {
+            throw new RuntimeException("이미지 파일이 존재하지 않습니다.: " + requestDto.getImagePath());
+        }
+        formData.add("imagePath", new FileSystemResource(imageFile)); // 바이너리 파일 첨부
+
         try {
-            String favFoods = objectMapper.writeValueAsString(requestDto.getFavoriteFoods());
-            String allergies = objectMapper.writeValueAsString(requestDto.getAllergies());
+            formData.add("userId", String.valueOf(requestDto.getUserId()));
+            formData.add("nationality", requestDto.getNationality());
+            formData.add("favoriteFoods", objectMapper.writeValueAsString(requestDto.getFavoriteFoods()));
+            formData.add("allergies", objectMapper.writeValueAsString(requestDto.getAllergies()));
+            formData.add("top_k", "5");
 
-            // 전달되는 실제 데이터 확인
-            log.info("Request payload: imagePath={}, userId={}, nationality={}, favFoods={}, allergies={}",
-                    requestDto.getImagePath(),
+            log.info("Request payload: imageFile={}, userId={}, nationality={}, favFoods={}, allergies={}",
+                    imageFile.getName(),
                     requestDto.getUserId(),
                     requestDto.getNationality(),
-                    favFoods,
-                    allergies
+                    objectMapper.writeValueAsString(requestDto.getFavoriteFoods()),
+                    objectMapper.writeValueAsString(requestDto.getAllergies())
             );
 
-            formData.add("favoriteFoods", favFoods);
-            formData.add("allergies", allergies);
         } catch (JsonProcessingException e) {
             throw new RuntimeException("JSON 변환 실패", e);
         }
 
-        formData.add("top_k", "5");
-
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(formData, headers);
+        HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(formData, headers);
 
         try {
             ResponseEntity<ImageAnalysisResultDto> response = restTemplate.exchange(
@@ -82,23 +85,36 @@ public class AiImageAnalysisClient {
 
     public MenuTranslationResultDto requestTranslation(ImageAnalysisRequestDto requestDto) {
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA); // multipart 설정
 
-        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-        formData.add("imagePath", requestDto.getImagePath());
-        formData.add("userId", String.valueOf(requestDto.getUserId()));
-        formData.add("nationality", requestDto.getNationality());
+        MultiValueMap<String, Object> formData = new LinkedMultiValueMap<>();
+
+        File imageFile = new File(requestDto.getImagePath());
+        if (!imageFile.exists()) {
+            throw new RuntimeException("이미지 파일이 존재하지 않습니다: " + requestDto.getImagePath());
+        }
+        formData.add("imagePath", new FileSystemResource(imageFile));
 
         try {
+            formData.add("userId", String.valueOf(requestDto.getUserId()));
+            formData.add("nationality", requestDto.getNationality());
             formData.add("favoriteFoods", objectMapper.writeValueAsString(requestDto.getFavoriteFoods()));
-            formData.add("allergies", objectMapper.writeValueAsString((requestDto.getAllergies())));
+            formData.add("allergies", objectMapper.writeValueAsString(requestDto.getAllergies()));
+            formData.add("top_k", "5");
+
+            log.info("Translation request: file={}, userId={}, nationality={}, foods={}, allergies={}",
+                    imageFile.getName(),
+                    requestDto.getUserId(),
+                    requestDto.getNationality(),
+                    objectMapper.writeValueAsString(requestDto.getFavoriteFoods()),
+                    objectMapper.writeValueAsString(requestDto.getAllergies())
+            );
+
         } catch (JsonProcessingException e) {
             throw new RuntimeException("JSON 변환 실패", e);
         }
 
-        formData.add("top_k", "5");
-
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(formData, headers);
+        HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(formData, headers);
 
         try {
             ResponseEntity<MenuTranslationResultDto> response = restTemplate.exchange(
