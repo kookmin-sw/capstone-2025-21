@@ -49,7 +49,7 @@ public class ImageAnalysisController {
 //    @Value("${app.base-url}")
 //    private String baseUrl;
 
-    @Value("${file.uplaod-dir}")
+    @Value("${file.upload-dir}")
     private String uploadDir;
 
     @PostMapping("/analyze-image")
@@ -151,8 +151,16 @@ public class ImageAnalysisController {
                         "success": true,
                         "message": "분석 결과 조회 성공",
                         "data": {
-                            "allergyWarnings": ["새우", "땅콩"],
-                            "recommendedMenus": ["비빔밥", "잡채"]
+                            "recommendations": [
+                                {
+                                    "menu_name": "Squid",
+                                    "similarity": 0.87887673108377254
+                                },
+                                {
+                                    "menu_name": "Stir-fried",
+                                    "similarity": 0.77385739265724756
+                                }
+                            ]
                         }
                     }
                     """))),
@@ -208,17 +216,84 @@ public class ImageAnalysisController {
                         "success": true,
                         "message": "번역 결과 조회 성공",
                         "data": {
-                            "translatedMenus": [
+                            "menu_items": [
                                 {
-                                    "original": "비빔밥",
-                                    "translated": "Bibimbap"
+                                    "menu_name": "Budaejjigae",
+                                    "bbox": [
+                                        [
+                                            612.0,
+                                            156.0
+                                        ],
+                                        [
+                                            664.0,
+                                            156.0
+                                        ],
+                                        [
+                                            664.0,
+                                            167.0
+                                        ],
+                                        [
+                                            612.0,
+                                            167.0
+                                        ]
+                                    ],
+                                    "has_allergy": true,
+                                    "allergy_types": [
+                                        "Pork"
+                                    ]
                                 },
                                 {
-                                    "original": "불고기",
-                                    "translated": "Bulgogi"
+                                    "menu_name": "kimchi soup",
+                                    "bbox": [
+                                        [
+                                            217.0,
+                                            181.0
+                                        ],
+                                        [
+                                            250.0,
+                                            181.0
+                                        ],
+                                        [
+                                            250.0,
+                                            192.0
+                                        ],
+                                        [
+                                            217.0,
+                                            192.0
+                                        ]
+                                    ],
+                                    "has_allergy": true,
+                                    "allergy_types": [
+                                        "Pork"
+                                    ]
+                                },
+                                {
+                                    "menu_name": "Tofu",
+                                    "bbox": [
+                                        [
+                                            171.0,
+                                            237.0
+                                        ],
+                                        [
+                                            237.0,
+                                            237.0
+                                        ],
+                                        [
+                                            237.0,
+                                            252.0
+                                        ],
+                                        [
+                                            171.0,
+                                            252.0
+                                        ]
+                                    ],
+                                    "has_allergy": true,
+                                    "allergy_types": [
+                                        "Pork"
+                                    ]
                                 }
                             ]
-                        }
+                        }       
                     }
                     """))),
                     @ApiResponse(responseCode = "404", description = "결과 없음", content = @Content(
@@ -258,8 +333,36 @@ public class ImageAnalysisController {
     @GetMapping("/translate-image")
     @Operation(
             summary = "번역 결과 이미지 반환",
-            description = "번역된 메뉴 항목과 위치 정보 기반으로 텍스트가 그려진 이미지를 반환합니다.",
-            security = @SecurityRequirement(name = "bearerAuth")
+            description = """
+            번역된 메뉴 항목과 위치 정보 기반으로 텍스트가 그려진 이미지를 반환합니다.
+            
+            ⚠️ 헤더 정보:
+            - Authorization: Bearer {accessToken}
+            """,
+            security = @SecurityRequirement(name = "bearerAuth"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "번역 이미지 반환 성공", content = @Content(
+                            mediaType = "image/png")
+                    ),
+                    @ApiResponse(responseCode = "404", description = "번역 이미지 또는 분석 결과 없음", content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                    {
+                        "success": false,
+                        "message": "업로드된 이미지가 없습니다.",
+                        "data": null
+                    }
+                    """))),
+                    @ApiResponse(responseCode = "500", description = "서버 오류", content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                    {
+                        "success": false,
+                        "message": "번역 이미지 생성 중 오류",
+                        "data": null
+                    }
+                    """)))
+            }
     )
     public void getTranslatedImage(
             HttpServletResponse response,
@@ -270,7 +373,16 @@ public class ImageAnalysisController {
             String imagePath = imagePathCache.getLatestImagePath(userId);  // 예: /api/gallery/images/abc.png
 
             if (imagePath == null) {
-                throw new RuntimeException("업로드된 이미지가 없습니다.");
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                response.setContentType("application/json");
+                response.getWriter().write("""
+                        {
+                            "success": false,
+                            "message": "업로드된 이미지가 없습니다.",
+                            "data": null
+                        }
+                        """);
+                return;
             }
 
             // 실제 로컬 경로로 변환
@@ -323,8 +435,19 @@ public class ImageAnalysisController {
             os.close();
 
         } catch (Exception e) {
-            log.error("번역 이미지 생성 중 오류: {}", e.getMessage(), e);
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            log.error("번역 이미지 생성 중 오류", e);
+            try {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                response.setContentType("application/json");
+                response.getWriter().write("""
+                        {
+                            "success": false,
+                            "message" "번역 이미지 생성 중 오류",
+                            "data": null
+                        """);
+            } catch (IOException ioException) {
+                log.error("오류 응답 작성 실패", ioException);
+            }
         }
     }
 }
