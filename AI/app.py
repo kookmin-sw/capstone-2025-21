@@ -164,8 +164,7 @@ async def analyze(
             continue
         recs.append({
             "menu_name": name,
-            "similarity": float(score),
-            "matched_allergens": matched_list
+            "similarity": float(score)
         })
         if len(recs) >= top_k:
             break
