@@ -30,7 +30,7 @@ public class SecurityConfig {
                                 "/v3/api-docs/**",          // OpenAPI 문서 경로
                                 "/swagger-ui.html",         // Swagger HTML 진입점
                                 "/api/gallery/images/**",    // 이미지 조회 경로 익명 허용
-                                "/restaurants/**"
+                                "/restaurant-images/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
