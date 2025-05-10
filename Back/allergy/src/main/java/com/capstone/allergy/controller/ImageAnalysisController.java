@@ -398,7 +398,7 @@ public class ImageAnalysisController {
 
             // 텍스트용 설정
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
-            g.setFont(new Font("SansSerif", Font.BOLD, 15));
+            g.setFont(new Font("SansSerif", Font.BOLD, 13));
 
             // 번역 결과 꺼내기
             MenuTranslationResultDto result = imageAnalysisService.getCachedTranslation(userId);
@@ -408,8 +408,8 @@ public class ImageAnalysisController {
 
             for (MenuItemDto item : result.getMenuItems()) {
                 String label = item.getMenuName();
-                if (item.isHasAllergy()) {
-                    label += "⚠";
+                if (item.isHasAllergy() && item.getAllergyTypes() != null && !item.getAllergyTypes().isEmpty()) {
+                    label += "(" + String.join(", ", item.getAllergyTypes())+ ")";
                 }
 
                 List<List<Double>> bbox = item.getBbox();
