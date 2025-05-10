@@ -53,7 +53,6 @@ public class AiImageAnalysisClient {
             formData.add("nationality", requestDto.getNationality());
             formData.add("favoriteFoods", objectMapper.writeValueAsString(requestDto.getFavoriteFoods()));
             formData.add("allergies", objectMapper.writeValueAsString(requestDto.getAllergies()));
-            formData.add("top_k", "5");
 
             log.info("Request payload: imageFile={}, userId={}, nationality={}, favFoods={}, allergies={}",
                     imageFile.getName(),
@@ -100,7 +99,6 @@ public class AiImageAnalysisClient {
             formData.add("nationality", requestDto.getNationality());
             formData.add("favoriteFoods", objectMapper.writeValueAsString(requestDto.getFavoriteFoods()));
             formData.add("allergies", objectMapper.writeValueAsString(requestDto.getAllergies()));
-            formData.add("top_k", "5");
 
             log.info("Translation request: file={}, userId={}, nationality={}, foods={}, allergies={}",
                     imageFile.getName(),
