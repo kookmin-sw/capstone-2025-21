@@ -96,6 +96,8 @@ async def analyze(
     valid_scanned = []
     all_menu_items = []
     user_allergy_set = set(json.loads(allergies))
+    # build mapping from user allergens to menu items they appear in
+    allergy_matches = {allergen: [] for allergen in user_allergy_set}
     for name, bbox in scanned_lines:
         if name in menu_names and name not in seen:
             matched_allergies = set()
@@ -116,7 +118,11 @@ async def analyze(
                     translated_name = name # 번역 실패 시 그대로 사용
             else:
                 translated_name = name
-            valid_scanned.append((idx, translated_name, bbox, bool(user_matched_allergies)))
+            matched_list = list(user_matched_allergies)
+            # record each allergen occurrence
+            for allergen in user_matched_allergies:
+                allergy_matches[allergen].append(translated_name)
+            valid_scanned.append((idx, translated_name, bbox, bool(user_matched_allergies), matched_list))
             user_matched_allergies_translated = translate_allergens(user_matched_allergies, lang_code=nationality)
             
             seen.add(name)
@@ -133,7 +139,7 @@ async def analyze(
     fav_list = json.loads(favoriteFoods)
 
     # E) 스캔된 메뉴 임베딩 수집
-    scanned_idxs = [idx for idx, _, _, _ in valid_scanned]
+    scanned_idxs = [idx for idx, _, _, _, _ in valid_scanned]
     scanned_embs = menu_embeddings[scanned_idxs]
 
     # F) 사용자 임베딩 계산
@@ -152,18 +158,32 @@ async def analyze(
 
     # H) 알러지 제외 후 추천 생성
     recs = []
-    for (idx, name, bbox, has_allergy), score in scored:
+    for (idx, name, bbox, has_allergy, matched_list), score in scored:
         # 알러지 필터링
         if has_allergy:
             continue
         recs.append({
             "menu_name": name,
-            "similarity": float(score)
+            "similarity": float(score),
+            "matched_allergens": matched_list
         })
         if len(recs) >= top_k:
             break
 
-    return {"recommendations": recs}
+    # translate allergen keys into destination language
+    translated_matches = {}
+    for allergen, names in allergy_matches.items():
+        key_trans = allergen
+        if dest_lang != "ko":
+            try:
+                key_trans = translator.translate(allergen, dest=dest_lang).text
+            except Exception:
+                pass
+        translated_matches[key_trans] = names
+    return {
+        "recommendations": recs,
+        "allergy_matches": translated_matches
+    }
 
 
 # New endpoint to return all menu items with location and allergy info
