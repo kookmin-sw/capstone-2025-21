@@ -67,7 +67,7 @@ app = FastAPI()
 
 @app.post("/analyze")
 async def analyze(
-    imagePath: str = Form(...),
+    imagePath: UploadFile = File(...),
     userId: int = Form(...),
     nationality: str = Form(...),
     favoriteFoods: str = Form("[]"),   # JSON string, e.g. '["비빔밥","불고기"]'
@@ -81,10 +81,8 @@ async def analyze(
     3) 사용자 취향 임베딩 및 유사도 계산
     4) 알러지 제외 후 top_k 메뉴 추천
     """
-    # Download image from URL and decode to array
-    response = requests.get(imagePath)
-    response.raise_for_status()
-    img_array = cv2.imdecode(np.frombuffer(response.content, np.uint8), cv2.IMREAD_COLOR)
+    contents = await imagePath.read()
+    img_array = cv2.imdecode(np.frombuffer(contents, np.uint8), cv2.IMREAD_COLOR)
     # B) OCR: 메뉴명 추출 from array
     ocr_result = ocr_model.ocr(img_array, cls=True)
     scanned_lines = [(line[1][0], line[0]) for line in ocr_result[0]]
@@ -171,7 +169,7 @@ async def analyze(
 # New endpoint to return all menu items with location and allergy info
 @app.post("/analyze/menu")
 async def analyze_menu(
-    imagePath: str = Form(...),
+    imagePath: UploadFile = File(...),
     userId: int = Form(...),
     nationality: str = Form(...),
     favoriteFoods: str = Form("[]"),
@@ -181,10 +179,8 @@ async def analyze_menu(
     """
     FastAPI endpoint to return all menu items with location and allergy info.
     """
-    # Download image from URL and decode
-    response = requests.get(imagePath)
-    response.raise_for_status()
-    img_array = cv2.imdecode(np.frombuffer(response.content, np.uint8), cv2.IMREAD_COLOR)
+    contents = await imagePath.read()
+    img_array = cv2.imdecode(np.frombuffer(contents, np.uint8), cv2.IMREAD_COLOR)
     ocr_result = ocr_model.ocr(img_array, cls=True)
     scanned_lines = [(line[1][0], line[0]) for line in ocr_result[0]]
 
