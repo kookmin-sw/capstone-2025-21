@@ -394,7 +394,7 @@ public class ImageAnalysisController {
             // ARGB 이미지로 복사 및 투명도 처리
             BufferedImage output = new BufferedImage(original.getWidth(), original.getHeight(), BufferedImage.TYPE_INT_ARGB);
             Graphics2D g = output.createGraphics();
-            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.6f));
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f));
             g.drawImage(original, 0, 0, null);
 
             // 텍스트용 설정
