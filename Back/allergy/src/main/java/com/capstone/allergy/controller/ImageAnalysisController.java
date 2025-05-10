@@ -347,7 +347,7 @@ public class ImageAnalysisController {
                     {
                         "success": true,
                         "message": "번역 이미지 생성 성공",
-                        "data": "http://43.2-1.142.124:8080/uploads/translated_3.png"
+                        "data": "http://43.201.142.124:8080/uploads/translated_3.png"
                     }
                     """))),
                     @ApiResponse(responseCode = "404", description = "이미지 없음", content = @Content(
