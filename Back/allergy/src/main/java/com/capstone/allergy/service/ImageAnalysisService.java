@@ -59,12 +59,4 @@ public class ImageAnalysisService {
         }
         return translationCache.get(userId);
     }
-
-//    public ImageAnalysisResultDto analyzeImage(ImageAnalysisRequestDto requestDto) {
-//        return aiImageAnalysisClient.requestAnalysis(requestDto);
-//    }
-//
-//    public MenuTranslationResultDto getTranslatedMenu(String imagePath) {
-//        return aiImageAnalysisClient.requestTranslation(imagePath);
-//    }
 }
