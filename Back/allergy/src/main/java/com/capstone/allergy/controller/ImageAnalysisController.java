@@ -46,8 +46,8 @@ public class ImageAnalysisController {
     private final UserRepository userRepository;
     private final ImagePathCache imagePathCache;
 
-//    @Value("${app.base-url}")
-//    private String baseUrl;
+    @Value("${app.base-url}")
+    private String baseUrl;
 
     @Value("${file.upload-dir}")
     private String uploadDir;
@@ -341,10 +341,16 @@ public class ImageAnalysisController {
             """,
             security = @SecurityRequirement(name = "bearerAuth"),
             responses = {
-                    @ApiResponse(responseCode = "200", description = "번역 이미지 반환 성공", content = @Content(
-                            mediaType = "image/png")
-                    ),
-                    @ApiResponse(responseCode = "404", description = "번역 이미지 또는 분석 결과 없음", content = @Content(
+                    @ApiResponse(responseCode = "200", description = "번역 이미지 URL 반환 성공", content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                    {
+                        "success": true,
+                        "message": "번역 이미지 생성 성공",
+                        "data": "http://43.2-1.142.124:8080/uploads/translated_3.png"
+                    }
+                    """))),
+                    @ApiResponse(responseCode = "404", description = "이미지 없음", content = @Content(
                             mediaType = "application/json",
                             examples = @ExampleObject(value = """
                     {
@@ -364,8 +370,7 @@ public class ImageAnalysisController {
                     """)))
             }
     )
-    public void getTranslatedImage(
-            HttpServletResponse response,
+    public ResponseEntity<CommonResponse<String>> getTranslatedImage(
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         try {
@@ -373,16 +378,12 @@ public class ImageAnalysisController {
             String imagePath = imagePathCache.getLatestImagePath(userId);  // 예: /api/gallery/images/abc.png
 
             if (imagePath == null) {
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                response.setContentType("application/json");
-                response.getWriter().write("""
-                        {
-                            "success": false,
-                            "message": "업로드된 이미지가 없습니다.",
-                            "data": null
-                        }
-                        """);
-                return;
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(CommonResponse.<String>builder()
+                                .success(false)
+                                .message("업로드된 이미지가 없습니다.")
+                                .data(null)
+                                .build());
             }
 
             // 실제 로컬 경로로 변환
@@ -403,7 +404,12 @@ public class ImageAnalysisController {
             // 번역 결과 꺼내기
             MenuTranslationResultDto result = imageAnalysisService.getCachedTranslation(userId);
             if (result == null || result.getMenuItems() == null) {
-                throw new RuntimeException("번역된 메뉴 결과가 없습니다.");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(CommonResponse.<String>builder()
+                                .success(false)
+                                .message("번역된 메뉴 결과가 없습니다.")
+                                .data(null)
+                                .build());
             }
 
             for (MenuItemDto item : result.getMenuItems()) {
@@ -429,145 +435,29 @@ public class ImageAnalysisController {
 
             g.dispose();
 
-            response.setContentType("image/png");
-            OutputStream os = response.getOutputStream();
-            ImageIO.write(output, "png", os);
-            os.close();
+            // 저장 + URL 생성
+            String outputFileName = "translated_" + userId + ".png";
+            Path outputPath = Paths.get(uploadDir).resolve(outputFileName);
+            ImageIO.write(output, "png", outputPath.toFile());
+
+            String imageUrl = baseUrl + "/uploads/" + outputFileName;
+
+            return ResponseEntity.ok(
+                    CommonResponse.<String>builder()
+                            .success(true)
+                            .message("번역 이미지 생성 성공")
+                            .data(imageUrl)
+                            .build()
+            );
 
         } catch (Exception e) {
             log.error("번역 이미지 생성 중 오류", e);
-            try {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                response.setContentType("application/json");
-                response.getWriter().write("""
-                        {
-                            "success": false,
-                            "message" "번역 이미지 생성 중 오류",
-                            "data": null
-                        """);
-            } catch (IOException ioException) {
-                log.error("오류 응답 작성 실패", ioException);
-            }
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(CommonResponse.<String>builder()
+                            .success(false)
+                            .message("번역 이미지 생성 중 오류")
+                            .data(null)
+                            .build());
         }
     }
 }
-
-
-//@RestController
-//@RequestMapping("/api/analysis")
-//@RequiredArgsConstructor
-//@Tag(name = "이미지 분석 API", description = "AI 기반 이미지 분석 및 번역 API")
-//@Slf4j
-//public class ImageAnalysisController {
-//
-//    private final ImageAnalysisService imageAnalysisService;
-//    private final UserRepository userRepository;
-//    private final ImagePathCache imagePathCache;
-//
-//    @Value("${app.base-url}")
-//    private String baseUrl;
-//
-//    @PostMapping("/analyze-image")
-//    @Operation(
-//            summary = "이미지 분석 요청",
-//            description = "백엔드에서 사용자 정보를 조회하고, 최근 업로드된 이미지 경로를 이용해 AI 서버에 분석 요청을 보냅니다.",
-//            security = @SecurityRequirement(name = "bearerAuth")
-//    )
-//    public ResponseEntity<CommonResponse<String>> analyzeImageAndCache(
-//            @AuthenticationPrincipal CustomUserDetails userDetails
-//    ) {
-//        try {
-//            Long userId = userDetails.getUser().getId();
-//            User user = userRepository.findById(userId)
-//                            .orElseThrow(() -> new RuntimeException("사용자 정보를 찾을 수 없습니다."));
-//
-//            String relativePath = imagePathCache.getLatestImagePath(userId);
-//            if (relativePath == null) {
-//                throw new RuntimeException("업로드된 이미지가 없습니다.");
-//            }
-//
-//            String absolutePath = baseUrl + relativePath;
-//            log.info("[분석 요청] userId: {}, imagePath: {}", userId, absolutePath);
-//
-//            ImageAnalysisRequestDto dto = new ImageAnalysisRequestDto();
-//            dto.setUserId(userId);
-//            dto.setNationality(user.getNationality());
-//            dto.setFavoriteFoods(user.getFavoriteFoods());
-//            dto.setAllergies(user.getAllergies());
-//            dto.setImagePath(absolutePath);
-//
-//            imageAnalysisService.analyzeAndCache(dto, userId);
-//
-//            return ResponseEntity.ok(
-//                    CommonResponse.<String>builder()
-//                            .success(true)
-//                            .message("AI 분석 요청 성공 및 결과 캐싱 완료")
-//                            .data("ok")
-//                            .build()
-//            );
-//        } catch (RuntimeException e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body(CommonResponse.<String>builder()
-//                            .success(false)
-//                            .message("AI 요청 실패: " + e.getMessage())
-//                            .data(null)
-//                            .build());
-//        }
-//    }
-//
-//    @GetMapping("/analyze")
-//    @Operation(
-//            summary = "분석 결과 조회",
-//            description = "캐시에 저장된 분석 결과를 반환합니다."
-//    )
-//    public ResponseEntity<CommonResponse<ImageAnalysisResultDto>> getCachedAnalysis(
-//            @AuthenticationPrincipal CustomUserDetails userDetails
-//    ) {
-//        try {
-//            Long userId = userDetails.getUser().getId();
-//            ImageAnalysisResultDto result = imageAnalysisService.getCachedAnalysis(userId);
-//            return ResponseEntity.ok(
-//                    CommonResponse.<ImageAnalysisResultDto>builder()
-//                            .success(true)
-//                            .message("분석 결과 조회 성공")
-//                            .data(result)
-//                            .build()
-//            );
-//        } catch (RuntimeException e) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-//                    .body(CommonResponse.<ImageAnalysisResultDto>builder()
-//                            .success(false)
-//                            .message(e.getMessage())
-//                            .data(null)
-//                            .build());
-//        }
-//    }
-//
-//    @GetMapping("/translate")
-//    @Operation(
-//            summary = "번역 결과 조회",
-//            description = "캐시에 저장된 번역 결과를 반환합니다."
-//    )
-//    public ResponseEntity<CommonResponse<MenuTranslationResultDto>> getCachedTranslation(
-//            @AuthenticationPrincipal CustomUserDetails userDetails
-//    ) {
-//        try {
-//            Long userId = userDetails.getUser().getId();
-//            MenuTranslationResultDto result = imageAnalysisService.getCachedTranslation(userId);
-//            return ResponseEntity.ok(
-//                    CommonResponse.<MenuTranslationResultDto>builder()
-//                            .success(true)
-//                            .message("번역 결과 조회 성공")
-//                            .data(result)
-//                            .build()
-//            );
-//        } catch (RuntimeException e) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-//                    .body(CommonResponse.<MenuTranslationResultDto>builder()
-//                            .success(false)
-//                            .message(e.getMessage())
-//                            .data(null)
-//                            .build());
-//        }
-//    }
-//}
