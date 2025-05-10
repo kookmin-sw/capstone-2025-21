@@ -18,7 +18,6 @@ public class RecommendationsDto {
     private double similarity;
 
     // JSON 응답에서 'similarity' 키로 퍼센트 값 반환
-
     @JsonProperty("similarity")
     public double getSimilarityAsPercent() {
         return Math.round(similarity * 1000.0) / 10.0; // 소수점 한 자리까지
