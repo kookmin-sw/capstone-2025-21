@@ -1,68 +1,68 @@
-name: Deploy to EC2
+# name: Deploy to EC2
 
-on:
-  push:
-    branches:
-      - master
-    paths:
-      - 'Back/allergy/**'  # 백엔드에 변경 있을 때만 실행
-      - '.github/workflows/**' 
+# on:
+#   push:
+#     branches:
+#       - master
+#     paths:
+#       - 'Back/allergy/**'  # 백엔드에 변경 있을 때만 실행
+#       - '.github/workflows/**' 
 
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
+# jobs:
+#   build-and-deploy:
+#     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: Back/allergy
+#     defaults:
+#       run:
+#         working-directory: Back/allergy
 
-    steps:
-      - name: Checkout source code
-        uses: actions/checkout@v3
+#     steps:
+#       - name: Checkout source code
+#         uses: actions/checkout@v3
 
-      - name: Set up JDK 21
-        uses: actions/setup-java@v3
-        with:
-          java-version: '21'
-          distribution: 'temurin'
+#       - name: Set up JDK 21
+#         uses: actions/setup-java@v3
+#         with:
+#           java-version: '21'
+#           distribution: 'temurin'
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x ./gradlew
+#       - name: Grant execute permission for gradlew
+#         run: chmod +x ./gradlew
 
-      - name: Build with Gradle (skip tests)
-        run: ./gradlew build -x test
+#       - name: Build with Gradle (skip tests)
+#         run: ./gradlew build -x test
 
-      - name: Copy JAR to EC2
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
-          key: ${{ secrets.EC2_KEY }}
-          port: ${{ secrets.EC2_PORT }}
-          source: "./Back/allergy/build/libs/allergy-0.0.1-SNAPSHOT.jar"
-          target: ${{ secrets.EC2_TARGET_PATH }}
+#       - name: Copy JAR to EC2
+#         uses: appleboy/scp-action@master
+#         with:
+#           host: ${{ secrets.EC2_HOST }}
+#           username: ubuntu
+#           key: ${{ secrets.EC2_KEY }}
+#           port: ${{ secrets.EC2_PORT }}
+#           source: "./Back/allergy/build/libs/allergy-0.0.1-SNAPSHOT.jar"
+#           target: ${{ secrets.EC2_TARGET_PATH }}
 
-      - name: SSH to EC2 and Run JAR
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
-          key: ${{ secrets.EC2_KEY }}
-          port: ${{ secrets.EC2_PORT }}
-          script: |
-            if pgrep -f allergy-0.0.1-SNAPSHOT.jar; then
-              pkill -f allergy-0.0.1-SNAPSHOT.jar
-              echo "✅ 기존 allergy.jar 종료 완료"
-            else
-              echo "ℹ️ 실행 중인 allergy.jar 없음"
-            fi
+#       - name: SSH to EC2 and Run JAR
+#         uses: appleboy/ssh-action@master
+#         with:
+#           host: ${{ secrets.EC2_HOST }}
+#           username: ubuntu
+#           key: ${{ secrets.EC2_KEY }}
+#           port: ${{ secrets.EC2_PORT }}
+#           script: |
+#             if pgrep -f allergy-0.0.1-SNAPSHOT.jar; then
+#               pkill -f allergy-0.0.1-SNAPSHOT.jar
+#               echo "✅ 기존 allergy.jar 종료 완료"
+#             else
+#               echo "ℹ️ 실행 중인 allergy.jar 없음"
+#             fi
           
-            cd ${{ secrets.EC2_TARGET_PATH }}
-            export DB_USER=${{ secrets.DB_USER }}
-            export DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-            export JWT_SECRET=${{ secrets.JWT_SECRET }}
+#             cd ${{ secrets.EC2_TARGET_PATH }}
+#             export DB_USER=${{ secrets.DB_USER }}
+#             export DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+#             export JWT_SECRET=${{ secrets.JWT_SECRET }}
           
-            nohup java -jar allergy-0.0.1-SNAPSHOT.jar > log.txt 2>&1 &
-            echo "🚀 allergy-0.0.1-SNAPSHOT.jar 실행됨!"
-            sleep 3   # ✅ 안정성 확보
-            exit 0    # ✅ 깃허브에 “성공”으로 인식시키기
+#             nohup java -jar allergy-0.0.1-SNAPSHOT.jar > log.txt 2>&1 &
+#             echo "🚀 allergy-0.0.1-SNAPSHOT.jar 실행됨!"
+#             sleep 3   # ✅ 안정성 확보
+#             exit 0    # ✅ 깃허브에 “성공”으로 인식시키기
