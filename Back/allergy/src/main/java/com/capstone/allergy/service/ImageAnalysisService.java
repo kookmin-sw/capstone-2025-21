@@ -37,7 +37,7 @@ public class ImageAnalysisService {
         translationCache.put(userId, translationResult);
     }
 
-    private String mapNationalityToLangCode(String nationality) {
+    public String mapNationalityToLangCode(String nationality) {
         switch (nationality.toUpperCase()) {
             case "USA": return "en";
             case "JPN": return "ja";
