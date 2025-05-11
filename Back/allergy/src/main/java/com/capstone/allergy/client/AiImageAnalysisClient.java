@@ -32,8 +32,8 @@ public class AiImageAnalysisClient {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private final String ANALYSIS_URL = "http://13.124.255.38:9000/analyze"; // 실제 엔드포인트로 수정
-    private final String TRANSLATE_URL = "http://13.124.255.38:9000/analyze/menu";
+    private final String ANALYSIS_URL = "http://3.35.4.60:8000/analyze"; // 실제 엔드포인트로 수정
+    private final String TRANSLATE_URL = "http://3.35.4.60.38:8000/analyze/menu";
 
     public ImageAnalysisResultDto requestAnalysis(ImageAnalysisRequestDto requestDto) {
         HttpHeaders headers = new HttpHeaders();
