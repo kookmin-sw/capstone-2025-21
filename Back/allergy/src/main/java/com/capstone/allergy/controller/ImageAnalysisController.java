@@ -44,6 +44,9 @@ public class ImageAnalysisController {
     private final UserRepository userRepository;
     private final ImagePathCache imagePathCache;
 
+    @Value("${app.dummy-mode:false}")
+    private boolean dummyMode;
+
     @Value("${app.base-url}")
     private String baseUrl;
 
@@ -145,13 +148,25 @@ public class ImageAnalysisController {
         }
 
         try {
-            // 파일 이름 추출
-            String fileName = Paths.get(imagePath).getFileName().toString();
+            if (dummyMode) {
+                log.info("[DUMMY MODE] 더미 데이터로 분석 캐시 저장");
+                imageAnalysisService.saveDummyResultToCache(
+                        userId,
+                        imageAnalysisService.createDummyAnalysis(),
+                        imageAnalysisService.createDummyTranslation()
+                );
 
-            // 로컬 절대 경로로 변환
+                return ResponseEntity.ok(CommonResponse.<String>builder()
+                        .success(true)
+                        .message("[DUMMY] 분석 성공 및 결과 캐싱 완료")
+                        .data("ok")
+                        .build());
+            }
+
+            // 실제 파일 경로 처리 및 분석
+            String fileName = Paths.get(imagePath).getFileName().toString();
             String localPath = Paths.get(uploadDir, fileName).toString();
 
-            //String absolutePath = baseUrl + relativePath;
             log.info("[분석 요청] userId: {}, imagePath: {}", userId, localPath);
 
             ImageAnalysisRequestDto dto = new ImageAnalysisRequestDto();
@@ -159,17 +174,16 @@ public class ImageAnalysisController {
             dto.setNationality(imageAnalysisService.mapNationalityToLangCode(user.getNationality()));
             dto.setFavoriteFoods(user.getFavoriteFoods());
             dto.setAllergies(user.getAllergies());
-            //dto.setImagePath(absolutePath);
-            dto.setImagePath(localPath); // 로컬 경로 세팅
+            dto.setImagePath(localPath);
 
-            imageAnalysisService.analyzeAndCache(dto, userId); // AI 서버 통신 중 예외 발생 가능
+            imageAnalysisService.analyzeAndCache(dto, userId);
 
-            return ResponseEntity.ok(
-                    CommonResponse.<String>builder()
-                            .success(true)
-                            .message("AI 분석 요청 성공 및 결과 캐싱 완료")
-                            .data("ok")
-                            .build());
+            return ResponseEntity.ok(CommonResponse.<String>builder()
+                    .success(true)
+                    .message("AI 분석 요청 성공 및 결과 캐싱 완료")
+                    .data("ok")
+                    .build());
+
         } catch (ResourceAccessException e) {
             return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT)
                     .body(CommonResponse.<String>builder()
