@@ -71,18 +71,13 @@ public class ImageAnalysisService {
                 new RecommendationsDto("drinkables", 0.386),
                 new RecommendationsDto("beer", 0.366)
         );
-        Map<String, List<String>> allergenMap = new HashMap<>();
-        allergenMap.put("Pork", Arrays.asList(
-                "Budaejjigae",
-                "kimchi soup",
-                "Tofu",
-                "Cheonggukjang",
-                "Octopus",
-                "Stir -fried"
-        ));
-        allergenMap.put("Peanuts", Collections.singletonList("Octopus"));
 
-        return new ImageAnalysisResultDto(recommendations, allergenMap);
+        List<AllergenDto> allergenList = Arrays.asList(
+                new AllergenDto("Pork", Arrays.asList("Budaejjigae", "kimchi soup", "Cheonggukjang", "Octopus", "Stir-fried")),
+                new AllergenDto("Peanuts", Collections.singletonList("Octopus"))
+        );
+
+        return new ImageAnalysisResultDto(recommendations, allergenList);
     }
 
     public MenuTranslationResultDto createDummyTranslation() {
