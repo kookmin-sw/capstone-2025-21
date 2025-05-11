@@ -74,6 +74,8 @@ public class AiImageAnalysisClient {
                     ANALYSIS_URL, HttpMethod.POST, request, Map.class
             );
 
+            log.info("AI 분석 응답 raw JSON: {}", response.getBody());
+
             Map<String, Object> body = response.getBody();
 
             // recommendations 가공
