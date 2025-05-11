@@ -70,12 +70,48 @@ public class ImageAnalysisController {
                         "data": "ok"
                     }
                     """))),
+                    @ApiResponse(responseCode = "400", description = "요청 데이터 누락", content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                    {
+                        "success": false
+                        "message": "업로드 된 이미지가 없습니다.",
+                        "data": null
+                    }
+                    """))),
+                    @ApiResponse(responseCode = "401", description = "인증 실패 또는 사용자 정보 없음", content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                    {
+                        "success": false,
+                        "message": "사용자 정보를 찾을 수 없습니다.",
+                        "data": null
+                    }
+                    """))),
                     @ApiResponse(responseCode = "500", description = "분석 요청 실패", content = @Content(
                             mediaType = "application/json",
                             examples = @ExampleObject(value = """
                     {
                         "success": false,
                         "message": "AI 요청 실패: 업로드된 이미지가 없습니다.",
+                        "data": null
+                    }
+                    """))),
+                    @ApiResponse(responseCode = "502", description = "AI 서버 통신 오류", content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                    {
+                        "success": false,
+                        "message": "AI 서버와 통신 중 오류가 발생했습니다.",
+                        "data": null
+                    }
+                    """))),
+                    @ApiResponse(responseCode = "504", description = "AI 서버 응답 시간 초과", content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                    {
+                        "success": false,
+                        "message": "AI 서버 응답이 지연되어 시간 초과되었습니다.",
                         "data": null
                     }
                     """)))
@@ -381,7 +417,7 @@ public class ImageAnalysisController {
                         "data": "http://43.201.142.124:8080/uploads/translated_3.png"
                     }
                     """))),
-                    @ApiResponse(responseCode = "404", description = "이미지 없음", content = @Content(
+                    @ApiResponse(responseCode = "404", description = "이미지 또는 번역 결과 없음", content = @Content(
                             mediaType = "application/json",
                             examples = @ExampleObject(value = """
                     {
@@ -390,12 +426,12 @@ public class ImageAnalysisController {
                         "data": null
                     }
                     """))),
-                    @ApiResponse(responseCode = "500", description = "서버 오류", content = @Content(
+                    @ApiResponse(responseCode = "500", description = "이미지 처리 중 오류 발생", content = @Content(
                             mediaType = "application/json",
                             examples = @ExampleObject(value = """
                     {
                         "success": false,
-                        "message": "번역 이미지 생성 중 오류",
+                        "message": "이미지 생성 실패: <오류 메시지>",
                         "data": null
                     }
                     """)))
