@@ -9,30 +9,27 @@ import com.capstone.allergy.service.ImageAnalysisService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.RestClientException;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -87,49 +84,79 @@ public class ImageAnalysisController {
     public ResponseEntity<CommonResponse<String>> analyzeImageAndCache(
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
+        Long userId = userDetails.getUser().getId();
+
+        User user = userRepository.findById(userId)
+                .orElse(null);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(CommonResponse.<String>builder()
+                            .success(false)
+                            .message("사용자 정보를 찾을 수 없습니다.")
+                            .data(null)
+                            .build());
+        }
+
+        String imagePath = imagePathCache.getLatestImagePath(userId);
+        if (imagePath == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(CommonResponse.<String>builder()
+                            .success(false)
+                            .message("업로드된 이미지가 없습니다.")
+                            .data(null)
+                            .build());
+        }
+
         try {
-            Long userId = userDetails.getUser().getId();
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new RuntimeException("사용자 정보를 찾을 수 없습니다."));
-
-            String relativePath = imagePathCache.getLatestImagePath(userId);
-            if (relativePath == null) {
-                throw new RuntimeException("업로드된 이미지가 없습니다.");
-            }
-
             // 파일 이름 추출
-            String fileName = relativePath.substring(relativePath.lastIndexOf("/") + 1);
+            String fileName = Paths.get(imagePath).getFileName().toString();
 
             // 로컬 절대 경로로 변환
-            String localPath = uploadDir + File.separator + fileName;
+            String localPath = Paths.get(uploadDir, fileName).toString();
 
             //String absolutePath = baseUrl + relativePath;
             log.info("[분석 요청] userId: {}, imagePath: {}", userId, localPath);
 
             ImageAnalysisRequestDto dto = new ImageAnalysisRequestDto();
             dto.setUserId(userId);
-            dto.setNationality(user.getNationality());
+            dto.setNationality(imageAnalysisService.mapNationalityToLangCode(user.getNationality()));
             dto.setFavoriteFoods(user.getFavoriteFoods());
             dto.setAllergies(user.getAllergies());
             //dto.setImagePath(absolutePath);
             dto.setImagePath(localPath); // 로컬 경로 세팅
 
-            imageAnalysisService.analyzeAndCache(dto, userId);
+            imageAnalysisService.analyzeAndCache(dto, userId); // AI 서버 통신 중 예외 발생 가능
 
             return ResponseEntity.ok(
                     CommonResponse.<String>builder()
                             .success(true)
                             .message("AI 분석 요청 성공 및 결과 캐싱 완료")
                             .data("ok")
-                            .build()
-            );
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .build());
+        } catch (ResourceAccessException e) {
+            return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT)
                     .body(CommonResponse.<String>builder()
                             .success(false)
-                            .message("AI 요청 실패: " + e.getMessage())
+                            .message("AI 서버 응답이 지연되어 시간 초과되었습니다.")
                             .data(null)
                             .build());
+        } catch (HttpClientErrorException | HttpServerErrorException e) {
+            return ResponseEntity.status(e.getStatusCode())
+                    .body(CommonResponse.<String>builder()
+                            .success(false)
+                            .message("AI 서버 오류: " + e.getStatusText())
+                            .data(null)
+                            .build());
+        } catch (RestClientException e) {
+            return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+                    .body(CommonResponse.<String>builder()
+                            .success(false)
+                            .message("AI 서버와 통신 중 오류가 발생했습니다.")
+                            .data(null)
+                            .build());
+        } catch (Exception e) {
+            log.error("AI 분석 중 에러 발생", e);
+            throw e;
         }
     }
 
@@ -182,24 +209,23 @@ public class ImageAnalysisController {
     public ResponseEntity<CommonResponse<ImageAnalysisResultDto>> getCachedAnalysis(
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        try {
-            Long userId = userDetails.getUser().getId();
-            ImageAnalysisResultDto result = imageAnalysisService.getCachedAnalysis(userId);
-            return ResponseEntity.ok(
-                    CommonResponse.<ImageAnalysisResultDto>builder()
-                            .success(true)
-                            .message("분석 결과 조회 성공")
-                            .data(result)
-                            .build()
-            );
-        } catch (RuntimeException e) {
+        Long userId = userDetails.getUser().getId();
+        ImageAnalysisResultDto result = imageAnalysisService.getCachedAnalysis(userId);
+        if (result == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(CommonResponse.<ImageAnalysisResultDto>builder()
                             .success(false)
-                            .message(e.getMessage())
+                            .message("분석 결과를 찾을 수 없습니다.")
                             .data(null)
                             .build());
         }
+
+        return ResponseEntity.ok(
+                CommonResponse.<ImageAnalysisResultDto>builder()
+                        .success(true)
+                        .message("분석 결과 조회 성공")
+                        .data(result)
+                        .build());
     }
 
     @GetMapping("/translate")
@@ -314,24 +340,25 @@ public class ImageAnalysisController {
     public ResponseEntity<CommonResponse<MenuTranslationResultDto>> getCachedTranslation(
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        try {
-            Long userId = userDetails.getUser().getId();
-            MenuTranslationResultDto result = imageAnalysisService.getCachedTranslation(userId);
-            return ResponseEntity.ok(
-                    CommonResponse.<MenuTranslationResultDto>builder()
-                            .success(true)
-                            .message("번역 결과 조회 성공")
-                            .data(result)
-                            .build()
-            );
-        } catch (RuntimeException e) {
+        Long userId = userDetails.getUser().getId();
+
+        MenuTranslationResultDto result = imageAnalysisService.getCachedTranslation(userId);
+
+        if (result == null || result.getMenuItems() == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(CommonResponse.<MenuTranslationResultDto>builder()
                             .success(false)
-                            .message(e.getMessage())
+                            .message("번역 결과를 찾을 수 없습니다.")
                             .data(null)
                             .build());
         }
+
+        return ResponseEntity.ok(
+                CommonResponse.<MenuTranslationResultDto>builder()
+                        .success(true)
+                        .message("번역 결과 조회 성공")
+                        .data(result)
+                        .build());
     }
 
     @GetMapping("/translate-image")
@@ -377,49 +404,45 @@ public class ImageAnalysisController {
     public ResponseEntity<CommonResponse<String>> getTranslatedImage(
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
+        Long userId = userDetails.getUser().getId();
+        String imagePath = imagePathCache.getLatestImagePath(userId);
+
+        if (imagePath == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(CommonResponse.<String>builder()
+                            .success(false)
+                            .message("업로드된 이미지가 없습니다.")
+                            .data(null)
+                            .build());
+        }
+
         try {
-            Long userId = userDetails.getUser().getId();
-            String imagePath = imagePathCache.getLatestImagePath(userId);  // 예: /api/gallery/images/abc.png
-
-            if (imagePath == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(CommonResponse.<String>builder()
-                                .success(false)
-                                .message("업로드된 이미지가 없습니다.")
-                                .data(null)
-                                .build());
-            }
-
-            // 실제 로컬 경로로 변환
-            String fileName = Paths.get(imagePath).getFileName().toString(); // abc.png
+            String fileName = Paths.get(imagePath).getFileName().toString();
             Path fullPath = Paths.get(uploadDir).resolve(fileName);
             BufferedImage original = ImageIO.read(fullPath.toFile());
 
-            // ARGB 이미지로 복사 및 투명도 처리
+            if (original == null) {
+                throw new IOException("이미지를 읽을 수 없습니다. 손상되었거나 잘못된 파일입니다.");
+            }
+
             BufferedImage output = new BufferedImage(original.getWidth(), original.getHeight(), BufferedImage.TYPE_INT_ARGB);
             Graphics2D g = output.createGraphics();
+
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f));
             g.drawImage(original, 0, 0, null);
 
-            // 텍스트용 설정
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
             g.setFont(new Font("SansSerif", Font.BOLD, 13));
 
-            // 번역 결과 꺼내기
             MenuTranslationResultDto result = imageAnalysisService.getCachedTranslation(userId);
             if (result == null || result.getMenuItems() == null) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(CommonResponse.<String>builder()
-                                .success(false)
-                                .message("번역된 메뉴 결과가 없습니다.")
-                                .data(null)
-                                .build());
+                throw new RuntimeException("번역된 메뉴 결과가 없습니다.");
             }
 
             for (MenuItemDto item : result.getMenuItems()) {
                 String label = item.getMenuName();
                 if (item.isHasAllergy() && item.getAllergyTypes() != null && !item.getAllergyTypes().isEmpty()) {
-                    label += "(" + String.join(", ", item.getAllergyTypes())+ ")";
+                    label += "(" + String.join(", ", item.getAllergyTypes()) + ")";
                 }
 
                 List<List<Double>> bbox = item.getBbox();
@@ -430,7 +453,7 @@ public class ImageAnalysisController {
                 int textWidth = fm.stringWidth(label);
                 int textHeight = fm.getHeight();
 
-                g.setColor(new Color(255, 255, 255, 200)); // 반투명 흰 배경
+                g.setColor(new Color(255, 255, 255, 200));
                 g.fillRect(x - 2, y - textHeight + 4, textWidth + 4, textHeight);
 
                 g.setColor(item.isHasAllergy() ? Color.RED : Color.BLACK);
@@ -439,7 +462,6 @@ public class ImageAnalysisController {
 
             g.dispose();
 
-            // 저장 + URL 생성
             String outputFileName = "translated_" + userId + ".png";
             Path outputPath = Paths.get(uploadDir).resolve(outputFileName);
             ImageIO.write(output, "png", outputPath.toFile());
@@ -451,17 +473,11 @@ public class ImageAnalysisController {
                             .success(true)
                             .message("번역 이미지 생성 성공")
                             .data(imageUrl)
-                            .build()
-            );
+                            .build());
 
         } catch (Exception e) {
-            log.error("번역 이미지 생성 중 오류", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(CommonResponse.<String>builder()
-                            .success(false)
-                            .message("번역 이미지 생성 중 오류")
-                            .data(null)
-                            .build());
+            log.error("이미지 생성 중 오류", e);
+            throw new RuntimeException("이미지 생성 실패: " + e.getMessage());
         }
     }
 }
