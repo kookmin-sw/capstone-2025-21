@@ -1,15 +1,13 @@
 import os
 import json
 import numpy as np
-from fastapi import FastAPI, HTTPException, Form
+from fastapi import FastAPI, HTTPException, File, UploadFile, Form
 from typing import List, Optional
 from paddleocr import PaddleOCR
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 from collections import defaultdict
 import cv2
-
-import requests
 
 # 번역을 위한 Translator 초기화
 from googletrans import Translator
@@ -67,7 +65,7 @@ app = FastAPI()
 
 @app.post("/analyze")
 async def analyze(
-    imagePath: str = Form(...),
+    imagePath: UploadFile = File(...),
     userId: int = Form(...),
     nationality: str = Form(...),
     favoriteFoods: str = Form("[]"),   # JSON string, e.g. '["비빔밥","불고기"]'
@@ -89,14 +87,10 @@ async def analyze(
         tmp.write(await image.read())
     '''
 
-    # B) 이미지 다운로드 및 OCR 처리
-    try:
-        resp = requests.get(imagePath)
-        resp.raise_for_status()
-    except Exception:
-        raise HTTPException(status_code=400, detail="Failed to download image")
+    # B) OCR: 메뉴명 추출
+    contents = await imagePath.read()
     img_array = cv2.imdecode(
-        np.frombuffer(resp.content, dtype=np.uint8),
+        np.frombuffer(contents, dtype=np.uint8),
         cv2.IMREAD_UNCHANGED
     )
     ocr_result = ocr_model.ocr(img_array, cls=True)
@@ -191,7 +185,7 @@ async def analyze(
 # New endpoint to return all menu items with location and allergy info
 @app.post("/analyze/menu")
 async def analyze_menu(
-    imagePath: str = Form(...),
+    imagePath: UploadFile = File(...),
     userId: int = Form(...),
     nationality: str = Form(...),
     favoriteFoods: str = Form("[]"),
@@ -201,14 +195,10 @@ async def analyze_menu(
     """
     FastAPI endpoint to return all menu items with location and allergy info.
     """
-    # 이미지 다운로드 및 OCR 처리
-    try:
-        resp = requests.get(imagePath)
-        resp.raise_for_status()
-    except Exception:
-        raise HTTPException(status_code=400, detail="Failed to download image")
+    # OCR and scanning
+    contents = await imagePath.read()
     img_array = cv2.imdecode(
-        np.frombuffer(resp.content, dtype=np.uint8),
+        np.frombuffer(contents, dtype=np.uint8),
         cv2.IMREAD_UNCHANGED
     )
     ocr_result = ocr_model.ocr(img_array, cls=True)
