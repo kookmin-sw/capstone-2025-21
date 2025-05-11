@@ -1,8 +1,6 @@
 package com.capstone.allergy.client;
 
-import com.capstone.allergy.dto.ImageAnalysisRequestDto;
-import com.capstone.allergy.dto.ImageAnalysisResultDto;
-import com.capstone.allergy.dto.MenuTranslationResultDto;
+import com.capstone.allergy.dto.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +20,9 @@ import org.springframework.http.HttpMethod;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -69,10 +69,28 @@ public class AiImageAnalysisClient {
         HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(formData, headers);
 
         try {
-            ResponseEntity<ImageAnalysisResultDto> response = restTemplate.exchange(
-                    ANALYSIS_URL, HttpMethod.POST, request, ImageAnalysisResultDto.class
+            // AI 서버 응답을 Map으로 받기
+            ResponseEntity<Map> response = restTemplate.exchange(
+                    ANALYSIS_URL, HttpMethod.POST, request, Map.class
             );
-            return response.getBody();
+
+            Map<String, Object> body = response.getBody();
+
+            // recommendations 가공
+            List<Map<String, Object>> recommendationRaw = (List<Map<String, Object>>) body.get("recommendations");
+            List<RecommendationsDto> recommendations = recommendationRaw.stream()
+                    .map(r -> new RecommendationsDto(
+                            (String) r.get("menu_name"),
+                            ((Number) r.get("similarity")).doubleValue()
+                    )).collect(Collectors.toList());
+
+            // allergen 가공: Map<String, List<String>> -> List<AllergenDto>
+            Map<String, List<String>> rawAllergen = (Map<String, List<String>>) body.get("allergen");
+            List<AllergenDto> allergenList = rawAllergen.entrySet().stream()
+                    .map(entry -> new AllergenDto(entry.getKey(), entry.getValue()))
+                    .collect(Collectors.toList());
+
+            return new ImageAnalysisResultDto(recommendations, allergenList);
         } catch (HttpStatusCodeException e) {
             // AI 서버가 응답은 했지만 HTTP 오류 (예: 400, 500)
             throw new RuntimeException("AI server error: " + e.getStatusCode() + " - " + e.getResponseBodyAsString());

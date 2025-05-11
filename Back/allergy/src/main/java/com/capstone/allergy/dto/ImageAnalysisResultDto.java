@@ -17,7 +17,7 @@ public class ImageAnalysisResultDto {
     private List<RecommendationsDto> recommendations;
 
     @JsonProperty("allergen")
-    private Map<String, List<String>> allergen;
+    private List<AllergenDto> allergen;
 
 
 //    @Override
