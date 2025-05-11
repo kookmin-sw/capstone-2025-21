@@ -1,10 +1,8 @@
 import os
 import json
-import uuid
 import numpy as np
 from fastapi import FastAPI, HTTPException, File, UploadFile, Form
 from typing import List, Optional
-import torch
 from paddleocr import PaddleOCR
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
