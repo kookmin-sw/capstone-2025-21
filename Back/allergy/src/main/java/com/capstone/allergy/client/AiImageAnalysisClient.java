@@ -132,15 +132,30 @@ public class AiImageAnalysisClient {
 
         HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(formData, headers);
 
+//        try {
+//            ResponseEntity<MenuTranslationResultDto> response = restTemplate.exchange(
+//                    TRANSLATE_URL, HttpMethod.POST, request, MenuTranslationResultDto.class
+//            );
+//            return response.getBody();
         try {
-            ResponseEntity<MenuTranslationResultDto> response = restTemplate.exchange(
-                    TRANSLATE_URL, HttpMethod.POST, request, MenuTranslationResultDto.class
+            // 1. 먼저 응답을 문자열(String)로 받음
+            ResponseEntity<String> response = restTemplate.exchange(
+                    TRANSLATE_URL, HttpMethod.POST, request, String.class
             );
-            return response.getBody();
+
+            // 2. 실제 응답 내용을 로그로 확인
+            log.info("AI 응답 raw JSON: {}", response.getBody());
+
+            // 3. JSON을 DTO로 파싱
+            MenuTranslationResultDto dto = objectMapper.readValue(response.getBody(), MenuTranslationResultDto.class);
+            return dto;
+
         } catch (HttpStatusCodeException e) {
             throw new RuntimeException("AI server error(translation): " + e.getStatusCode() + " - " + e.getResponseBodyAsString());
         } catch (RestClientException e) {
             throw new RuntimeException("Cannot connect to AI server (translation request). Check if the AI server is running.");
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("JSON 파싱 오류", e);
         }
     }
 }
