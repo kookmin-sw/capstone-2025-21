@@ -1,15 +1,15 @@
-package com.capstone.allergy.exception;
-
-import com.capstone.allergy.dto.CommonResponse;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+//package com.capstone.allergy.exception;
+//
+//import com.capstone.allergy.dto.CommonResponse;
+//import org.springframework.http.HttpStatus;
+//import org.springframework.http.ResponseEntity;
+//import org.springframework.web.bind.annotation.*;
 //import org.springframework.web.bind.annotation.ControllerAdvice;
 //import org.springframework.web.bind.annotation.ExceptionHandler;
 //import org.springframework.web.multipart.MaxUploadSizeExceededException;
 //
-@RestControllerAdvice
-public class GlobalExceptionHandler {
+//@RestControllerAdvice
+//public class GlobalExceptionHandler {
 //
 //    /**
 //     * 5MB 초과 업로드 예외 처리
@@ -38,14 +38,14 @@ public class GlobalExceptionHandler {
 //                        .build()
 //        );
 //    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<CommonResponse<String>> handleException(Exception ex) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(CommonResponse.<String>builder()
-                        .success(false)
-                        .message("서버 오류: " + ex.getMessage())
-                        .data(null)
-                        .build());
-    }
-}
+//
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<CommonResponse<String>> handleException(Exception ex) {
+//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                .body(CommonResponse.<String>builder()
+//                        .success(false)
+//                        .message("서버 오류: " + ex.getMessage())
+//                        .data(null)
+//                        .build());
+//    }
+//}
