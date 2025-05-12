@@ -223,6 +223,7 @@ struct MenuAnalysisResultView: View {
             .ignoresSafeArea(edges: .bottom)
             
             .onAppear {
+                viewModel.send(.onAppear)
                 withAnimation(Animation.easeOut(duration: 0.5).delay(0.2)) {
                     animateCards = true
                 }

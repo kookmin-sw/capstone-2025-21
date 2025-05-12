@@ -339,7 +339,7 @@ struct RestaurantCard: View {
                     image
                         .resizable()
                         .aspectRatio(contentMode: .fill)
-                        .frame(width: 240, height: 160)
+                        .frame(width: 120, height: 80)
                         .cornerRadius(12)
                         .clipped()
                 case .failure:

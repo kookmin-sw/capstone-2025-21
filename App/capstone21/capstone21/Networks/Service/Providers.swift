@@ -17,8 +17,8 @@ extension MoyaProvider {
     
     convenience init(withAuth: Bool) {
         let configuration = URLSessionConfiguration.default
-        configuration.timeoutIntervalForRequest = 120 // 요청 타임아웃 시간 (초)
-        configuration.timeoutIntervalForResource = 120 // 리소스 타임아웃 시간 (다운로드 등)
+        configuration.timeoutIntervalForRequest = 1000 // 요청 타임아웃 시간 (초)
+        configuration.timeoutIntervalForResource = 1000 // 리소스 타임아웃 시간 (다운로드 등)
         
         if withAuth {
             self.init(session: Session(configuration: configuration, interceptor: AuthInterceptor.shared),

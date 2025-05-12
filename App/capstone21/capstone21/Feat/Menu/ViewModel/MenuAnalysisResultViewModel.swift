@@ -83,12 +83,12 @@ class MenuAnalysisResultViewModel: ObservableObject {
                 }
             }
             
-            Providers.HomeProvider.request(target: .getTranslateMenuImage, instance: BaseResponse<MenuTranslateResult>.self) { [weak self] data in
+            Providers.HomeProvider.request(target: .getTranslateMenuImage, instance: BaseResponse<String>.self) { [weak self] data in
                 guard let self = self else { return }
                 
                 if data.success {
                     // When data arrives, load the parsed menu image
-                    if let imageURL = URL(string: data.data!.imageURL) {
+                    if let imageURL = URL(string: data.data!) {
                         self.loadParsedMenuImage(from: imageURL)
                     }
                 }
