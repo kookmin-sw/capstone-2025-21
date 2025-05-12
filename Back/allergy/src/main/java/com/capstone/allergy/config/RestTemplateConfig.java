@@ -9,9 +9,6 @@ import org.springframework.web.client.RestTemplate;
 public class RestTemplateConfig {
     @Bean
     public RestTemplate restTemplate() {
-        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
-        factory.setConnectionRequestTimeout(30000);
-        factory.setReadTimeout(60000);
-        return new RestTemplate(factory);
+        return new RestTemplate();
     }
 }
