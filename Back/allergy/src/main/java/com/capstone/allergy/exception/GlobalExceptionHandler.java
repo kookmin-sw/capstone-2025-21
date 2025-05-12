@@ -3,11 +3,12 @@
 //import com.capstone.allergy.dto.CommonResponse;
 //import org.springframework.http.HttpStatus;
 //import org.springframework.http.ResponseEntity;
+//import org.springframework.web.bind.annotation.*;
 //import org.springframework.web.bind.annotation.ControllerAdvice;
 //import org.springframework.web.bind.annotation.ExceptionHandler;
 //import org.springframework.web.multipart.MaxUploadSizeExceededException;
 //
-//@ControllerAdvice
+//@RestControllerAdvice
 //public class GlobalExceptionHandler {
 //
 //    /**
@@ -36,5 +37,15 @@
 //                        .data(null)
 //                        .build()
 //        );
+//    }
+//
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<CommonResponse<String>> handleException(Exception ex) {
+//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                .body(CommonResponse.<String>builder()
+//                        .success(false)
+//                        .message("서버 오류: " + ex.getMessage())
+//                        .data(null)
+//                        .build());
 //    }
 //}
