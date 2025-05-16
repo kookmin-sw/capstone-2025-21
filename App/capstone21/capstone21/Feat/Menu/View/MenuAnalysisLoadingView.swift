@@ -128,8 +128,6 @@ public struct MenuAnalysisLoadingView: View {
                     navigateToResult()
                 }
             }
-            
-            
         }
     }
     

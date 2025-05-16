@@ -21,21 +21,6 @@ class MenuAnalysisResultViewModel: ObservableObject {
         let dishes: [String]
     }
     
-    // Example spicy dish structure
-    struct SpicyDish {
-        let name: String
-        let spiceLevel: Int
-    }
-    
-    // Example recommended menu structure
-    struct RecommendedMenu {
-        let name: String
-        let description: String
-        let price: String
-        let matchPercentage: Int
-        let matchReasons: [String]
-    }
-    
     //TODO: 서버통신으로 연결
     let allergiesDetected: Bool = true
     let allergiesInfo: [AllergenInfo] = [
@@ -44,13 +29,7 @@ class MenuAnalysisResultViewModel: ObservableObject {
     ]
     
     //TODO: 서버통신으로 연결
-    let topRecommendedMenu: RecommendedMenu = RecommendedMenu(
-        name: "Signature Bibimbap",
-        description: "A colorful mix of vegetables, beef, and rice topped with a fried egg and special sauce.",
-        price: "₩12,000",
-        matchPercentage: 95,
-        matchReasons: ["Based on history", "Low allergens", "Medium spicy"]
-    )
+    var recommendedMenus: [MenuResult] = []
     
     // Add properties for handling UI state
     @Published var parsedMenuImage: UIImage? = UIImage(systemName: "pencil")
@@ -63,9 +42,7 @@ class MenuAnalysisResultViewModel: ObservableObject {
     var navigationRouter: NavigationRoutableType
     private let cancelBag = CancelBag()
     
-    init(
-        navigationRouter: NavigationRoutableType
-    ) {
+    init(navigationRouter: NavigationRoutableType) {
         self.navigationRouter = navigationRouter
     }
     
@@ -76,10 +53,7 @@ class MenuAnalysisResultViewModel: ObservableObject {
                 guard let self = self else { return }
                 
                 if data.success {
-                    // When data arrives, load the parsed menu image
-//                    if let imageURL = data.result?.parsedMenuImageURL {
-//                        self.loadParsedMenuImage(from: imageURL)
-//                    }
+                    self.recommendedMenus = data.data!.recommendations
                 }
             }
             

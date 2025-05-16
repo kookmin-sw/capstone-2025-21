@@ -52,79 +52,140 @@ struct MenuAnalysisResultView: View {
                 .padding(.top, 16)
                 
                 // Top Recommendation Card
+                // Recommendations Cards Section
+                // Recommendations Cards Section
                 VStack(alignment: .leading, spacing: 0) {
-                    Text("YOUR TOP RECOMMENDATION")
+                    Text("RECOMMENDED FOR YOU")
                         .font(.medium_12)
                         .foregroundColor(.heyGray3)
                         .padding(.bottom, 8)
                     
-                    ZStack(alignment: .topTrailing) {
-                        VStack(alignment: .leading, spacing: 16) {
-                            HStack(alignment: .top, spacing: 16) {
-                                Image(systemName: "star.fill")
-                                    .font(.title2)
-                                    .foregroundColor(.yellow)
-                                    .padding(12)
-                                    .background(Color.yellow.opacity(0.2))
-                                    .clipShape(Circle())
-                                
-                                VStack(alignment: .leading, spacing: 6) {
-                                    Text(viewModel.topRecommendedMenu.name)
-                                        .font(.semibold_18)
-                                        .foregroundColor(.heyGray1)
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        if !viewModel.recommendedMenus.isEmpty {
+                            HStack(spacing: 16) {
+                                // Card for top recommendation
+                                ZStack(alignment: .topTrailing) {
                                     
-                                    Text("Best match for your preferences")
-                                        .font(.regular_14)
-                                        .foregroundColor(.heyGray2)
+                                    
+                                    VStack(alignment: .center, spacing: 12) {
+                                        // Food icon
+                                        Image(systemName: "fork.knife.circle.fill")
+                                            .font(.system(size: 32))
+                                            .foregroundColor(.heyMain.opacity(0.8))
+                                            .padding(.top, 8)
+                                        
+                                        // Menu name
+                                        Text(viewModel.recommendedMenus[0].menu_name ?? "")
+                                            .font(.semibold_16)
+                                            .foregroundColor(.heyGray1)
+                                            .multilineTextAlignment(.center)
+                                            .lineLimit(2)
+                                            .frame(height: 50)
+                                        
+                                        // Match percentage badge
+                                        Text("\(viewModel.recommendedMenus[0].similarity)% Match")
+                                            .font(.semibold_14)
+                                            .foregroundColor(.white)
+                                            .padding(.horizontal, 12)
+                                            .padding(.vertical, 6)
+                                            .background(
+                                                LinearGradient(
+                                                    gradient: Gradient(colors: [Color.heyMain, Color.heyMain.opacity(0.7)]),
+                                                    startPoint: .leading,
+                                                    endPoint: .trailing
+                                                )
+                                            )
+                                            .cornerRadius(16)
+                                    }
+                                    .padding(16)
+                                    .frame(width: 160, height: 180)
+                                    .background(
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [Color.white, Color.heyGray5.opacity(0.3)]),
+                                            startPoint: .top,
+                                            endPoint: .bottom
+                                        )
+                                    )
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 16)
+                                            .stroke(Color.heyMain.opacity(0.3), lineWidth: 1.5)
+                                    )
+                                    .cornerRadius(16)
+                                    .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
+                                    
+                                    // Top recommendation badge
+                                    if viewModel.recommendedMenus[0].similarity >= 90 {
+                                        Image(systemName: "star.fill")
+                                            .font(.system(size: 14))
+                                            .foregroundColor(.white)
+                                            .padding(6)
+                                            .background(Color.yellow)
+                                            .clipShape(Circle())
+                                            .offset(x: -8, y: 8)
+                                    }
                                 }
+                                .scaleEffect(1.05) // Make the top recommendation slightly larger
                                 
-                                Spacer()
-                                
-                                Text("\(viewModel.topRecommendedMenu.price)")
-                                    .font(.semibold_16)
-                                    .foregroundColor(.heyMain)
-                            }
-                            
-                            Text(viewModel.topRecommendedMenu.description)
-                                .font(.regular_14)
-                                .foregroundColor(.heyGray2)
-                                .lineLimit(3)
-                                .padding(.leading, 8)
-                            
-                            HStack(spacing: 8) {
-                                ForEach(viewModel.topRecommendedMenu.matchReasons, id: \.self) { reason in
-                                    Text(reason)
-                                        .font(.medium_12)
-                                        .foregroundColor(.heyMain)
-                                        .padding(.horizontal, 12)
-                                        .padding(.vertical, 6)
-                                        .background(Color.heyMain.opacity(0.1))
-                                        .cornerRadius(16)
+                                // Cards for other recommendations
+                                ForEach(viewModel.recommendedMenus, id: \.self) { menu in
+                                    VStack(alignment: .center, spacing: 12) {
+                                        // Food icon - different for variety
+                                        Image(systemName: menu.menu_name.contains("Bib") ? "leaf.circle.fill" : "flame.circle.fill")
+                                            .font(.system(size: 28))
+                                            .foregroundColor(getColorForMatchPercentage(menu.similarity))
+                                            .padding(.top, 8)
+                                        
+                                        // Menu name
+                                        Text(menu.menu_name)
+                                            .font(.semibold_16)
+                                            .foregroundColor(.heyGray1)
+                                            .multilineTextAlignment(.center)
+                                            .lineLimit(2)
+                                            .frame(height: 50)
+                                        
+                                        // Match percentage badge
+                                        Text("\(menu.similarity)% Match")
+                                            .font(.semibold_14)
+                                            .foregroundColor(.white)
+                                            .padding(.horizontal, 12)
+                                            .padding(.vertical, 6)
+                                            .background(
+                                                LinearGradient(
+                                                    gradient: Gradient(colors: [getColorForMatchPercentage(menu.similarity), getColorForMatchPercentage(menu.similarity).opacity(0.7)]),
+                                                    startPoint: .leading,
+                                                    endPoint: .trailing
+                                                )
+                                            )
+                                            .cornerRadius(16)
+                                    }
+                                    .padding(16)
+                                    .frame(width: 150, height: 170)
+                                    .background(
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [Color.white, Color.heyGray5.opacity(0.2)]),
+                                            startPoint: .top,
+                                            endPoint: .bottom
+                                        )
+                                    )
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 16)
+                                            .stroke(getColorForMatchPercentage(menu.similarity).opacity(0.2), lineWidth: 1)
+                                    )
+                                    .cornerRadius(16)
+                                    .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 4)
                                 }
                             }
+                            .padding(.horizontal, 16)
+                            .padding(.bottom, 12)
                             .padding(.top, 4)
                         }
-                        .padding(20)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(Color.white)
-                        .cornerRadius(16)
-                        .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
-                        
-                        // Match percentage badge
-                        Text("\(viewModel.topRecommendedMenu.matchPercentage)% Match")
-                            .font(.semibold_14)
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 6)
-                            .background(Color.heyMain)
-                            .cornerRadius(16)
-                            .padding(16)
                     }
-                }
-                .padding(.horizontal, 16)
-                .padding(.top, 24)
-                .opacity(showTopRecommendation ? 1 : 0)
-                .offset(y: showTopRecommendation ? 0 : 20)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 24)
+                    .opacity(showTopRecommendation ? 1 : 0)
+                    .offset(y: showTopRecommendation ? 0 : 20)
+                        }
+                        
                 
                 // Analysis Cards
                 VStack(spacing: 16) {
@@ -291,6 +352,20 @@ struct MenuAnalysisResultView: View {
                     isVisible = true
                 }
             }
+        }
+    }
+    
+    // Helper function for dynamic color based on match percentage
+    private func getColorForMatchPercentage(_ percentage: Double) -> Color {
+        switch percentage {
+        case 90...100:
+            return .green
+        case 70..<90:
+            return .heyMain
+        case 50..<70:
+            return .orange
+        default:
+            return .gray
         }
     }
 }
