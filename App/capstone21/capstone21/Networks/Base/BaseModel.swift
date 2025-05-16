@@ -8,7 +8,7 @@
 import Foundation
 
 struct BaseResponse<T: Decodable>: Decodable {
-    var status: Int
+    var success: Bool
     var message: String?
     var data: T?
 }

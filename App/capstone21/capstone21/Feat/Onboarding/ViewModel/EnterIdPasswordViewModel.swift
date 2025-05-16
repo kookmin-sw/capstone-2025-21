@@ -52,8 +52,12 @@ public class EnterIdPasswordViewModel: ObservableObject {
             navigationRouter.pop()
             
         case .nextButtonDidTap:
-            //TODO: 회원가입 진행 -> 성공하면 홈으로
-            windowRouter.switch(to: .home)
+            userInfo.username = nickName
+            userInfo.password = password
+            Providers.AuthProvider.request(target: .signUp(userInfo), instance: BaseResponse<EmptyResponseDTO>.self) { [weak self] _ in
+                self?.navigationRouter.popToRootView()
+            }
+            
             
         case .checkIDAvailabilityButtonDidTap:
             //TODO: ID 중복 확인

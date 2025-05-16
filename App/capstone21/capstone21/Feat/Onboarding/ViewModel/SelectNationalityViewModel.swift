@@ -52,7 +52,7 @@ public class SelectNationalityViewModel: ObservableObject {
             
         case .nextButtonDidTap:
             guard let nationality else { return }
-            userInfo.nationality = nationality.rawValue
+            userInfo.nationality = nationality.name
             navigationRouter.push(to: .selectAllergy(userInfo))
             
         case .selectNationality(let nationality):

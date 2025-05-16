@@ -17,6 +17,6 @@ enum NavigationDestination: Hashable {
     case enterIdPassword(UserInfo)
     
     //Menu
-    case menuAnalysisLoading
+    case menuAnalysisLoading(String)
     case menuAnalysResult
 }

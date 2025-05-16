@@ -94,7 +94,7 @@ struct ArchivingView: View {
             Text("Based on your food preferences")
                 .font(.bold_20)
                 .foregroundColor(.heyGray1)
-                
+            
             HStack(spacing: 8) {
                 ForEach(viewModel.userPreferredFoods.prefix(3), id: \.id) { food in
                     HStack(spacing: 4) {
@@ -226,22 +226,25 @@ struct FeaturedRestaurantCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             ZStack(alignment: .topTrailing) {
-                restaurant.image
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 240, height: 160)
-                    .cornerRadius(12)
-                    .clipped()
-                
-                if let matchPercentage = restaurant.matchPercentage {
-                    Text("\(matchPercentage)% Match")
-                        .font(.semibold_12)
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color.heyMain)
-                        .cornerRadius(8)
-                        .padding(8)
+                AsyncImage(url: restaurant.image) { phase in
+                    switch phase {
+                    case .empty:
+                        ProgressView() // 로딩 중
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 240, height: 160)
+                            .cornerRadius(12)
+                            .clipped()
+                    case .failure:
+                        Image(systemName: "photo") // 에러 이미지
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .foregroundColor(.gray)
+                    @unknown default:
+                        EmptyView()
+                    }
                 }
             }
             
@@ -271,10 +274,6 @@ struct FeaturedRestaurantCard: View {
                     
                     Text("•")
                         .foregroundColor(.heyGray3)
-                    
-                    Text(restaurant.distance)
-                        .font(.regular_12)
-                        .foregroundColor(.heyGray2)
                     
                     Spacer()
                     
@@ -332,27 +331,31 @@ struct RestaurantCard: View {
     
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
-            restaurant.image
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: 100, height: 100)
-                .cornerRadius(8)
-                .clipped()
+            AsyncImage(url: restaurant.image) { phase in
+                switch phase {
+                case .empty:
+                    ProgressView() // 로딩 중
+                case .success(let image):
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 120, height: 80)
+                        .cornerRadius(12)
+                        .clipped()
+                case .failure:
+                    Image(systemName: "photo") // 에러 이미지
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .foregroundColor(.gray)
+                @unknown default:
+                    EmptyView()
+                }
+            }
             
             VStack(alignment: .leading, spacing: 4) {
-                HStack {
-                    Text(restaurant.name)
-                        .font(.semibold_16)
-                        .foregroundColor(.heyGray1)
-                    
-                    Spacer()
-                    
-                    if let matchPercentage = restaurant.matchPercentage {
-                        Text("\(matchPercentage)%")
-                            .font(.semibold_14)
-                            .foregroundColor(.heyMain)
-                    }
-                }
+                Text(restaurant.name)
+                    .font(.semibold_16)
+                    .foregroundColor(.heyGray1)
                 
                 HStack(spacing: 4) {
                     ForEach(restaurant.foodTags.prefix(3), id: \.self) { tag in
@@ -392,10 +395,6 @@ struct RestaurantCard: View {
                     Text("•")
                         .foregroundColor(.heyGray3)
                     
-                    Text(restaurant.distance)
-                        .font(.regular_12)
-                        .foregroundColor(.heyGray2)
-                    
                     Spacer()
                     
                     HStack(spacing: 2) {
@@ -427,11 +426,7 @@ struct FilterView: View {
         NavigationView {
             VStack(alignment: .leading, spacing: 24) {
                 // Food Categories
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("Food Categories")
-                        .font(.semibold_16)
-                        .foregroundColor(.heyGray1)
-                    
+                VStack(alignment: .leading, spacing: 6) {
                     VStack(alignment: .leading, spacing: 8) {
                         ForEach(FoodCategory.allCases, id: \.self) { category in
                             Button(action: {
@@ -512,6 +507,7 @@ struct FilterView: View {
                         .background(Color.heyMain)
                         .cornerRadius(12)
                 }
+                .padding(.bottom, 100)
             }
             .padding(16)
             .navigationTitle("Filter Options")

@@ -9,17 +9,19 @@ import Foundation
 import Moya
 
 struct Providers {
-//    static let challengeProvider = NetworkProvider<ChallengeRouter>(withAuth: true)
-//    static let myPageProvider = NetworkProvider<MyPageRouter>(withAuth: true)
-//    static let AuthProvider = NetworkProvider<AuthRouter>(withAuth: false)
-//    static let pointProvider = NetworkProvider<PointRouter>(withAuth: false)
-//    static let bannerProvider = NetworkProvider<BannerRouter>(withAuth: true)
+    static let HomeProvider = NetworkProvider<HomeRouter>(withAuth: true)
+    static let AuthProvider = NetworkProvider<AuthRouter>(withAuth: false)
 }
 
 extension MoyaProvider {
+    
     convenience init(withAuth: Bool) {
+        let configuration = URLSessionConfiguration.default
+        configuration.timeoutIntervalForRequest = 1000 // 요청 타임아웃 시간 (초)
+        configuration.timeoutIntervalForResource = 1000 // 리소스 타임아웃 시간 (다운로드 등)
+        
         if withAuth {
-            self.init(session: Session(interceptor: AuthInterceptor.shared),
+            self.init(session: Session(configuration: configuration, interceptor: AuthInterceptor.shared),
                       plugins: [MoyaLoggingPlugin()])
         } else {
             self.init(plugins: [MoyaLoggingPlugin()])

@@ -8,62 +8,29 @@
 import SwiftUI
 
 enum OnboardingType {
-    case timeTable
-    case theme
-    case alarm
+    case one
+    case two
+    case three
     
     var title: String {
         switch self {
-        case .timeTable:
-            return "blabla"
-        case .theme:
-            return "blabla"
-        case .alarm:
-            return "blabla"
-        }
-    }
-    
-    var description: String {
-        switch self {
-        case.timeTable:
-            return "blabla"
-        case .theme:
-            return "blabla"
-        case .alarm:
-            return "blabla"
+        case .one:
+            return "Translate restaurant menus for your visit to Korea"
+        case .two:
+            return "Get detailed and useful information about allergens."
+        case .three:
+            return "Find dishes matching your preferences"
         }
     }
     
     var image: UIImage {
         switch self {
-        case .timeTable:
-            return .icAdd
-        case .theme:
-            return .icAdd
-        case .alarm:
-            return .icAdd
-        }
-    }
-    
-    var horizontalPadding: CGFloat {
-        switch self {
-        case .timeTable:
-            return 0.12
-        case .theme:
-            return 0
-        case .alarm:
-            return 0.07
-        }
-    }
-    
-    var topPadding: CGFloat {
-        switch self {
-        case .timeTable:
-            return 0.06
-        case .theme:
-            return 0.15
-        case .alarm:
-            return 0.11
+        case .one:
+            return .graphics1
+        case .two:
+            return .graphics2
+        case .three:
+            return .graphics3
         }
     }
 }
@@ -73,7 +40,7 @@ public struct OnboardingView: View {
     var viewModel: OnboardingViewModel
     @State var currentIndex = 0
     
-    let onboardingContent: [OnboardingType] = [.timeTable, .theme, .alarm]
+    let onboardingContent: [OnboardingType] = [.one, .two, .three]
     
     public init(viewModel: OnboardingViewModel) {
         self.viewModel = viewModel
@@ -89,16 +56,11 @@ public struct OnboardingView: View {
                         Spacer()
                             .frame(height: geometry.size.height * 0.15)
                         
-                        VStack(alignment: .leading, spacing: 0) {
+                        VStack(alignment: .center, spacing: 0) {
                             HStack {
                                 VStack(alignment: .leading, spacing: 8) {
                                     Text(onboardingContent[currentIndex].title)
                                         .font(.bold_20)
-                                        .foregroundColor(.heyWhite)
-                                        .multilineTextAlignment(.leading)
-                                    
-                                    Text(onboardingContent[currentIndex].description)
-                                        .font(.regular_14)
                                         .foregroundColor(.heyWhite)
                                         .multilineTextAlignment(.leading)
                                 }
@@ -111,13 +73,11 @@ public struct OnboardingView: View {
                                 Image(uiImage: onboardingContent[currentIndex].image)
                                     .resizable()
                                     .scaledToFit()
-                                    .padding(
-                                        .horizontal,
-                                        geometry.size.width * onboardingContent[currentIndex].horizontalPadding
-                                    )
+                                    .frame(height: 400)
                                 Spacer()
                             }
-                            .frame(height: geometry.size.height * 0.48)
+                            .padding(.top, 20)
+                            .padding(.horizontal, 80)
                         }
                         .gesture(
                             DragGesture()
@@ -139,6 +99,7 @@ public struct OnboardingView: View {
                         )
                         
                         Spacer()
+                            .frame(height: 20)
                         
                         
                         VStack {

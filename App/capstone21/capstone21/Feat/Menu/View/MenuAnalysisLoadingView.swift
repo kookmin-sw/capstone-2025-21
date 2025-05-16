@@ -122,7 +122,12 @@ public struct MenuAnalysisLoadingView: View {
         .toolbar(.hidden, for: .tabBar)
         .onAppear {
             startLoadingAnimation()
-            navigateToResult()
+//            navigateToResult()
+            Providers.HomeProvider.request(target: .postMenuAnalyzeImage, instance: BaseResponse<EmptyResponseDTO>.self) {  data in
+                if data.success {
+                    navigateToResult()
+                }
+            }
         }
     }
     

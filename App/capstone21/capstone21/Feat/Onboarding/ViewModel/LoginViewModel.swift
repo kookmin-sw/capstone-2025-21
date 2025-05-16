@@ -48,23 +48,29 @@ public class LogInViewModel: ObservableObject {
     func send(_ action: Action) {
         switch action {
         case .onAppear:
-            //TODO: 자동 로그인 로직
             break
+//            if UserDefaultsManager.accessToken != "" {
+//                navigationRouter.destinations = []
+//                windowRouter.switch(to: .home)
+//            }
             
         case .loginButtonDidTap:
-            //TODO: 로그인 로직
-            navigationRouter.destinations = []
-            windowRouter.switch(to: .home)
-
+            let request = LoginRequest(username: id, password: password)
+            Providers.AuthProvider.request(target: .login(request), instance: BaseResponse<LoginResult>.self) { [weak self] data in
+                if data.success {
+                    UserDefaultsManager.accessToken = data.data?.token ?? ""
+                    UserDefaultsManager.userName = data.data?.username ?? ""
+                    self?.navigationRouter.destinations = []
+                    self?.windowRouter.switch(to: .home)
+                }
+            }
+            
         case .dismissToastView:
             state.errMessage = ""
         case .forgotPasswordButtonDidTap:
             break
-//            navigationRouter.push(to: .enterEmail)
         case .signUpButtonDidTap:
             navigationRouter.push(to: .selectNationality)
-            break
-//            navigationRouter.push(to: .selectUniversity)
         }
     }
     

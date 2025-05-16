@@ -13,8 +13,6 @@ public struct MyPageView: View {
     
     public init(viewModel: MyPageViewModel) {
         self.viewModel = viewModel
-        
-        viewModel.send(.onAppear)
     }
     
     public var body: some View {
@@ -82,16 +80,6 @@ public struct MyPageView: View {
             .ignoresSafeArea(.keyboard)
         }
         .navigationBarBackButtonHidden()
-        .heyAlert(
-            isPresented: viewModel.state.logoutAlertViewIsPresented,
-            title: "Are you sure you want\nto logout?",
-            primaryButton: ("Close", .gray, {
-                viewModel.send(.dismissLogoutAlertView)
-            }),
-            secondaryButton: ("Ok", .primary, {
-                viewModel.send(.logout)
-            })
-        )
     }
 }
 
@@ -127,7 +115,7 @@ public struct MyPageTopView: View {
     }
 }
 
-#Preview {
-    MyPageView(viewModel: .init())
-        .environmentObject(DIContainer.default)
-}
+//#Preview {
+//    MyPageView(viewModel: .init())
+//        .environmentObject(DIContainer.default)
+//}

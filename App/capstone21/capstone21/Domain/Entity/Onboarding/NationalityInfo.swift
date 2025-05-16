@@ -23,4 +23,15 @@ enum NationalityInfo: String {
             return Image(.china)
         }
     }
+    
+    var name: String {
+        switch self {
+        case .USA:
+            return "en"
+        case .JPN:
+            return "jp"
+        case .CHN:
+            return "ch"
+        }
+    }
 }

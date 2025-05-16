@@ -21,11 +21,13 @@ final class AuthInterceptor: RequestInterceptor {
     
     func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
         print("---adater 진입----")
+        print("---urlRequest: \(urlRequest)----")
         completion(.success(urlRequest))
     }
     
     func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
         print("-------🔧retry 시작🔧-------")
+        print("-------🔧\(request.response)🔧-------")
         guard
             let statusCode = request.response?.statusCode,
             request.retryCount < retryLimit
@@ -54,7 +56,7 @@ final class AuthInterceptor: RequestInterceptor {
             }
         } else if statusCode == 404 {
             /// 유저를 찾을 수 없는 상태
-            UserManager.shared.appStateString = "login"
+//            UserManager.shared.appStateString = "login"
         } else {
             if request.retryCount > retryLimit {
                 print("🚨재시도 횟수가 너무 많습니다🚨")

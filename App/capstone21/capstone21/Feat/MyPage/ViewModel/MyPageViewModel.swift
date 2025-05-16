@@ -35,7 +35,6 @@ public class MyPageViewModel: ObservableObject {
         case signUpLogInButtonDidTap
         case editSchoolButtonDidTap
         
-        case logout
         case logoutButtonDidTap
         case dismissLogoutAlertView
     }
@@ -43,14 +42,29 @@ public class MyPageViewModel: ObservableObject {
     @Published var state = State()
     @Published var profileInfo: ProfileInfo = .init()
     
-    public init() {}
     
+    var navigationRouter: NavigationRoutableType
+    var windowRouter: WindowRoutableType
     private let cancelBag = CancelBag()
+
+    init(
+        navigationRouter: NavigationRoutableType,
+        windowRouter: WindowRoutableType
+    ) {
+        self.navigationRouter = navigationRouter
+        self.windowRouter = windowRouter
+    }
     
     func send(_ action: Action) {
         switch action {
         case .onAppear:
-            break
+            Providers.HomeProvider.request(target: .getProfile, instance: BaseResponse<ProfileResult>.self) { [weak self] data in
+                if data.success {
+                    guard let data = data.data else { return }
+                    self?.profileInfo.name = data.username
+                    self?.profileInfo.nationality = data.nationality
+                }
+            }
             
         case .changePasswordButtonDidTap:
             break
@@ -71,12 +85,14 @@ public class MyPageViewModel: ObservableObject {
             break
             
         case .logoutButtonDidTap:
-            break
+            Providers.AuthProvider.request(target: .logout, instance: BaseResponse<EmptyResponseDTO>.self) { [weak self] data in
+                if data.success {
+                    self?.navigationRouter.destinations = []
+                    self?.windowRouter.switch(to: .onboarding)
+                }
+            }
             
         case .copyReferralCodeButtonDidTap:
-            break
-            
-        case .logout:
             break
             
         case .dismissLogoutAlertView:
@@ -90,4 +106,3 @@ public class MyPageViewModel: ObservableObject {
         }
     }
 }
-
