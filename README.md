@@ -17,7 +17,7 @@
 <img src="https://github.com/user-attachments/assets/cd93c758-010c-4f25-a3b0-b8df76a6e2e5" width="400"/>
 
 ## ✅ Architecture
-<img src="https://github.com/user-attachments/assets/75d2cab4-f629-4518-aab5-f602de005de6" width="430"/>
+<img src="https://github.com/user-attachments/assets/537dd7cd-7015-4956-9754-19d413f5d6ec" width="430"/>
 
 ### 관련 문서 
 - Github 컨벤션 <a href="https://github.com/kookmin-sw/capstone-2025-21/wiki/Github-이슈,-PR,-커밋-컨벤션">문서 바로가기</a>
